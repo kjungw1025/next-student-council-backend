@@ -1,0 +1,92 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.15'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'com.dku.council'
+version = '1.1.0'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+jar{
+	enabled = false
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// spring boot
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// monitoring
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
+	// thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.redisson:redisson-spring-boot-starter:3.16.3'
+
+	// db
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	// jsoup (html parser)
+	implementation 'org.jsoup:jsoup:1.15.4'
+
+	// thumbnailator (image thumbnail generator)
+	implementation 'net.coobird:thumbnailator:[0.4, 0.5)'
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	// json
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
+	// firebase sdk
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
+
+	// swagger
+	annotationProcessor 'com.github.therapi:therapi-runtime-javadoc-scribe:0.15.0'
+	implementation 'com.github.therapi:therapi-runtime-javadoc:0.15.0'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+
+	// test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
+	testImplementation "org.testcontainers:junit-jupiter:1.16.3"
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+test {
+	String activeProfile = project.properties.get('spring.profiles.active')
+	println "Actived profile: $activeProfile"
+	systemProperty "spring.profiles.active", activeProfile
+
+	testLogging {
+		events "failed"
+		exceptionFormat "full"
+	}
+}
