@@ -21,8 +21,11 @@ public class ThumbnailService {
 
     private final ObjectUploadContext uploadContext;
 
-    @Value("${app.post.thumbnail.size}")
-    private final int size;
+    @Value("${app.post.thumbnail.height-size}")
+    private final int heightSize;
+
+    @Value("${app.post.thumbnail.width-size}")
+    private final int widthSize;
 
 
     public String createThumbnail(FileUploadService.Context uploadCtx, UploadedFile file) {
@@ -34,7 +37,7 @@ public class ThumbnailService {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             InputStream fileInStream = file.getFile().getInputStream();
             Thumbnails.of(fileInStream)
-                    .size(size, size)
+                    .size(widthSize, heightSize)
                     .outputFormat("png")
                     .toOutputStream(outStream);
 
