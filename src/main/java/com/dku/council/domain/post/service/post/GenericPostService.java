@@ -9,6 +9,7 @@ import com.dku.council.domain.post.model.dto.response.ResponseSingleGenericPostD
 import com.dku.council.domain.post.model.entity.Post;
 import com.dku.council.domain.post.model.entity.PostFile;
 import com.dku.council.domain.post.repository.post.GenericPostRepository;
+import com.dku.council.domain.post.repository.post.NewsRepository;
 import com.dku.council.domain.post.repository.spec.PostSpec;
 import com.dku.council.domain.post.service.ThumbnailService;
 import com.dku.council.domain.post.service.ViewCountService;
@@ -29,8 +30,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +84,25 @@ public class GenericPostService<E extends Post> {
     public SummarizedGenericPostDto makeListDto(int bodySize, E post) {
         int likes = likeService.getCountOfLikes(post.getId(), LikeTarget.POST);
         return new SummarizedGenericPostDto(uploadContext, bodySize, likes, post);
+    }
+
+    /**
+     * 특정 기간동안의 게시글 목록 조회
+     *
+     * @param duration 조회할 날짜 수
+     */
+    @Transactional(readOnly = true)
+    public Page<SummarizedGenericPostDto> listByDuration(GenericPostRepository<E> repository,
+                                                         Pageable pageable, int bodySize, int duration) {
+        Page<E> result = listByDuration(repository, duration, pageable);
+        return result.map((post) -> makeListDto(bodySize, post));
+    }
+
+    private Page<E> listByDuration(GenericPostRepository<E> repository, int duration, Pageable pageable) {
+        LocalDateTime start = LocalDateTime.now().minusDays(duration);
+        LocalDateTime end = LocalDateTime.now();
+
+        return repository.findAllByDuration(start, end, pageable);
     }
 
     /**
@@ -200,7 +224,6 @@ public class GenericPostService<E extends Post> {
         return post.orElseThrow(PostNotFoundException::new);
     }
 
-
     /**
      * 게시글 삭제. 실제 DB에서 삭제처리되지 않고 표시만 해둔다.
      *
@@ -242,7 +265,6 @@ public class GenericPostService<E extends Post> {
         E post = repository.findBlindedPostById(postId).orElseThrow(PostNotFoundException::new);
         post.unblind();
     }
-
 
     @FunctionalInterface
     public interface PostResultMapper<T, D, E extends Post> {

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface GenericPostRepository<T extends Post> extends JpaRepository<T, Long>, JpaSpecificationExecutor<T> {
@@ -38,4 +39,7 @@ public interface GenericPostRepository<T extends Post> extends JpaRepository<T, 
             "where p.id=:id and p.status='BLINDED'")
     Optional<T> findBlindedPostById(@Param("id") Long id);
 
+    @Query("select p from Post p " +
+            "where p.status='ACTIVE' and p.createdAt between :start and :end")
+    Page<T> findAllByDuration(LocalDateTime start, LocalDateTime end, Pageable pageable);
 }
