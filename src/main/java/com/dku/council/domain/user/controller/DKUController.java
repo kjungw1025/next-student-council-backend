@@ -7,6 +7,7 @@ import com.dku.council.domain.user.model.dto.response.ResponseVerifyStudentDto;
 import com.dku.council.domain.user.service.DKUAuthService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.UserAuth;
+import com.dku.council.infra.dku.service.DkuAuthBatchService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 public class DKUController {
 
     private final DKUAuthService service;
+    private final DkuAuthBatchService renewingAccountService;
 
     /**
      * 단국대학교 학생 인증
@@ -30,6 +32,17 @@ public class DKUController {
     @PostMapping("/verify")
     public ResponseVerifyStudentDto verifyDKUStudent(@Valid @RequestBody RequestDkuStudentDto dto) {
         return service.verifyStudent(dto);
+    }
+
+    /**
+     * 단국대학교 학생 인증 갱신
+     * <p>3월, 9월 단위로 동결되는 학생 인증을 갱신하기 위해 진행합니다.</p>
+     *
+     * @param dto 요청 body
+     */
+    @PostMapping("/refresh")
+    public void refreshVerifyDKUStudent(@Valid @RequestBody RequestDkuStudentDto dto) {
+        renewingAccountService.changeDkuAuth(dto);
     }
 
     /**
