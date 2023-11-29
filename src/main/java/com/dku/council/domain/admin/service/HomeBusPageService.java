@@ -19,7 +19,7 @@ import com.dku.council.domain.homebus.service.HomeBusUserService;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.global.error.exception.UserNotFoundException;
-import com.dku.council.infra.nhn.service.MMSService;
+import com.dku.council.infra.nhn.sms.service.MMSService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;

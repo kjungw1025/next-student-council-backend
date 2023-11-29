@@ -16,7 +16,7 @@ import com.dku.council.domain.post.service.post.PetitionService;
 import com.dku.council.domain.statistic.model.dto.PetitionStatisticDto;
 import com.dku.council.domain.statistic.service.PetitionStatisticService;
 import com.dku.council.global.auth.role.UserRole;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import com.dku.council.mock.PetitionMock;
 import com.dku.council.mock.PetitionStatisticMock;
 import com.dku.council.util.ClockUtil;
@@ -47,7 +47,7 @@ public class PetitionServiceTest {
 
     private final Clock clock = ClockUtil.create();
     private final Duration writeCooltime = Duration.ofDays(1);
-    private final ObjectUploadContext uploadContext = new ObjectUploadContext("", "");
+    private final ObjectUploadContext uploadContext = new ObjectUploadContext("", "", "", "");
 
     @Mock
     private PetitionStatisticService petitionStatisticService;
@@ -143,7 +143,7 @@ public class PetitionServiceTest {
     public void create() {
         // given
         RequestCreatePetitionDto dto = new RequestCreatePetitionDto("title", "body",
-                List.of(), List.of());
+                List.of(), List.of(), List.of());
         Instant now = Instant.now(clock);
 
         when(postTimeMemoryRepository.isAlreadyContains(PETITION_KEY, 1L, now))
@@ -163,7 +163,7 @@ public class PetitionServiceTest {
     public void createAlreadyPostJustNow() {
         // given
         RequestCreatePetitionDto dto = new RequestCreatePetitionDto("title", "body",
-                List.of(), List.of());
+                List.of(), List.of(), List.of());
         Instant now = Instant.now(clock);
 
         when(postTimeMemoryRepository.isAlreadyContains(PETITION_KEY, 1L, now))
@@ -179,7 +179,7 @@ public class PetitionServiceTest {
     public void noCooltimeCreatingException() {
         // given
         RequestCreatePetitionDto dto = new RequestCreatePetitionDto("title", "body",
-                List.of(), List.of());
+                List.of(), List.of(), List.of());
         Instant now = Instant.now(clock);
 
         when(postTimeMemoryRepository.isAlreadyContains(PETITION_KEY, 1L, now))

@@ -11,8 +11,8 @@ import java.util.List;
 @Getter
 public class RequestCreateRuleDto extends RequestCreateGenericPostDto<Rule> {
 
-    public RequestCreateRuleDto(@NotBlank String title, @NotBlank String body, List<Long> tagIds, List<MultipartFile> files) {
-        super(title, body, tagIds, files);
+    public RequestCreateRuleDto(@NotBlank String title, @NotBlank String body, List<Long> tagIds, List<MultipartFile> images, List<MultipartFile> files) {
+        super(title, body, tagIds, images, files);
     }
 
     public Rule toEntity(User user) {

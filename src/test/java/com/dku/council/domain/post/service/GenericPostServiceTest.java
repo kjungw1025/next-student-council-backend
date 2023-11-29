@@ -14,8 +14,9 @@ import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
-import com.dku.council.infra.nhn.service.FileUploadService;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.service.FileUploadService;
+import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import com.dku.council.mock.MultipartFileMock;
 import com.dku.council.mock.NewsMock;
 import com.dku.council.mock.UserMock;
@@ -56,7 +57,10 @@ class GenericPostServiceTest {
     private ViewCountService viewCountService;
 
     @Mock
-    private FileUploadService fileUploadService;
+    private OriginalFileUploadService originalFileUploadService;
+
+    @Mock
+    private OriginalFileUploadService.Context originalFileUploadContext;
 
     @Mock
     private FileUploadService.Context fileUploadContext;
@@ -72,6 +76,9 @@ class GenericPostServiceTest {
 
     @InjectMocks
     private GenericPostService<News> newsService;
+
+    @Mock
+    private FileUploadService fileUploadService;
 
 
     @Test
@@ -108,18 +115,29 @@ class GenericPostServiceTest {
         User user = UserMock.createDummyMajor(99L);
         News news = NewsMock.create(user, 3L);
 
+        List<MultipartFile> images = MultipartFileMock.createList(10);
         List<MultipartFile> files = MultipartFileMock.createList(10);
-        RequestCreateNewsDto dto = new RequestCreateNewsDto("title", "body", null, files);
+        RequestCreateNewsDto dto = new RequestCreateNewsDto("title", "body", null, images, images);
 
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(newsRepository.save(any())).thenReturn(news);
+        when(originalFileUploadService.newContext()).thenReturn(originalFileUploadContext);
         when(fileUploadService.newContext()).thenReturn(fileUploadContext);
+
 
         // when
         Long newsId = newsService.create(newsRepository, 2L, dto);
 
         // then
         assertThat(newsId).isEqualTo(3L);
+
+        verify(originalFileUploadContext).originalUploadFiles(argThat(fileList -> {
+            assertThat(fileList).hasSize(images.size());
+            for (int i = 0; i < images.size(); i++) {
+                assertThat(fileList.get(i).getOriginalFilename()).isEqualTo(images.get(i).getOriginalFilename());
+            }
+            return true;
+        }), any());
 
         verify(fileUploadContext).uploadFiles(argThat(fileList -> {
             assertThat(fileList).hasSize(files.size());
@@ -143,9 +161,10 @@ class GenericPostServiceTest {
         News news = NewsMock.create(user, 3L);
         List<Long> tagIds = List.of(10L, 11L, 12L, 13L);
 
-        RequestCreateNewsDto dto = new RequestCreateNewsDto("title", "body", tagIds, List.of());
+        RequestCreateNewsDto dto = new RequestCreateNewsDto("title", "body", tagIds, List.of(), List.of());
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(newsRepository.save(any())).thenReturn(news);
+        when(originalFileUploadService.newContext()).thenReturn(originalFileUploadContext);
         when(fileUploadService.newContext()).thenReturn(fileUploadContext);
 
         // when
@@ -171,7 +190,7 @@ class GenericPostServiceTest {
         // when & then
         assertThrows(UserNotFoundException.class, () ->
                 newsService.create(newsRepository, 2L,
-                        new RequestCreateNewsDto("title", "body", List.of(), List.of())));
+                        new RequestCreateNewsDto("title", "body", List.of(), List.of(), List.of())));
     }
 
     @Test

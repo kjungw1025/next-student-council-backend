@@ -1,8 +1,8 @@
 package com.dku.council.infra.nhn.service;
 
-import com.dku.council.infra.nhn.exception.InvalidAccessObjectStorageException;
-import com.dku.council.infra.nhn.service.ObjectStorageService;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.global.exception.InvalidAccessObjectStorageException;
+import com.dku.council.infra.nhn.s3.service.ObjectStorageService;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import com.dku.council.util.base.AbstractMockServerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,12 +22,17 @@ class ObjectStorageServiceTest extends AbstractMockServerTest {
     private ObjectUploadContext uploadContext;
     private String apiPath;
 
+    private String apiImagePath;
+
+    private String apiFilePath;
+
+
 
     @BeforeEach
     public void beforeEach() {
         WebClient webClient = WebClient.create();
         this.apiPath = "http://localhost:" + mockServer.getPort();
-        this.uploadContext = new ObjectUploadContext(apiPath, "default");
+        this.uploadContext = new ObjectUploadContext(apiPath, apiImagePath, apiFilePath ,"default");
         this.service = new ObjectStorageService(webClient, uploadContext);
     }
 

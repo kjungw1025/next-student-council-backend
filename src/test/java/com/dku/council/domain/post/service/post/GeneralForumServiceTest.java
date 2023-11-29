@@ -7,11 +7,10 @@ import com.dku.council.domain.post.repository.post.GeneralForumRepository;
 import com.dku.council.domain.post.service.DummyPage;
 import com.dku.council.domain.post.service.ThumbnailService;
 import com.dku.council.domain.post.service.ViewCountService;
-import com.dku.council.domain.post.service.post.GenericPostService;
 import com.dku.council.domain.tag.service.TagService;
 import com.dku.council.domain.user.repository.UserRepository;
-import com.dku.council.infra.nhn.service.FileUploadService;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import com.dku.council.mock.GeneralForumMock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ class GeneralForumServiceTest {
     private ViewCountService viewCountService;
 
     @Mock
-    private FileUploadService fileUploadService;
+    private OriginalFileUploadService fileUploadService;
 
     @Mock
     private ObjectUploadContext uploadContext;

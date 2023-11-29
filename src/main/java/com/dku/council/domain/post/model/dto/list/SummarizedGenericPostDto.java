@@ -1,9 +1,10 @@
 package com.dku.council.domain.post.model.dto.list;
 
 import com.dku.council.domain.post.model.dto.PostFileDto;
+import com.dku.council.domain.post.model.dto.PostImageDto;
 import com.dku.council.domain.post.model.entity.Post;
 import com.dku.council.domain.tag.model.dto.TagDto;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -29,7 +30,10 @@ public class SummarizedGenericPostDto {
     @Schema(description = "생성 날짜")
     private final LocalDateTime createdAt;
 
-    @Schema(description = "파일 목록")
+    @Schema(description = "이미지 목록")
+    private final List<PostImageDto> images;
+
+    @Schema(description = "첨부파일 목록")
     private final List<PostFileDto> files;
 
     @Schema(description = "좋아요 수", example = "26")
@@ -55,6 +59,7 @@ public class SummarizedGenericPostDto {
         this.body = slice(post.getBody(), bodySize);
         this.createdAt = post.getCreatedAt();
         this.likes = likes;
+        this.images = PostImageDto.listOf(context, post.getFiles());
         this.files = PostFileDto.listOf(context, post.getFiles());
         this.views = post.getViews();
         this.commentCount = post.getComments().size(); // 댓글 개수 캐싱 필요
@@ -71,6 +76,7 @@ public class SummarizedGenericPostDto {
         this.body = copy.getBody();
         this.createdAt = copy.getCreatedAt();
         this.likes = copy.getLikes();
+        this.images = copy.getImages();
         this.files = copy.getFiles();
         this.views = copy.getViews();
         this.commentCount = copy.getCommentCount();

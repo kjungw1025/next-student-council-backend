@@ -24,14 +24,17 @@ public abstract class RequestCreateGenericPostDto<T> {
     @Schema(description = "태그 ID 목록")
     private final List<Long> tagIds;
 
-    @Schema(description = "첨부파일")
+    @Schema(description = "이미지 파일 목록")
+    private final List<MultipartFile> images;
+
+    @Schema(description = "첨부파일 목록")
     private final List<MultipartFile> files;
 
-
-    public RequestCreateGenericPostDto(String title, String body, List<Long> tagIds, List<MultipartFile> files) {
+    public RequestCreateGenericPostDto(String title, String body, List<Long> tagIds, List<MultipartFile> images, List<MultipartFile> files) {
         this.title = title;
         this.body = body;
         this.tagIds = Objects.requireNonNullElseGet(tagIds, ArrayList::new);
+        this.images = Objects.requireNonNullElseGet(images, ArrayList::new);
         this.files = Objects.requireNonNullElseGet(files, ArrayList::new);
     }
 
