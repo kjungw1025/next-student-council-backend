@@ -9,7 +9,7 @@ import com.dku.council.domain.ticket.repository.TicketRepository;
 import com.dku.council.domain.user.model.UserInfo;
 import com.dku.council.domain.user.service.UserInfoService;
 import com.dku.council.domain.user.util.CodeGenerator;
-import com.dku.council.infra.nhn.service.SMSService;
+import com.dku.council.infra.nhn.sms.service.SMSService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;

@@ -1,7 +1,7 @@
 package com.dku.council.domain.mainpage.model.dto.response;
 
 import com.dku.council.domain.mainpage.model.entity.CarouselImage;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import lombok.Getter;
 
 @Getter

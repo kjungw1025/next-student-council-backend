@@ -16,7 +16,7 @@ public class PostFileDto {
     @Schema(description = "파일 아이디", example = "1")
     private final Long id;
 
-    @Schema(description = "파일 url", example = "http://1.2.3.4/1ddee68d-6afb-48d0-9cb6-04a8d8fea4ae.png")
+    @Schema(description = "파일 url", example = "http://1.2.3.4/1ddee68d-6aftatub-48d0-9cb6-04a8d8fea4ae.png")
     private final String url;
 
     @Schema(description = "원본파일 이름", example = "my_text.txt")

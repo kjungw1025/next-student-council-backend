@@ -9,7 +9,6 @@ import com.dku.council.domain.post.model.dto.response.ResponseSingleGenericPostD
 import com.dku.council.domain.post.model.entity.Post;
 import com.dku.council.domain.post.model.entity.PostFile;
 import com.dku.council.domain.post.repository.post.GenericPostRepository;
-import com.dku.council.domain.post.repository.post.NewsRepository;
 import com.dku.council.domain.post.repository.spec.PostSpec;
 import com.dku.council.domain.post.service.ThumbnailService;
 import com.dku.council.domain.post.service.ViewCountService;
@@ -19,10 +18,13 @@ import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
-import com.dku.council.infra.nhn.model.FileRequest;
-import com.dku.council.infra.nhn.model.UploadedFile;
-import com.dku.council.infra.nhn.service.FileUploadService;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.model.FileRequest;
+import com.dku.council.infra.nhn.s3.model.ImageRequest;
+import com.dku.council.infra.nhn.s3.model.OriginalUploadedImage;
+import com.dku.council.infra.nhn.s3.model.UploadedFile;
+import com.dku.council.infra.nhn.s3.service.FileUploadService;
+import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,12 +32,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +48,7 @@ public class GenericPostService<E extends Post> {
     protected final ViewCountService viewCountService;
     protected final LikeService likeService;
 
+    protected final OriginalFileUploadService originalFileUploadService;
     protected final FileUploadService fileUploadService;
     protected final ObjectUploadContext uploadContext;
     protected final ThumbnailService thumbnailService;
@@ -118,6 +118,7 @@ public class GenericPostService<E extends Post> {
         E post = dto.toEntity(user);
         tagService.addTagsToPost(post, dto.getTagIds());
 
+        attachImages(dto.getImages(), post);
         attachFiles(dto.getFiles(), post);
 
         E savedPost = repository.save(post);
@@ -132,13 +133,13 @@ public class GenericPostService<E extends Post> {
         FileUploadService.Context uploadCtx = fileUploadService.newContext();
         List<PostFile> postFiles = new ArrayList<>();
 
-        for (UploadedFile file : files) {
+        for (UploadedFile file: files) {
             PostFile.PostFileBuilder builder = PostFile.builder()
                     .fileName(file.getOriginalName())
                     .mimeType(file.getMimeType().toString())
                     .fileId(file.getFileId());
 
-            String thumbnailId = thumbnailService.createThumbnail(uploadCtx, file);
+            String thumbnailId = thumbnailService.createDefaultThumbnail(uploadCtx, file);
             if (thumbnailId != null) {
                 builder.thumbnailId(thumbnailId);
             }
@@ -146,6 +147,34 @@ public class GenericPostService<E extends Post> {
         }
 
         for (PostFile file : postFiles) {
+            file.changePost(post);
+        }
+    }
+
+    private void attachImages(List<MultipartFile> dtoImages, E post) {
+        //TODO 이미지 업로드 경로 original에서 ImageUpload로 변경해야함
+
+        List<OriginalUploadedImage> images = originalFileUploadService.newContext().originalUploadFiles(
+                ImageRequest.ofList(dtoImages),
+                post.getClass().getSimpleName());
+
+        OriginalFileUploadService.Context uploadCtx = originalFileUploadService.newContext();
+        List<PostFile> postImages = new ArrayList<>();
+
+        for (OriginalUploadedImage image : images) {
+            PostFile.PostFileBuilder builder = PostFile.builder()
+                    .fileName(image.getOriginalName())
+                    .mimeType(image.getMimeType().toString())
+                    .fileId(image.getFileId());
+
+            String thumbnailId = thumbnailService.createThumbnail(uploadCtx, image);
+            if (thumbnailId != null) {
+                builder.thumbnailId(thumbnailId);
+            }
+            postImages.add(builder.build());
+        }
+
+        for (PostFile file : postImages) {
             file.changePost(post);
         }
     }
