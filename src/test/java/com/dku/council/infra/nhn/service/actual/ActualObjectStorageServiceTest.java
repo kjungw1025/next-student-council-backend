@@ -1,8 +1,8 @@
 package com.dku.council.infra.nhn.service.actual;
 
-import com.dku.council.infra.nhn.service.NHNAuthService;
-import com.dku.council.infra.nhn.service.ObjectStorageService;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.global.service.service.NHNAuthService;
+import com.dku.council.infra.nhn.s3.service.ObjectStorageService;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import com.dku.council.util.WebClientUtil;
 import com.dku.council.util.YamlProperties;
 import org.junit.jupiter.api.*;
@@ -34,12 +34,14 @@ class ActualObjectStorageServiceTest {
 
         String defaultThumbnail = properties.get("app.post.thumbnail.default");
         String osApiPath = properties.get("nhn.os.api-path");
+        String osApiImagePath = properties.get("nhn.os.api-image-path");
+        String osApiFilePath = properties.get("nhn.os.api-file-path");
         String authApiPath = properties.get("nhn.auth.api-path");
         String tenantId = properties.get("nhn.auth.tenant-id");
         String username = properties.get("nhn.auth.username");
         String password = properties.get("nhn.auth.password");
 
-        ObjectUploadContext uploadContext = new ObjectUploadContext(osApiPath, defaultThumbnail);
+        ObjectUploadContext uploadContext = new ObjectUploadContext(osApiPath, osApiImagePath, osApiFilePath ,defaultThumbnail);
 
         this.storageService = new ObjectStorageService(webClient, uploadContext);
         this.authService = new NHNAuthService(webClient, authApiPath, tenantId, username, password);

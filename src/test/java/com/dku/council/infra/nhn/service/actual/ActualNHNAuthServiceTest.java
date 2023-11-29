@@ -1,6 +1,6 @@
 package com.dku.council.infra.nhn.service.actual;
 
-import com.dku.council.infra.nhn.service.NHNAuthService;
+import com.dku.council.infra.nhn.global.service.service.NHNAuthService;
 import com.dku.council.util.WebClientUtil;
 import com.dku.council.util.YamlProperties;
 import org.junit.jupiter.api.*;

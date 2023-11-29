@@ -1,8 +1,8 @@
 package com.dku.council.infra.nhn.service;
 
-import com.dku.council.infra.nhn.exception.CannotGetTokenException;
-import com.dku.council.infra.nhn.exception.NotInitializedException;
-import com.dku.council.infra.nhn.service.NHNAuthService;
+import com.dku.council.infra.nhn.global.exception.CannotGetTokenException;
+import com.dku.council.infra.nhn.global.exception.NotInitializedException;
+import com.dku.council.infra.nhn.global.service.service.NHNAuthService;
 import com.dku.council.util.base.AbstractMockServerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
