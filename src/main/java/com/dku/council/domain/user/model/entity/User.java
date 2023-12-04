@@ -176,7 +176,6 @@ public class User extends BaseEntity {
     }
 
     /**
-     * TODO changeIsDkuChecked 만들어서 비즈니스 로직 ㄱㄱ
      * 학생 인증을 갱신했을 경우 true로 변경해줍니다.
      */
     public void changeIsDkuChecked() {

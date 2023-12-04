@@ -10,12 +10,6 @@ import java.util.Optional;
 
 public interface CafeteriaRepository extends JpaRepository<Cafeteria, Long> {
 
-//    @Query("select new com.dku.council.domain.cafeteria.model.dto.response.ResponseCafeteriaDto(" +
-//            "c.mealDate, c.breakfast, c.lunch, c.dinner, c.other" +
-//            ") " +
-//            "from Cafeteria c where c.mealDate = :mealDate")
-//    List<ResponseCafeteriaDto> findByMealDate(@Param("mealDate") LocalDate mealDate);
-
     @Query("select c from Cafeteria c where c.mealDate = :mealDate")
     Optional<Cafeteria> findByMealDate(@Param("mealDate") LocalDate mealDate);
 }
