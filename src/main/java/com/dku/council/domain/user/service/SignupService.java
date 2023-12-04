@@ -52,6 +52,7 @@ public class SignupService {
             user.changeNickName(dto.getNickname());
             user.changePhone(phone);
             user.changePassword(encryptedPassword);
+            user.changeIsDkuChecked();
             user.changeGenericInfo(studentInfo.getStudentId(), studentInfo.getStudentName(), major,
                     studentInfo.getYearOfAdmission(), studentInfo.getStudentState());
             userInfoService.invalidateUserInfo(user.getId());
