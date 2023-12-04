@@ -18,11 +18,9 @@ import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
-import com.dku.council.infra.nhn.s3.model.FileRequest;
-import com.dku.council.infra.nhn.s3.model.ImageRequest;
-import com.dku.council.infra.nhn.s3.model.OriginalUploadedImage;
-import com.dku.council.infra.nhn.s3.model.UploadedFile;
+import com.dku.council.infra.nhn.s3.model.*;
 import com.dku.council.infra.nhn.s3.service.FileUploadService;
+import com.dku.council.infra.nhn.s3.service.ImageUploadService;
 import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
 import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +46,7 @@ public class GenericPostService<E extends Post> {
     protected final ViewCountService viewCountService;
     protected final LikeService likeService;
 
-    protected final OriginalFileUploadService originalFileUploadService;
+    protected final ImageUploadService imageUploadService;
     protected final FileUploadService fileUploadService;
     protected final ObjectUploadContext uploadContext;
     protected final ThumbnailService thumbnailService;
@@ -152,20 +150,18 @@ public class GenericPostService<E extends Post> {
     }
 
     private void attachImages(List<MultipartFile> dtoImages, E post) {
-        //TODO 이미지 업로드 경로 original에서 ImageUpload로 변경해야함
-
-        List<OriginalUploadedImage> images = originalFileUploadService.newContext().originalUploadFiles(
+        List<UploadedImage> images = imageUploadService.newContext().uploadImages(
                 ImageRequest.ofList(dtoImages),
                 post.getClass().getSimpleName());
 
-        OriginalFileUploadService.Context uploadCtx = originalFileUploadService.newContext();
+        ImageUploadService.Context uploadCtx = imageUploadService.newContext();
         List<PostFile> postImages = new ArrayList<>();
 
-        for (OriginalUploadedImage image : images) {
+        for (UploadedImage image : images) {
             PostFile.PostFileBuilder builder = PostFile.builder()
                     .fileName(image.getOriginalName())
                     .mimeType(image.getMimeType().toString())
-                    .fileId(image.getFileId());
+                    .fileId(image.getImageId());
 
             String thumbnailId = thumbnailService.createThumbnail(uploadCtx, image);
             if (thumbnailId != null) {
