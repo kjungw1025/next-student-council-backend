@@ -1,6 +1,7 @@
 package com.dku.council.domain.user.service;
 
 import com.dku.council.domain.user.exception.AlreadyNicknameException;
+import com.dku.council.domain.user.exception.DkuAuthNotRefreshedException;
 import com.dku.council.domain.user.exception.WrongPasswordException;
 import com.dku.council.domain.user.model.UserStatus;
 import com.dku.council.domain.user.model.dto.request.RequestExistPasswordChangeDto;
@@ -41,7 +42,11 @@ public class UserService {
         User user = userRepository.findByStudentId(dto.getStudentId())
                 .orElseThrow(UserNotFoundException::new);
 
-        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+        if (!user.isDkuChecked()) {
+            throw new DkuAuthNotRefreshedException();
+        }
+
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword()) && user.isDkuChecked()) {
             AuthenticationToken token = jwtProvider.issue(user);
             userInfoService.cacheUserInfo(user.getId(), user);
             return new ResponseLoginDto(token);

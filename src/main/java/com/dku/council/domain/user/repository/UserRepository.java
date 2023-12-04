@@ -1,10 +1,7 @@
 package com.dku.council.domain.user.repository;
 
 import com.dku.council.domain.user.model.entity.User;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
@@ -48,4 +45,10 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
      */
     @Query("select u from User u where u.id = :id")
     Optional<User> findByIdWithNotActive(@Param("id") Long id);
+
+    /**
+     * 학기 단위 (3.1, 9.1)로 계정 인증을 false로 변경할 때 사용한다.
+     */
+    @Query("select u from User u where u.status = 'ACTIVE' and u.isDkuChecked = true")
+    List<User> findAllWithDkuChecked();
 }
