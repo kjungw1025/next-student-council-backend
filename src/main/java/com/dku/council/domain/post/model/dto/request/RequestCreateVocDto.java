@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 public class RequestCreateVocDto extends RequestCreateGenericPostDto<Voc> {
 
-    public RequestCreateVocDto(String title, String body, List<Long> tagIds, List<MultipartFile> files) {
-        super(title, body, tagIds, files);
+    public RequestCreateVocDto(String title, String body, List<Long> tagIds, List<MultipartFile> images, List<MultipartFile> files) {
+        super(title, body, tagIds, images, files);
     }
 
     public Voc toEntity(User user) {

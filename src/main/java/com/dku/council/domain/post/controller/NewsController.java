@@ -28,7 +28,7 @@ import java.util.List;
 
 import static com.dku.council.domain.like.model.LikeTarget.POST;
 
-@Tag(name = "총학소식", description = "총학소식 게시판 관련 api")
+@Tag(name = "총학생회 공지", description = "총학생회 공지 게시판 관련 api")
 @RestController
 @RequestMapping("/post/news")
 @RequiredArgsConstructor
@@ -43,7 +43,7 @@ public class NewsController {
      * @param keyword  제목이나 내용에 포함된 검색어. 지정하지않으면 모든 게시글 조회.
      * @param tagIds   조회할 태그 목록. or 조건으로 검색된다. 지정하지않으면 모든 게시글 조회.
      * @param bodySize 게시글 본문 길이. (글자 단위) 지정하지 않으면 50 글자.
-     * @return 페이징된 총학 소식 목록
+     * @return 페이징된 총학생회 공지 목록
      */
     @GetMapping
     public ResponsePage<SummarizedGenericPostDto> list(@RequestParam(required = false) String keyword,
@@ -51,6 +51,21 @@ public class NewsController {
                                                        @RequestParam(defaultValue = "50") int bodySize,
                                                        @ParameterObject Pageable pageable) {
         Page<SummarizedGenericPostDto> list = postService.list(keyword, tagIds, pageable, bodySize);
+        return new ResponsePage<>(list);
+    }
+
+    /**
+     * 특정 기간으로 게시물 목록 조회
+     *
+     * @param bodySize 게시글 본문 길이. (글자 단위) 지정하지 않으면 50글자.
+     * @param duration 조회할 기간. (일 단위) 지정하지 않으면 7일.
+     * @return 기간으로 페이징된 총학생회 공지 목록
+     */
+    @GetMapping("/duration")
+    public ResponsePage<SummarizedGenericPostDto> listByDuration(@ParameterObject Pageable pageable,
+                                                                 @RequestParam(defaultValue = "50") int bodySize,
+                                                                 @RequestParam(defaultValue = "7") int duration) {
+        Page<SummarizedGenericPostDto> list = postService.findByDuration(pageable, bodySize, duration);
         return new ResponsePage<>(list);
     }
 
@@ -68,7 +83,7 @@ public class NewsController {
      * 게시글 단건 조회
      *
      * @param id 조회할 게시글 id
-     * @return 총학소식 게시글 정보
+     * @return 총학생회 공지글 정보
      */
     @GetMapping("/{id}")
     @GuestAuth

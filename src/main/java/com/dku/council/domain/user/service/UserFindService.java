@@ -10,7 +10,7 @@ import com.dku.council.domain.user.repository.UserFindRepository;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.domain.user.util.CodeGenerator;
 import com.dku.council.global.error.exception.UserNotFoundException;
-import com.dku.council.infra.nhn.service.SMSService;
+import com.dku.council.infra.nhn.sms.service.SMSService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;

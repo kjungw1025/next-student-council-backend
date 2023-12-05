@@ -6,7 +6,7 @@ import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.model.dto.list.SummarizedGenericPostDto;
 import com.dku.council.domain.post.model.entity.Post;
 import com.dku.council.domain.post.repository.post.PostRepository;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

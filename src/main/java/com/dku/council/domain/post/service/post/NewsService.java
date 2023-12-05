@@ -40,6 +40,10 @@ public class NewsService {
         return postService.findOne(repository, id, userId, role, address);
     }
 
+    public Page<SummarizedGenericPostDto> findByDuration(Pageable pageable, int bodySize, int duration) {
+        return postService.listByDuration(repository, pageable, bodySize, duration);
+    }
+
     public void delete(Long id, Long userId, boolean admin) {
         postService.delete(repository, id, userId, admin);
     }

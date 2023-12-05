@@ -16,7 +16,7 @@ import com.dku.council.domain.user.repository.SignupAuthRepository;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.domain.user.util.CodeGenerator;
 import com.dku.council.global.util.TextTemplateEngine;
-import com.dku.council.infra.nhn.service.NHNEmailService;
+import com.dku.council.infra.nhn.global.service.service.NHNEmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

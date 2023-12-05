@@ -1,7 +1,7 @@
 package com.dku.council.infra.nhn.service;
 
-import com.dku.council.infra.nhn.exception.CannotSendSMSException;
-import com.dku.council.infra.nhn.service.SMSService;
+import com.dku.council.infra.nhn.global.exception.CannotSendSMSException;
+import com.dku.council.infra.nhn.sms.service.SMSService;
 import com.dku.council.util.base.AbstractMockServerTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -65,6 +65,9 @@ public class User extends BaseEntity {
     @Enumerated(STRING)
     private UserRole userRole;
 
+    @NotNull
+    private boolean isDkuChecked;
+
     @Builder
     private User(@NonNull String studentId,
                  @NonNull String password,
@@ -86,6 +89,7 @@ public class User extends BaseEntity {
         this.yearOfAdmission = yearOfAdmission;
         this.status = status;
         this.userRole = role;
+        this.isDkuChecked = true;
     }
 
     public String getName() {
@@ -169,5 +173,12 @@ public class User extends BaseEntity {
         this.phone = "";
         this.nickname = "";
         this.password = "";
+    }
+
+    /**
+     * 학생 인증을 갱신했을 경우 true로 변경해줍니다.
+     */
+    public void changeIsDkuChecked() {
+        this.isDkuChecked = !this.isDkuChecked;
     }
 }

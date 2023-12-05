@@ -23,8 +23,8 @@ public class RequestCreateConferenceDto extends RequestCreateGenericPostDto<Conf
             requiredMode = Schema.RequiredMode.REQUIRED)
     private final String date;
 
-    public RequestCreateConferenceDto(String title, String body, List<Long> tagIds, List<MultipartFile> files, Integer round, String date) {
-        super(title, body, tagIds, files);
+    public RequestCreateConferenceDto(String title, String body, List<Long> tagIds, List<MultipartFile> images, List<MultipartFile> files, Integer round, String date) {
+        super(title, body, tagIds, images, files);
         this.round = round;
         this.date = date;
     }
