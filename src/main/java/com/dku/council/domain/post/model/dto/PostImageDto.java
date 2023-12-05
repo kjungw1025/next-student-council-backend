@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.springframework.http.MediaType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class PostImageDto {
 
     public PostImageDto(ObjectUploadContext context, PostFile file) {
         this.id = file.getId();
-        this.url = context.getObjectUrl(file.getFileId());
+        this.url = context.getImageUrl(file.getFileId());
         this.thumbnailUrl = context.getThumbnailUrl(file.getThumbnailId());
         this.originalName = file.getFileName();
 
@@ -40,7 +41,14 @@ public class PostImageDto {
     }
 
     public static List<PostImageDto> listOf(ObjectUploadContext context, List<PostFile> entities) {
-        return entities.stream()
+        List<PostFile> result = new ArrayList<>();
+
+        for (PostFile entity : entities) {
+            if (entity.getThumbnailId() != null) {
+                result.add(entity);
+            }
+        }
+        return result.stream()
                 .map(file -> new PostImageDto(context, file))
                 .collect(Collectors.toList());
     }
