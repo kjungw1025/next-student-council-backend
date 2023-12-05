@@ -15,6 +15,7 @@ import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import com.dku.council.infra.nhn.s3.service.FileUploadService;
+import com.dku.council.infra.nhn.s3.service.ImageUploadService;
 import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
 import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import com.dku.council.mock.MultipartFileMock;
@@ -66,6 +67,9 @@ class GenericPostServiceTest {
     private FileUploadService.Context fileUploadContext;
 
     @Mock
+    private ImageUploadService.Context imageUploadContext;
+
+    @Mock
     private ObjectUploadContext uploadContext;
 
     @Mock
@@ -79,6 +83,9 @@ class GenericPostServiceTest {
 
     @Mock
     private FileUploadService fileUploadService;
+
+    @Mock
+    private ImageUploadService imageUploadService;
 
 
     @Test
@@ -117,11 +124,11 @@ class GenericPostServiceTest {
 
         List<MultipartFile> images = MultipartFileMock.createList(10);
         List<MultipartFile> files = MultipartFileMock.createList(10);
-        RequestCreateNewsDto dto = new RequestCreateNewsDto("title", "body", null, images, images);
+        RequestCreateNewsDto dto = new RequestCreateNewsDto("title", "body", null, images, files);
 
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(newsRepository.save(any())).thenReturn(news);
-        when(originalFileUploadService.newContext()).thenReturn(originalFileUploadContext);
+        when(imageUploadService.newContext()).thenReturn(imageUploadContext);
         when(fileUploadService.newContext()).thenReturn(fileUploadContext);
 
 
@@ -131,7 +138,7 @@ class GenericPostServiceTest {
         // then
         assertThat(newsId).isEqualTo(3L);
 
-        verify(originalFileUploadContext).originalUploadFiles(argThat(fileList -> {
+        verify(imageUploadContext).uploadImages(argThat(fileList -> {
             assertThat(fileList).hasSize(images.size());
             for (int i = 0; i < images.size(); i++) {
                 assertThat(fileList.get(i).getOriginalFilename()).isEqualTo(images.get(i).getOriginalFilename());
@@ -164,7 +171,7 @@ class GenericPostServiceTest {
         RequestCreateNewsDto dto = new RequestCreateNewsDto("title", "body", tagIds, List.of(), List.of());
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(newsRepository.save(any())).thenReturn(news);
-        when(originalFileUploadService.newContext()).thenReturn(originalFileUploadContext);
+        when(imageUploadService.newContext()).thenReturn(imageUploadContext);
         when(fileUploadService.newContext()).thenReturn(fileUploadContext);
 
         // when
