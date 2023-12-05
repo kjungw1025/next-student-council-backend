@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.springframework.http.MediaType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -35,7 +36,14 @@ public class PostFileDto {
     }
 
     public static List<PostFileDto> listOf(ObjectUploadContext context, List<PostFile> entities) {
-        return entities.stream()
+        List<PostFile> result = new ArrayList<>();
+
+        for (PostFile entity : entities) {
+            if (entity.getThumbnailId() == null) {
+                result.add(entity);
+            }
+        }
+        return result.stream()
                 .map(file -> new PostFileDto(context, file))
                 .collect(Collectors.toList());
     }
