@@ -115,7 +115,6 @@ public class UserController {
         userFindService.changePhoneNumber(auth.getUserId(), dto.getToken(), dto.getCode());
     }
 
-
     /**
      * 닉네임 변경.
      *

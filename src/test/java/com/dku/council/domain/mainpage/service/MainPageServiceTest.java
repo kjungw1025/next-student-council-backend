@@ -6,11 +6,10 @@ import com.dku.council.domain.mainpage.model.dto.request.RequestCarouselImageDto
 import com.dku.council.domain.mainpage.model.dto.response.CarouselImageResponse;
 import com.dku.council.domain.mainpage.model.entity.CarouselImage;
 import com.dku.council.domain.mainpage.repository.CarouselImageRepository;
-import com.dku.council.domain.mainpage.service.MainPageService;
-import com.dku.council.infra.nhn.model.FileRequest;
-import com.dku.council.infra.nhn.model.UploadedFile;
-import com.dku.council.infra.nhn.service.FileUploadService;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.model.ImageRequest;
+import com.dku.council.infra.nhn.s3.model.OriginalUploadedImage;
+import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import com.dku.council.mock.MultipartFileMock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,10 +39,10 @@ public class MainPageServiceTest {
     private ObjectUploadContext uploadContext;
 
     @Mock
-    private FileUploadService fileUploadService;
+    private OriginalFileUploadService fileUploadService;
 
     @Mock
-    private FileUploadService.Context context;
+    private OriginalFileUploadService.Context context;
 
     @InjectMocks
     private MainPageService service;
@@ -65,11 +64,11 @@ public class MainPageServiceTest {
         // given
         MultipartFile file = MultipartFileMock.create("test", "jpg");
         RequestCarouselImageDto request = new RequestCarouselImageDto(file, "test/test");
-        UploadedFile uploadedFile = new UploadedFile("fileId",
-                new FileRequest("", MediaType.IMAGE_JPEG, null));
+        OriginalUploadedImage uploadedFile = new OriginalUploadedImage("fileId",
+                new ImageRequest("", MediaType.IMAGE_JPEG, null));
 
         when(fileUploadService.newContext()).thenReturn(context);
-        when(context.uploadFile(any(), eq("carousel"))).thenReturn(uploadedFile);
+        when(context.originalUploadFile(any(), eq("carousel"))).thenReturn(uploadedFile);
 
         // when
         service.addCarouselImage(request);
@@ -84,11 +83,11 @@ public class MainPageServiceTest {
         // given
         MultipartFile file = MultipartFileMock.create("test", "jpg");
         RequestCarouselImageDto request = new RequestCarouselImageDto(file, "test/test");
-        UploadedFile uploadedFile = new UploadedFile("fileId",
-                new FileRequest("", MediaType.IMAGE_JPEG, null));
+        OriginalUploadedImage uploadedFile = new OriginalUploadedImage("fileId",
+                new ImageRequest("", MediaType.IMAGE_JPEG, null));
 
         when(fileUploadService.newContext()).thenReturn(context);
-        when(context.uploadFile(any(), eq("carousel"))).thenReturn(uploadedFile);
+        when(context.originalUploadFile(any(), eq("carousel"))).thenReturn(uploadedFile);
         when(carouselImageRepository.findAllByOrderByCreatedAtDesc()).thenReturn(List.of(
                 CarouselImage.builder()
                         .redirectUrl("test/test")

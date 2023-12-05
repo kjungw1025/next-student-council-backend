@@ -11,8 +11,8 @@ import java.util.List;
 @Getter
 public class RequestCreateGeneralForumDto extends RequestCreateGenericPostDto<GeneralForum> {
 
-    public RequestCreateGeneralForumDto(@NotBlank String title, @NotBlank String body, List<Long> tagIds, List<MultipartFile> files) {
-        super(title, body, tagIds, files);
+    public RequestCreateGeneralForumDto(@NotBlank String title, @NotBlank String body, List<Long> tagIds, List<MultipartFile> images, List<MultipartFile> files) {
+        super(title, body, tagIds, images, files);
     }
 
     public GeneralForum toEntity(User user) {

@@ -58,7 +58,7 @@ class GeneralForumServiceTest {
     public void create() {
         // given
         RequestCreateGeneralForumDto dto = new RequestCreateGeneralForumDto("title", "body",
-                List.of(), List.of());
+                List.of(), List.of(), List.of());
         Instant now = Instant.now(clock);
 
         when(postTimeMemoryRepository.isAlreadyContains(GENERAL_FORUM_KEY, 1L, now))
@@ -78,7 +78,7 @@ class GeneralForumServiceTest {
     public void createAlreadyPostJustNow() {
         // given
         RequestCreateGeneralForumDto dto = new RequestCreateGeneralForumDto("title", "body",
-                List.of(), List.of());
+                List.of(), List.of(), List.of());
         Instant now = Instant.now(clock);
 
         when(postTimeMemoryRepository.isAlreadyContains(GENERAL_FORUM_KEY, 1L, now))
@@ -94,7 +94,7 @@ class GeneralForumServiceTest {
     public void noCooltimeCreatingException() {
         // given
         RequestCreateGeneralForumDto dto = new RequestCreateGeneralForumDto("title", "body",
-                List.of(), List.of());
+                List.of(), List.of(), List.of());
         Instant now = Instant.now(clock);
 
         when(postTimeMemoryRepository.isAlreadyContains(GENERAL_FORUM_KEY, 1L, now))

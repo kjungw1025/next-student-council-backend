@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 public class RequestCreatePetitionDto extends RequestCreateGenericPostDto<Petition> {
 
-    public RequestCreatePetitionDto(String title, String body, List<Long> tagIds, List<MultipartFile> files) {
-        super(title, body, tagIds, files);
+    public RequestCreatePetitionDto(String title, String body, List<Long> tagIds, List<MultipartFile> images, List<MultipartFile> files) {
+        super(title, body, tagIds, images, files);
     }
 
     public Petition toEntity(User user) {

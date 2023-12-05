@@ -5,10 +5,9 @@ import com.dku.council.domain.ticket.model.dto.response.ResponseManagerTicketDto
 import com.dku.council.domain.ticket.model.dto.response.ResponseTicketDto;
 import com.dku.council.domain.ticket.model.entity.Ticket;
 import com.dku.council.domain.ticket.repository.TicketRepository;
-import com.dku.council.domain.ticket.service.TicketVerifyService;
 import com.dku.council.domain.user.model.UserInfo;
 import com.dku.council.domain.user.service.UserInfoService;
-import com.dku.council.infra.nhn.service.SMSService;
+import com.dku.council.infra.nhn.sms.service.SMSService;
 import com.dku.council.mock.TicketMock;
 import com.dku.council.mock.UserInfoMock;
 import org.junit.jupiter.api.BeforeEach;

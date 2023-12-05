@@ -11,8 +11,8 @@ import java.util.List;
 @Getter
 public class RequestCreateNewsDto extends RequestCreateGenericPostDto<News> {
 
-    public RequestCreateNewsDto(@NotBlank String title, @NotBlank String body, List<Long> tagIds, List<MultipartFile> files) {
-        super(title, body, tagIds, files);
+    public RequestCreateNewsDto(@NotBlank String title, @NotBlank String body, List<Long> tagIds, List<MultipartFile> images, List<MultipartFile> files) {
+        super(title, body, tagIds, images, files);
     }
 
     public News toEntity(User user) {

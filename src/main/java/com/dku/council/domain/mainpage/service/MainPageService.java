@@ -12,9 +12,9 @@ import com.dku.council.domain.mainpage.repository.CarouselImageRepository;
 import com.dku.council.domain.post.repository.post.ConferenceRepository;
 import com.dku.council.domain.post.repository.post.NewsRepository;
 import com.dku.council.domain.post.repository.post.PetitionRepository;
-import com.dku.council.infra.nhn.model.FileRequest;
-import com.dku.council.infra.nhn.service.FileUploadService;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.model.ImageRequest;
+import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MainPageService {
 
-    private final FileUploadService fileUploadService;
+    private final OriginalFileUploadService fileUploadService;
     private final ObjectUploadContext uploadContext;
 
     private final CarouselImageRepository carouselImageRepository;
@@ -60,7 +60,7 @@ public class MainPageService {
         }
 
         String fileId = fileUploadService.newContext()
-                .uploadFile(new FileRequest(file), "carousel")
+                .originalUploadFile(new ImageRequest(file), "carousel")
                 .getFileId();
 
         CarouselImage carouselImage = CarouselImage.builder()
@@ -79,7 +79,7 @@ public class MainPageService {
         CarouselImage carouselImage = carouselImageRepository.findById(carouselId)
                 .orElseThrow(CarouselNotFoundException::new);
 
-        fileUploadService.newContext().deleteFile(carouselImage.getFileId());
+        fileUploadService.newContext().originalDeleteFile(carouselImage.getFileId());
         carouselImageRepository.delete(carouselImage);
     }
 

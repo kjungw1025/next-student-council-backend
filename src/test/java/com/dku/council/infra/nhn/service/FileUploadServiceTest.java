@@ -1,11 +1,11 @@
 package com.dku.council.infra.nhn.service;
 
-import com.dku.council.infra.nhn.model.FileRequest;
-import com.dku.council.infra.nhn.model.UploadedFile;
-import com.dku.council.infra.nhn.service.FileUploadService;
-import com.dku.council.infra.nhn.service.NHNAuthService;
-import com.dku.council.infra.nhn.service.ObjectStorageService;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.global.service.service.NHNAuthService;
+import com.dku.council.infra.nhn.s3.model.ImageRequest;
+import com.dku.council.infra.nhn.s3.model.OriginalUploadedImage;
+import com.dku.council.infra.nhn.s3.service.ObjectStorageService;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
 import com.dku.council.mock.MultipartFileMock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class FileUploadServiceTest {
     private ObjectUploadContext uploadContext;
 
     @InjectMocks
-    private FileUploadService service;
+    private OriginalFileUploadService service;
 
 
     @Test
@@ -57,11 +57,11 @@ class FileUploadServiceTest {
         when(uploadContext.makeObjectId(any(), any())).thenReturn("fileId");
 
         // when
-        ArrayList<UploadedFile> uploadedFiles = service.newContext().uploadFiles(FileRequest.ofList(files), prefix);
+        ArrayList<OriginalUploadedImage> uploadedFiles = service.newContext().originalUploadFiles(ImageRequest.ofList(files), prefix);
 
         // then
         for (int i = 1; i <= totalFiles; i++) {
-            UploadedFile file = uploadedFiles.get(i - 1);
+            OriginalUploadedImage file = uploadedFiles.get(i - 1);
             assertThat(file.getFileId()).isEqualTo("fileId");
             assertThat(file.getOriginalName()).isEqualTo("myFile" + i + ".txt");
             assertThat(file.getMimeType()).isEqualTo(MediaType.TEXT_PLAIN);
@@ -80,7 +80,7 @@ class FileUploadServiceTest {
         when(uploadContext.makeObjectId(any(), any())).thenReturn("fileId");
 
         //when
-        UploadedFile uploadedFile = service.newContext().uploadFile(new FileRequest(file), "test");
+        OriginalUploadedImage uploadedFile = service.newContext().originalUploadFile(new ImageRequest(file), "test");
 
         //then
         assertThat(uploadedFile.getOriginalName()).isEqualTo(file.getOriginalFilename());
@@ -98,7 +98,7 @@ class FileUploadServiceTest {
         when(uploadContext.makeObjectId(any(), any())).thenReturn("fileId");
 
         // when
-        service.newContext().uploadFiles(FileRequest.ofList(files), "prefix");
+        service.newContext().originalUploadFiles(ImageRequest.ofList(files), "prefix");
 
         // then
         verify(storageService, times(totalFiles)).uploadObject(eq("token"), any(), any(), eq(MediaType.TEXT_PLAIN));
@@ -111,7 +111,7 @@ class FileUploadServiceTest {
         when(authService.requestToken()).thenReturn("token");
 
         // when
-        service.newContext().deleteFile("fileId");
+        service.newContext().originalDeleteFile("fileId");
 
         // then
         verify(storageService).deleteObject("token", "fileId");
