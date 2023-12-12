@@ -61,7 +61,7 @@ class SignupServiceTest {
     private final String encodedPwd = "Encoded";
     private final String phone = "01011112222";
     private final String studentId = "id";
-    private final DkuUserInfo info = new DkuUserInfo("name", studentId, 0, "재학", "Major", "Department");
+    private final DkuUserInfo info = new DkuUserInfo("name", studentId, "20", "남자", 0, "재학", "Major", "Department");
     private final RequestSignupDto dto = new RequestSignupDto("nickname", "pwd");
 
 
@@ -93,6 +93,8 @@ class SignupServiceTest {
             assertThat(user.getAcademicStatus()).isEqualTo(info.getStudentState());
             assertThat(user.getUserRole()).isEqualTo(UserRole.USER);
             assertThat(user.getMajor()).isEqualTo(major);
+            assertThat(user.getAge()).isEqualTo(info.getAge());
+            assertThat(user.getGender()).isEqualTo(info.getGender());
             return true;
         }));
         verify(dkuAuthService).deleteStudentAuth(token);
