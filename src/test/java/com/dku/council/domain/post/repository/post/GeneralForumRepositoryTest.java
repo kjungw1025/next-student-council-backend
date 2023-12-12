@@ -1,15 +1,13 @@
 package com.dku.council.domain.post.repository.post;
 
 import com.dku.council.domain.post.model.entity.posttype.GeneralForum;
-import com.dku.council.domain.post.repository.post.GeneralForumRepository;
-import com.dku.council.domain.post.repository.post.NewsRepository;
 import com.dku.council.domain.user.model.entity.Major;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.MajorRepository;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.mock.GeneralForumMock;
 import com.dku.council.mock.MajorMock;
-import com.dku.council.mock.NewsMock;
+import com.dku.council.mock.NoticeMock;
 import com.dku.council.mock.UserMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +35,7 @@ class GeneralForumRepositoryTest {
     private GeneralForumRepository repository;
 
     @Autowired
-    private NewsRepository newsRepository;
+    private NoticeRepository noticeRepository;
 
     private User user1;
 
@@ -69,11 +67,11 @@ class GeneralForumRepositoryTest {
         repository.saveAll(posts);
 
         // 다른 타입의 게시글
-        newsRepository.saveAll(List.of(
-                NewsMock.create(user1),
-                NewsMock.create(user1),
-                NewsMock.create(user1),
-                NewsMock.create(user1)
+        noticeRepository.saveAll(List.of(
+                NoticeMock.create(user1),
+                NoticeMock.create(user1),
+                NoticeMock.create(user1),
+                NoticeMock.create(user1)
         ));
     }
 

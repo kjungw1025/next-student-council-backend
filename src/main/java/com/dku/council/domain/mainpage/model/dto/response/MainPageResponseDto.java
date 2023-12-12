@@ -9,14 +9,14 @@ import java.util.List;
 @Getter
 public class MainPageResponseDto {
     private final List<CarouselImageResponse> carousels;
-    private final List<PostSummary> recentNews;
+    private final List<PostSummary> recentNotices;
     private final List<PostSummary> recentConferences;
     private final List<PetitionSummary> popularPetitions;
 
 
-    public MainPageResponseDto(List<CarouselImageResponse> carousels, List<PostSummary> recentNews, List<PostSummary> recentConferences, List<PetitionSummary> popularPetitions) {
+    public MainPageResponseDto(List<CarouselImageResponse> carousels, List<PostSummary> recentNotices, List<PostSummary> recentConferences, List<PetitionSummary> popularPetitions) {
         this.carousels = carousels;
-        this.recentNews = recentNews;
+        this.recentNotices = recentNotices;
         this.recentConferences = recentConferences;
         this.popularPetitions = popularPetitions;
     }
