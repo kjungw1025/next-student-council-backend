@@ -21,6 +21,8 @@ public class UserInfoMock {
                 .nickname("nickname")
                 .yearOfAdmission(2017)
                 .academicStatus(academicStatus)
+                .age("20")
+                .gender("남자")
                 .major(MajorMock.create())
                 .phone("01011112222")
                 .build();

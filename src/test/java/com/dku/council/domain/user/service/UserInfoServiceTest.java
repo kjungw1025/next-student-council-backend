@@ -84,6 +84,8 @@ class UserInfoServiceTest {
         assertThat(info.getDepartment()).isEqualTo(user.getMajor().getDepartment());
         assertThat(info.isAdmin()).isEqualTo(user.getUserRole().isAdmin());
         assertThat(info.getPhoneNumber()).isEqualTo(user.getPhone());
+        assertThat(info.getAge()).isEqualTo(user.getAge());
+        assertThat(info.getGender()).isEqualTo(user.getGender());
         assertThat(info.getWritePostCount()).isEqualTo(1);
         assertThat(info.getCommentedPostCount()).isEqualTo(2);
         assertThat(info.getLikedPostCount()).isEqualTo(3);

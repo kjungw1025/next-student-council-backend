@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 public class StudentInfo {
     private final String studentName;
     private final String studentId;
+    private final String age;
+    private final String gender;
     private final int yearOfAdmission;
     private final String studentState;
 
