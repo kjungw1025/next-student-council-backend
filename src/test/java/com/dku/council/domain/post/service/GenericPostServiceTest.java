@@ -3,9 +3,9 @@ package com.dku.council.domain.post.service;
 import com.dku.council.domain.like.service.impl.CachedLikeServiceImpl;
 import com.dku.council.domain.post.exception.PostNotFoundException;
 import com.dku.council.domain.post.model.dto.list.SummarizedGenericPostDto;
-import com.dku.council.domain.post.model.dto.request.RequestCreateNewsDto;
+import com.dku.council.domain.post.model.dto.request.RequestCreateNoticeDto;
 import com.dku.council.domain.post.model.dto.response.ResponseSingleGenericPostDto;
-import com.dku.council.domain.post.model.entity.posttype.News;
+import com.dku.council.domain.post.model.entity.posttype.Notice;
 import com.dku.council.domain.post.repository.post.GenericPostRepository;
 import com.dku.council.domain.post.service.post.GenericPostService;
 import com.dku.council.domain.tag.service.TagService;
@@ -19,7 +19,7 @@ import com.dku.council.infra.nhn.s3.service.ImageUploadService;
 import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
 import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import com.dku.council.mock.MultipartFileMock;
-import com.dku.council.mock.NewsMock;
+import com.dku.council.mock.NoticeMock;
 import com.dku.council.mock.UserMock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.when;
 class GenericPostServiceTest {
 
     @Mock
-    private GenericPostRepository<News> newsRepository;
+    private GenericPostRepository<Notice> noticeRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -79,7 +79,7 @@ class GenericPostServiceTest {
     private CachedLikeServiceImpl postLikeService;
 
     @InjectMocks
-    private GenericPostService<News> newsService;
+    private GenericPostService<Notice> noticeService;
 
     @Mock
     private FileUploadService fileUploadService;
@@ -92,26 +92,26 @@ class GenericPostServiceTest {
     @DisplayName("list가 잘 동작하는지?")
     public void list() {
         // given
-        List<News> allNewsList = NewsMock.createListDummy("generic-", 20);
-        Page<News> allNews = new DummyPage<>(allNewsList, 20);
+        List<Notice> allNoticeList = NoticeMock.createListDummy("generic-", 20);
+        Page<Notice> allNotice = new DummyPage<>(allNoticeList, 20);
 
-        when(newsRepository.findAll((Specification<News>) any(), (Pageable) any())).thenReturn(allNews);
+        when(noticeRepository.findAll((Specification<Notice>) any(), (Pageable) any())).thenReturn(allNotice);
         when(postLikeService.getCountOfLikes(any(), eq(POST))).thenReturn(15);
 
         // when
-        Page<SummarizedGenericPostDto> allPage = newsService.list(newsRepository, null, Pageable.unpaged(),
+        Page<SummarizedGenericPostDto> allPage = noticeService.list(noticeRepository, null, Pageable.unpaged(),
                 500);
 
         // then
-        assertThat(allPage.getTotalElements()).isEqualTo(allNewsList.size());
+        assertThat(allPage.getTotalElements()).isEqualTo(allNoticeList.size());
         for (int i = 0; i < allPage.getTotalElements(); i++) {
             SummarizedGenericPostDto dto = allPage.getContent().get(i);
-            News news = allNewsList.get(i);
-            assertThat(dto.getId()).isEqualTo(news.getId());
-            assertThat(dto.getTitle()).isEqualTo(news.getTitle());
-            assertThat(dto.getBody()).isEqualTo(news.getBody());
+            Notice notice = allNoticeList.get(i);
+            assertThat(dto.getId()).isEqualTo(notice.getId());
+            assertThat(dto.getTitle()).isEqualTo(notice.getTitle());
+            assertThat(dto.getBody()).isEqualTo(notice.getBody());
             assertThat(dto.getLikes()).isEqualTo(15);
-            assertThat(dto.getViews()).isEqualTo(news.getViews());
+            assertThat(dto.getViews()).isEqualTo(notice.getViews());
         }
     }
 
@@ -120,23 +120,23 @@ class GenericPostServiceTest {
     public void create() {
         // given
         User user = UserMock.createDummyMajor(99L);
-        News news = NewsMock.create(user, 3L);
+        Notice notice = NoticeMock.create(user, 3L);
 
         List<MultipartFile> images = MultipartFileMock.createList(10);
         List<MultipartFile> files = MultipartFileMock.createList(10);
-        RequestCreateNewsDto dto = new RequestCreateNewsDto("title", "body", null, images, files);
+        RequestCreateNoticeDto dto = new RequestCreateNoticeDto("title", "body", null, images, files);
 
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(newsRepository.save(any())).thenReturn(news);
+        when(noticeRepository.save(any())).thenReturn(notice);
         when(imageUploadService.newContext()).thenReturn(imageUploadContext);
         when(fileUploadService.newContext()).thenReturn(fileUploadContext);
 
 
         // when
-        Long newsId = newsService.create(newsRepository, 2L, dto);
+        Long noticeId = noticeService.create(noticeRepository, 2L, dto);
 
         // then
-        assertThat(newsId).isEqualTo(3L);
+        assertThat(noticeId).isEqualTo(3L);
 
         verify(imageUploadContext).uploadImages(argThat(fileList -> {
             assertThat(fileList).hasSize(images.size());
@@ -154,7 +154,7 @@ class GenericPostServiceTest {
             return true;
         }), any());
 
-        verify(newsRepository).save(argThat(entity -> {
+        verify(noticeRepository).save(argThat(entity -> {
             assertThat(entity.getUser()).isEqualTo(user);
             return true;
         }));
@@ -165,22 +165,22 @@ class GenericPostServiceTest {
     public void createWithTag() {
         // given
         User user = UserMock.createDummyMajor(99L);
-        News news = NewsMock.create(user, 3L);
+        Notice notice = NoticeMock.create(user, 3L);
         List<Long> tagIds = List.of(10L, 11L, 12L, 13L);
 
-        RequestCreateNewsDto dto = new RequestCreateNewsDto("title", "body", tagIds, List.of(), List.of());
+        RequestCreateNoticeDto dto = new RequestCreateNoticeDto("title", "body", tagIds, List.of(), List.of());
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(newsRepository.save(any())).thenReturn(news);
+        when(noticeRepository.save(any())).thenReturn(notice);
         when(imageUploadService.newContext()).thenReturn(imageUploadContext);
         when(fileUploadService.newContext()).thenReturn(fileUploadContext);
 
         // when
-        Long newsId = newsService.create(newsRepository, 2L, dto);
+        Long noticeId = noticeService.create(noticeRepository, 2L, dto);
 
         // then
-        assertThat(newsId).isEqualTo(3L);
+        assertThat(noticeId).isEqualTo(3L);
 
-        verify(newsRepository).save(argThat(entity -> {
+        verify(noticeRepository).save(argThat(entity -> {
             assertThat(entity.getUser()).isEqualTo(user);
             return true;
         }));
@@ -196,25 +196,25 @@ class GenericPostServiceTest {
 
         // when & then
         assertThrows(UserNotFoundException.class, () ->
-                newsService.create(newsRepository, 2L,
-                        new RequestCreateNewsDto("title", "body", List.of(), List.of(), List.of())));
+                noticeService.create(noticeRepository, 2L,
+                        new RequestCreateNoticeDto("title", "body", List.of(), List.of(), List.of())));
     }
 
     @Test
     @DisplayName("단건 조회가 잘 동작하는지?")
     public void findOne() {
         // given
-        News news = NewsMock.createDummy(4L);
-        when(newsRepository.findById(any())).thenReturn(Optional.of(news));
+        Notice notice = NoticeMock.createDummy(4L);
+        when(noticeRepository.findById(any())).thenReturn(Optional.of(notice));
         when(postLikeService.isLiked(any(), any(), eq(POST))).thenReturn(false);
 
         // when
-        ResponseSingleGenericPostDto dto = newsService.findOne(newsRepository, 4L,
-                news.getUser().getId(), news.getUser().getUserRole(), "Addr");
+        ResponseSingleGenericPostDto dto = noticeService.findOne(noticeRepository, 4L,
+                notice.getUser().getId(), notice.getUser().getUserRole(), "Addr");
 
         // then
         verify(viewCountService).increasePostViews(argThat(post -> {
-            assertThat(post.getId()).isEqualTo(news.getId());
+            assertThat(post.getId()).isEqualTo(notice.getId());
             return true;
         }), eq("Addr"));
 
@@ -228,33 +228,33 @@ class GenericPostServiceTest {
     @DisplayName("없는 게시글 단건 조회시 오류")
     public void failedFindOneByNotFound() {
         // given
-        when(newsRepository.findById(any())).thenReturn(Optional.empty());
+        when(noticeRepository.findById(any())).thenReturn(Optional.empty());
 
         // when & then
         assertThrows(PostNotFoundException.class, () ->
-                newsService.findOne(newsRepository, 0L, 4L, UserRole.USER, "Addr"));
+                noticeService.findOne(noticeRepository, 0L, 4L, UserRole.USER, "Addr"));
     }
 
     @Test
     @DisplayName("없는 게시글 삭제시 오류")
     public void failedDeleteByNotFound() {
         // given
-        when(newsRepository.findById(any())).thenReturn(Optional.empty());
+        when(noticeRepository.findById(any())).thenReturn(Optional.empty());
 
         // when & then
         assertThrows(PostNotFoundException.class, () ->
-                newsService.delete(newsRepository, 0L, 0L, false));
+                noticeService.delete(noticeRepository, 0L, 0L, false));
     }
 
     @Test
     @DisplayName("권한 없는 게시글 삭제시 오류")
     public void failedDeleteByAccessDenied() {
         // given
-        News news = NewsMock.createDummy(4L);
-        when(newsRepository.findById(any())).thenReturn(Optional.of(news));
+        Notice notice = NoticeMock.createDummy(4L);
+        when(noticeRepository.findById(any())).thenReturn(Optional.of(notice));
 
         // when & then
         assertThrows(NotGrantedException.class, () ->
-                newsService.delete(newsRepository, 0L, 0L, false));
+                noticeService.delete(noticeRepository, 0L, 0L, false));
     }
 }
