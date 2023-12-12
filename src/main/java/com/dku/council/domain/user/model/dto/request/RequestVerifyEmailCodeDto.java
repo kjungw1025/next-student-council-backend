@@ -27,6 +27,12 @@ public class RequestVerifyEmailCodeDto {
     private final String academicStatus;
 
     @NotBlank
+    private final String age;
+
+    @NotBlank
+    private final String gender;
+
+    @NotBlank
     @Pattern(regexp = "^.{5}$", message = "이메일 코드는 5자리 입니다.")
     private final String emailCode;
 }
