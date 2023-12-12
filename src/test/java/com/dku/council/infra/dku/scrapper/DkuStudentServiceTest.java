@@ -46,6 +46,8 @@ class DkuStudentServiceTest extends AbstractMockServerTest {
         assertThat(studentInfo.getMajorName()).isEqualTo("정치외교학과");
         assertThat(studentInfo.getDepartmentName()).isEqualTo("사회과학대학");
         assertThat(studentInfo.getStudentState()).isEqualTo("재학");
+        assertThat(studentInfo.getAge()).isEqualTo("20");
+        assertThat(studentInfo.getGender()).isEqualTo("남자");
     }
 
     @Test

@@ -93,7 +93,7 @@ public class DKUAuthService {
      * @param dto 요청 dto
      * @return 학생 인증 결과 dto
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public ResponseScrappedStudentInfoDto updateDKUStudent(Long userId, RequestDkuStudentDto dto) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         DkuUserInfo info = retrieveDkuUserInfo(dto.getDkuStudentId(), dto.getDkuPassword());
@@ -105,7 +105,9 @@ public class DKUAuthService {
                 info.getStudentName(),
                 major,
                 info.getYearOfAdmission(),
-                info.getStudentState());
+                info.getStudentState(),
+                info.getAge(),
+                info.getGender());
 
         userInfoService.invalidateUserInfo(userId);
         return new ResponseScrappedStudentInfoDto(info);

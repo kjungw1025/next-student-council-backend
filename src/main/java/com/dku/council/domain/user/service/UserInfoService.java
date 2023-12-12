@@ -43,8 +43,9 @@ public class UserInfoService {
         Long likedPostCount = likeService.getCountOfLikedElements(userId, LikeTarget.POST);
 
         return new ResponseUserInfoDto(user.getStudentId(), user.getName(),
-                user.getNickname(), year, major.getName(), major.getDepartment(),
-                phoneNumber, writePostCount, commentedPostCount, likedPostCount,
+                user.getNickname(), user.getAge(), user.getGender(), year,
+                major.getName(), major.getDepartment(), phoneNumber,
+                writePostCount, commentedPostCount, likedPostCount,
                 user.getUserRole().isAdmin());
     }
 

@@ -10,6 +10,8 @@ public class ResponseUserInfoDto {
     private final String studentId;
     private final String username;
     private final String nickname;
+    private final String age;
+    private final String gender;
     private final String yearOfAdmission;
     private final String major;
     private final String department;
