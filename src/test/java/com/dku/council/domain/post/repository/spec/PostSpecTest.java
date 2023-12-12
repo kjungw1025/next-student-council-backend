@@ -1,8 +1,7 @@
 package com.dku.council.domain.post.repository.spec;
 
-import com.dku.council.domain.post.model.entity.posttype.News;
-import com.dku.council.domain.post.repository.post.NewsRepository;
-import com.dku.council.domain.post.repository.spec.PostSpec;
+import com.dku.council.domain.post.model.entity.posttype.Notice;
+import com.dku.council.domain.post.repository.post.NoticeRepository;
 import com.dku.council.domain.tag.model.entity.PostTag;
 import com.dku.council.domain.tag.model.entity.Tag;
 import com.dku.council.domain.tag.repository.PostTagRepository;
@@ -12,7 +11,7 @@ import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.MajorRepository;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.mock.MajorMock;
-import com.dku.council.mock.NewsMock;
+import com.dku.council.mock.NoticeMock;
 import com.dku.council.mock.TagMock;
 import com.dku.council.mock.UserMock;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PostSpecTest {
 
     @Autowired
-    private NewsRepository postRepository;
+    private NoticeRepository postRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -57,24 +56,24 @@ class PostSpecTest {
         User user2 = UserMock.create(major);
         user2 = userRepository.save(user2);
 
-        List<News> news1 = NewsMock.createList("news-1-", user1, 5);
-        postRepository.saveAll(news1);
+        List<Notice> notice1 = NoticeMock.createList("notice-1-", user1, 5);
+        postRepository.saveAll(notice1);
 
         tag1 = TagMock.create();
-        createPostsWithTag("news-2-", tag1, user1, 6);
+        createPostsWithTag("notice-2-", tag1, user1, 6);
 
         tag2 = TagMock.create();
-        createPostsWithTag("news-3-", tag2, user2, 7);
+        createPostsWithTag("notice-3-", tag2, user2, 7);
     }
 
     private void createPostsWithTag(String prefix, Tag tag, User user, int size) {
-        List<News> newsList = NewsMock.createList(prefix, user, size);
+        List<Notice> loticeList = NoticeMock.createList(prefix, user, size);
         tag = tagRepository.save(tag);
-        newsList = postRepository.saveAll(newsList);
+        loticeList = postRepository.saveAll(loticeList);
 
-        for (News news : newsList) {
+        for (Notice notice : loticeList) {
             PostTag relation = new PostTag(tag);
-            relation.changePost(news);
+            relation.changePost(notice);
             postTagRepository.save(relation);
         }
     }
@@ -82,10 +81,10 @@ class PostSpecTest {
     @Test
     void findByKeyword() {
         // given
-        Specification<News> spec = PostSpec.withTitleOrBody("ews-1");
+        Specification<Notice> spec = PostSpec.withTitleOrBody("notice-1");
 
         // when
-        List<News> all = postRepository.findAll(spec);
+        List<Notice> all = postRepository.findAll(spec);
 
         // then
         assertThat(all.size()).isEqualTo(5);
@@ -94,10 +93,10 @@ class PostSpecTest {
     @Test
     void findBySingleTags() {
         // given
-        Specification<News> spec = PostSpec.withTag(tag1.getId());
+        Specification<Notice> spec = PostSpec.withTag(tag1.getId());
 
         // when
-        List<News> all = postRepository.findAll(spec);
+        List<Notice> all = postRepository.findAll(spec);
 
         // then
         assertThat(all.size()).isEqualTo(6);
@@ -106,10 +105,10 @@ class PostSpecTest {
     @Test
     void findByMultipleTags() {
         // given
-        Specification<News> spec = PostSpec.withTags(List.of(tag1.getId(), tag2.getId()));
+        Specification<Notice> spec = PostSpec.withTags(List.of(tag1.getId(), tag2.getId()));
 
         // when
-        List<News> all = postRepository.findAll(spec);
+        List<Notice> all = postRepository.findAll(spec);
 
         // then
         assertThat(all.size()).isEqualTo(13);
@@ -118,10 +117,10 @@ class PostSpecTest {
     @Test
     void findByAuthor() {
         // given
-        Specification<News> spec = PostSpec.withAuthor(user1.getId());
+        Specification<Notice> spec = PostSpec.withAuthor(user1.getId());
 
         // when
-        List<News> all = postRepository.findAll(spec);
+        List<Notice> all = postRepository.findAll(spec);
 
         // then
         assertThat(all.size()).isEqualTo(11);

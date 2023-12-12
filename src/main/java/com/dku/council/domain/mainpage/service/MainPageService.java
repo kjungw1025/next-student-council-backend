@@ -10,7 +10,7 @@ import com.dku.council.domain.mainpage.model.dto.response.MainPageResponseDto;
 import com.dku.council.domain.mainpage.model.entity.CarouselImage;
 import com.dku.council.domain.mainpage.repository.CarouselImageRepository;
 import com.dku.council.domain.post.repository.post.ConferenceRepository;
-import com.dku.council.domain.post.repository.post.NewsRepository;
+import com.dku.council.domain.post.repository.post.NoticeRepository;
 import com.dku.council.domain.post.repository.post.PetitionRepository;
 import com.dku.council.infra.nhn.s3.model.ImageRequest;
 import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
@@ -34,7 +34,7 @@ public class MainPageService {
 
     private final CarouselImageRepository carouselImageRepository;
     private final PetitionRepository petitionRepository;
-    private final NewsRepository newsRepository;
+    private final NoticeRepository noticeRepository;
     private final ConferenceRepository conferenceRepository;
 
     /**
@@ -87,7 +87,7 @@ public class MainPageService {
         List<PetitionSummary> petitions = petitionRepository.findTopByOrderByCreatedAtDesc(PageRequest.of(0, 5)).stream()
                 .map(PetitionSummary::new)
                 .collect(Collectors.toList());
-        List<PostSummary> news = newsRepository.findTop5ByOrderByCreatedAtDesc().stream()
+        List<PostSummary> notice = noticeRepository.findTop5ByOrderByCreatedAtDesc().stream()
                 .map(PostSummary::new)
                 .collect(Collectors.toList());
         List<PostSummary> conferences = conferenceRepository.findTop5ByOrderByCreatedAtDesc().stream()
@@ -96,7 +96,7 @@ public class MainPageService {
 
         List<CarouselImageResponse> carouselImages = getCarouselImages();
 
-        return new MainPageResponseDto(carouselImages, news, conferences, petitions);
+        return new MainPageResponseDto(carouselImages, notice, conferences, petitions);
     }
 
     private boolean verifyImageExtension(String originName) {

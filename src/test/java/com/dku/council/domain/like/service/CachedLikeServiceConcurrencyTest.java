@@ -3,13 +3,13 @@ package com.dku.council.domain.like.service;
 import com.dku.council.domain.like.repository.LikeMemoryRepository;
 import com.dku.council.domain.like.service.impl.CachedLikeServiceImpl;
 import com.dku.council.domain.post.model.entity.Post;
-import com.dku.council.domain.post.repository.post.NewsRepository;
+import com.dku.council.domain.post.repository.post.NoticeRepository;
 import com.dku.council.domain.user.model.entity.Major;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.MajorRepository;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.mock.MajorMock;
-import com.dku.council.mock.NewsMock;
+import com.dku.council.mock.NoticeMock;
 import com.dku.council.mock.UserMock;
 import com.dku.council.util.base.AbstractContainerRedisTest;
 import com.dku.council.util.test.FullIntegrationTest;
@@ -45,7 +45,7 @@ class CachedLikeServiceConcurrencyTest extends AbstractContainerRedisTest {
     private MajorRepository majorRepository;
 
     @Autowired
-    private NewsRepository newsRepository;
+    private NoticeRepository noticeRepository;
 
     private Post post;
     private List<User> users;
@@ -62,7 +62,7 @@ class CachedLikeServiceConcurrencyTest extends AbstractContainerRedisTest {
             users.add(user);
         }
 
-        post = newsRepository.save(NewsMock.create(users.get(0)));
+        post = noticeRepository.save(NoticeMock.create(users.get(0)));
     }
 
     @Test

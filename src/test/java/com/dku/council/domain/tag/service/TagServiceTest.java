@@ -6,8 +6,7 @@ import com.dku.council.domain.tag.model.dto.TagDto;
 import com.dku.council.domain.tag.model.entity.Tag;
 import com.dku.council.domain.tag.repository.PostTagRepository;
 import com.dku.council.domain.tag.repository.TagRepository;
-import com.dku.council.domain.tag.service.TagService;
-import com.dku.council.mock.NewsMock;
+import com.dku.council.mock.NoticeMock;
 import com.dku.council.mock.TagMock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -129,7 +128,7 @@ class TagServiceTest {
     @DisplayName("Post에 태그 추가하기")
     void addTagsToPost() {
         // given
-        Post post = NewsMock.createDummy();
+        Post post = NoticeMock.createDummy();
         List<Long> tagIds = List.of(10L, 11L, 12L, 13L);
         List<Tag> tags = List.of(TagMock.create(10L), TagMock.create(11L), TagMock.create(12L), TagMock.create(13L));
         when(repository.findAllById(tagIds)).thenReturn(tags);

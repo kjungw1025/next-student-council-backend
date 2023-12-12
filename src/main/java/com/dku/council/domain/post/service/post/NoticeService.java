@@ -2,10 +2,10 @@ package com.dku.council.domain.post.service.post;
 
 
 import com.dku.council.domain.post.model.dto.list.SummarizedGenericPostDto;
-import com.dku.council.domain.post.model.dto.request.RequestCreateNewsDto;
+import com.dku.council.domain.post.model.dto.request.RequestCreateNoticeDto;
 import com.dku.council.domain.post.model.dto.response.ResponseSingleGenericPostDto;
-import com.dku.council.domain.post.model.entity.posttype.News;
-import com.dku.council.domain.post.repository.post.NewsRepository;
+import com.dku.council.domain.post.model.entity.posttype.Notice;
+import com.dku.council.domain.post.repository.post.NoticeRepository;
 import com.dku.council.domain.post.repository.spec.PostSpec;
 import com.dku.council.global.auth.role.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -18,17 +18,17 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class NewsService {
-    private final GenericPostService<News> postService;
-    private final NewsRepository repository;
+public class NoticeService {
+    private final GenericPostService<Notice> postService;
+    private final NoticeRepository repository;
 
     public Page<SummarizedGenericPostDto> list(String keyword, List<Long> tagIds, Pageable pageable, int bodySize) {
-        Specification<News> spec = PostSpec.withTitleOrBody(keyword);
+        Specification<Notice> spec = PostSpec.withTitleOrBody(keyword);
         spec = spec.and(PostSpec.withTags(tagIds));
         return postService.list(repository, spec, pageable, bodySize);
     }
 
-    public Long create(Long userId, RequestCreateNewsDto request) {
+    public Long create(Long userId, RequestCreateNoticeDto request) {
         return postService.create(repository, userId, request);
     }
 
