@@ -21,7 +21,6 @@ import com.dku.council.global.error.exception.UserNotFoundException;
 import com.dku.council.infra.nhn.s3.model.*;
 import com.dku.council.infra.nhn.s3.service.FileUploadService;
 import com.dku.council.infra.nhn.s3.service.ImageUploadService;
-import com.dku.council.infra.nhn.s3.service.OriginalFileUploadService;
 import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

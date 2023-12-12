@@ -6,5 +6,4 @@ import java.util.List;
 
 public interface ConferenceRepository extends GenericPostRepository<Conference> {
     List<Conference> findTop5ByOrderByCreatedAtDesc();
-
 }

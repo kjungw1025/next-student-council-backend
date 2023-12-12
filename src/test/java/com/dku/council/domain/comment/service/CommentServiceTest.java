@@ -5,7 +5,6 @@ import com.dku.council.domain.comment.model.dto.CommentDto;
 import com.dku.council.domain.comment.model.entity.Comment;
 import com.dku.council.domain.comment.repository.CommentLogRepository;
 import com.dku.council.domain.comment.repository.CommentRepository;
-import com.dku.council.domain.comment.service.CommentService;
 import com.dku.council.domain.like.model.LikeTarget;
 import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.model.entity.Post;
@@ -15,7 +14,7 @@ import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.mock.CommentMock;
-import com.dku.council.mock.NewsMock;
+import com.dku.council.mock.NoticeMock;
 import com.dku.council.mock.UserMock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,7 +59,7 @@ class CommentServiceTest {
     @DisplayName("댓글 추가")
     void create() {
         // given
-        Post post = NewsMock.createDummy();
+        Post post = NoticeMock.createDummy();
         User user = UserMock.createDummyMajor();
         Comment comment = CommentMock.createWithId(post, user);
         when(commentRepository.save(any())).thenReturn(comment);
@@ -161,7 +160,7 @@ class CommentServiceTest {
     @DisplayName("댓글 목록 생성 - 매핑함수가 잘 적용되는가?")
     void listWithMapper() {
         //given
-        Post post = NewsMock.createDummy();
+        Post post = NoticeMock.createDummy();
         User user = UserMock.createDummyMajor();
         String author = user.getMajor().getName() + " " + user.getNickname();
 

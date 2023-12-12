@@ -18,13 +18,13 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class News extends Post {
+public class Notice extends Post {
 
     @Builder
-    private News(@NonNull User user,
-                 @NonNull String title,
-                 @NonNull String body,
-                 int views) {
+    private Notice(@NonNull User user,
+                   @NonNull String title,
+                   @NonNull String body,
+                   int views) {
         super(user, title, body, views);
     }
 

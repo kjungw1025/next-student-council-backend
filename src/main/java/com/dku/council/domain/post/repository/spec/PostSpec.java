@@ -1,8 +1,10 @@
 package com.dku.council.domain.post.repository.spec;
 
+import com.dku.council.domain.post.model.CoalitionType;
 import com.dku.council.domain.post.model.PetitionStatus;
 import com.dku.council.domain.post.model.PostStatus;
 import com.dku.council.domain.post.model.entity.Post;
+import com.dku.council.domain.post.model.entity.posttype.Coalition;
 import com.dku.council.domain.tag.model.entity.PostTag;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -81,5 +83,12 @@ public class PostSpec {
         return spec;
     }
 
+    public static <T extends Post> Specification<T> withCoalitionType(CoalitionType coalitionType) {
+        if(coalitionType == null) {
+            return Specification.where(null);
+        }
 
+        return (root, query, builder) ->
+                builder.equal(root.get("coalitionType"), coalitionType);
+    }
 }

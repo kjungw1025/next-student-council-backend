@@ -3,10 +3,10 @@ package com.dku.council.domain.post.controller;
 import com.dku.council.domain.like.model.LikeTarget;
 import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.model.dto.list.SummarizedGenericPostDto;
-import com.dku.council.domain.post.model.dto.request.RequestCreateNewsDto;
+import com.dku.council.domain.post.model.dto.request.RequestCreateNoticeDto;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.post.model.dto.response.ResponseSingleGenericPostDto;
-import com.dku.council.domain.post.service.post.NewsService;
+import com.dku.council.domain.post.service.post.NoticeService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.auth.role.GuestAuth;
@@ -30,11 +30,11 @@ import static com.dku.council.domain.like.model.LikeTarget.POST;
 
 @Tag(name = "총학생회 공지", description = "총학생회 공지 게시판 관련 api")
 @RestController
-@RequestMapping("/post/news")
+@RequestMapping("/post/notice")
 @RequiredArgsConstructor
-public class NewsController {
+public class NoticeController {
 
-    private final NewsService postService;
+    private final NoticeService postService;
     private final LikeService likeService;
 
     /**
@@ -74,7 +74,7 @@ public class NewsController {
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @AdminAuth
-    public ResponseIdDto create(AppAuthentication auth, @Valid @ModelAttribute RequestCreateNewsDto request) {
+    public ResponseIdDto create(AppAuthentication auth, @Valid @ModelAttribute RequestCreateNoticeDto request) {
         Long postId = postService.create(auth.getUserId(), request);
         return new ResponseIdDto(postId);
     }
