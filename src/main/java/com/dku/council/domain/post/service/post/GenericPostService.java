@@ -18,10 +18,10 @@ import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
-import com.dku.council.infra.nhn.model.FileRequest;
-import com.dku.council.infra.nhn.model.UploadedFile;
-import com.dku.council.infra.nhn.service.FileUploadService;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.model.*;
+import com.dku.council.infra.nhn.s3.service.FileUploadService;
+import com.dku.council.infra.nhn.s3.service.ImageUploadService;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,7 @@ public class GenericPostService<E extends Post> {
     protected final ViewCountService viewCountService;
     protected final LikeService likeService;
 
+    protected final ImageUploadService imageUploadService;
     protected final FileUploadService fileUploadService;
     protected final ObjectUploadContext uploadContext;
     protected final ThumbnailService thumbnailService;
@@ -82,6 +84,25 @@ public class GenericPostService<E extends Post> {
     }
 
     /**
+     * 특정 기간동안의 게시글 목록 조회
+     *
+     * @param duration 조회할 날짜 수
+     */
+    @Transactional(readOnly = true)
+    public Page<SummarizedGenericPostDto> listByDuration(GenericPostRepository<E> repository,
+                                                         Pageable pageable, int bodySize, int duration) {
+        Page<E> result = listByDuration(repository, duration, pageable);
+        return result.map((post) -> makeListDto(bodySize, post));
+    }
+
+    private Page<E> listByDuration(GenericPostRepository<E> repository, int duration, Pageable pageable) {
+        LocalDateTime start = LocalDateTime.now().minusDays(duration);
+        LocalDateTime end = LocalDateTime.now();
+
+        return repository.findAllByDuration(start, end, pageable);
+    }
+
+    /**
      * 게시글 등록
      *
      * @param userId 등록한 사용자 id
@@ -94,6 +115,7 @@ public class GenericPostService<E extends Post> {
         E post = dto.toEntity(user);
         tagService.addTagsToPost(post, dto.getTagIds());
 
+        attachImages(dto.getImages(), post);
         attachFiles(dto.getFiles(), post);
 
         E savedPost = repository.save(post);
@@ -108,13 +130,13 @@ public class GenericPostService<E extends Post> {
         FileUploadService.Context uploadCtx = fileUploadService.newContext();
         List<PostFile> postFiles = new ArrayList<>();
 
-        for (UploadedFile file : files) {
+        for (UploadedFile file: files) {
             PostFile.PostFileBuilder builder = PostFile.builder()
                     .fileName(file.getOriginalName())
                     .mimeType(file.getMimeType().toString())
                     .fileId(file.getFileId());
 
-            String thumbnailId = thumbnailService.createThumbnail(uploadCtx, file);
+            String thumbnailId = thumbnailService.createDefaultThumbnail(uploadCtx, file);
             if (thumbnailId != null) {
                 builder.thumbnailId(thumbnailId);
             }
@@ -122,6 +144,32 @@ public class GenericPostService<E extends Post> {
         }
 
         for (PostFile file : postFiles) {
+            file.changePost(post);
+        }
+    }
+
+    private void attachImages(List<MultipartFile> dtoImages, E post) {
+        List<UploadedImage> images = imageUploadService.newContext().uploadImages(
+                ImageRequest.ofList(dtoImages),
+                post.getClass().getSimpleName());
+
+        ImageUploadService.Context uploadCtx = imageUploadService.newContext();
+        List<PostFile> postImages = new ArrayList<>();
+
+        for (UploadedImage image : images) {
+            PostFile.PostFileBuilder builder = PostFile.builder()
+                    .fileName(image.getOriginalName())
+                    .mimeType(image.getMimeType().toString())
+                    .fileId(image.getImageId());
+
+            String thumbnailId = thumbnailService.createThumbnail(uploadCtx, image);
+            if (thumbnailId != null) {
+                builder.thumbnailId(thumbnailId);
+            }
+            postImages.add(builder.build());
+        }
+
+        for (PostFile file : postImages) {
             file.changePost(post);
         }
     }
@@ -200,7 +248,6 @@ public class GenericPostService<E extends Post> {
         return post.orElseThrow(PostNotFoundException::new);
     }
 
-
     /**
      * 게시글 삭제. 실제 DB에서 삭제처리되지 않고 표시만 해둔다.
      *
@@ -242,7 +289,6 @@ public class GenericPostService<E extends Post> {
         E post = repository.findBlindedPostById(postId).orElseThrow(PostNotFoundException::new);
         post.unblind();
     }
-
 
     @FunctionalInterface
     public interface PostResultMapper<T, D, E extends Post> {

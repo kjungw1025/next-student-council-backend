@@ -1,9 +1,10 @@
 package com.dku.council.domain.post.model.dto.response;
 
 import com.dku.council.domain.post.model.dto.PostFileDto;
+import com.dku.council.domain.post.model.dto.PostImageDto;
 import com.dku.council.domain.post.model.entity.Post;
 import com.dku.council.domain.tag.model.dto.TagDto;
-import com.dku.council.infra.nhn.service.ObjectUploadContext;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -32,7 +33,10 @@ public class ResponseSingleGenericPostDto {
     @Schema(description = "생성 시각")
     private final LocalDateTime createdAt;
 
-    @Schema(description = "파일 목록")
+    @Schema(description = "이미지 목록")
+    private final List<PostImageDto> images;
+
+    @Schema(description = "첨부파일 목록")
     private final List<PostFileDto> files;
 
     @Schema(description = "좋아요 수", example = "16")
@@ -61,6 +65,7 @@ public class ResponseSingleGenericPostDto {
         this.likes = likes;
         this.views = post.getViews();
         this.createdAt = post.getCreatedAt();
+        this.images = PostImageDto.listOf(context, post.getFiles());
         this.files = PostFileDto.listOf(context, post.getFiles());
         this.isMine = isMine;
         this.isLiked = isLiked;
@@ -76,6 +81,7 @@ public class ResponseSingleGenericPostDto {
         this.likes = copy.likes;
         this.views = copy.views;
         this.createdAt = copy.createdAt;
+        this.images = copy.images;
         this.files = copy.files;
         this.isMine = copy.isMine;
         this.isLiked = copy.isLiked;
