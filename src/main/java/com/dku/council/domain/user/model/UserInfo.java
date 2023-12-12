@@ -17,6 +17,8 @@ public class UserInfo {
     private final MajorInfo major;
     private final int yearOfAdmission;
     private final String academicStatus;
+    private final String age;
+    private final String gender;
     private final UserStatus status;
 
     public UserInfo(User user) {
@@ -27,6 +29,8 @@ public class UserInfo {
         this.major = new MajorInfo(user.getMajor());
         this.yearOfAdmission = user.getYearOfAdmission();
         this.academicStatus = user.getAcademicStatus();
+        this.age = user.getAge();
+        this.gender = user.getGender();
         this.status = user.getStatus();
     }
 
