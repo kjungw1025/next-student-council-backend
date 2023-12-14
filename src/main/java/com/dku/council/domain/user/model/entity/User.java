@@ -47,6 +47,10 @@ public class User extends BaseEntity {
     @Column(length = 20)
     private String nickname;
 
+    private String age;
+
+    private String gender;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "major_id")
     private Major major;
@@ -76,6 +80,8 @@ public class User extends BaseEntity {
                  @NonNull String phone,
                  @NonNull String nickname,
                  @NonNull String academicStatus,
+                 @NonNull String age,
+                 @NonNull String gender,
                  Integer yearOfAdmission,
                  UserStatus status,
                  UserRole role) {
@@ -86,6 +92,8 @@ public class User extends BaseEntity {
         this.phone = phone;
         this.nickname = nickname;
         this.academicStatus = academicStatus;
+        this.age = age;
+        this.gender = gender;
         this.yearOfAdmission = yearOfAdmission;
         this.status = status;
         this.userRole = role;
@@ -146,6 +154,16 @@ public class User extends BaseEntity {
     }
 
     /**
+     * 나이를 변경합니다.
+     * User정보 캐시를 삭제하기위해 {@link UserInfoService}.invalidateUserInfo를 호출해야 합니다.
+     *
+     * @param age 나이
+     */
+    public void changeAge(String age) {
+        this.age = age;
+    }
+
+    /**
      * 공통 User 정보를 수정합니다.
      * User정보 캐시를 삭제하기위해 {@link UserInfoService}.invalidateUserInfo를 호출해야 합니다.
      *
@@ -155,12 +173,14 @@ public class User extends BaseEntity {
      * @param yearOfAdmission 입학년도
      * @param studentState    학적상태
      */
-    public void changeGenericInfo(String studentId, String studentName, Major major, int yearOfAdmission, String studentState) {
+    public void changeGenericInfo(String studentId, String studentName, Major major, int yearOfAdmission, String studentState, String age, String gender) {
         this.studentId = studentId;
         this.name = studentName;
         this.major = major;
         this.yearOfAdmission = yearOfAdmission;
         this.academicStatus = studentState;
+        this.age = age;
+        this.gender = gender;
     }
 
     /**
@@ -172,6 +192,8 @@ public class User extends BaseEntity {
         this.name = "";
         this.phone = "";
         this.nickname = "";
+        this.age = "";
+        this.gender = "";
         this.password = "";
     }
 
@@ -180,5 +202,15 @@ public class User extends BaseEntity {
      */
     public void changeIsDkuChecked() {
         this.isDkuChecked = !this.isDkuChecked;
+    }
+
+
+    /**
+     * 매년 1월 1일 사용자들의 나이 1을 증가시킵니다.
+     */
+    public void updateAge() {
+        int age = Integer.parseInt(this.age);
+        age++;
+        this.age = String.valueOf(age);
     }
 }
