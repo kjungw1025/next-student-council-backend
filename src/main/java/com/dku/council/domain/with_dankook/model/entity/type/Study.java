@@ -44,7 +44,7 @@ public class Study extends WithDankook {
     private String content;
 
     @Builder
-    private Study(@NonNull User user, @NonNull String chatLink, @NonNull String title, @NonNull int minStudentId, @NonNull LocalDateTime startTime, @NonNull LocalDateTime endTime, @NonNull String content) {
+    private Study(User user, String chatLink, String title, int minStudentId, LocalDateTime startTime, LocalDateTime endTime, String content) {
         super(user, chatLink);
         this.title = title;
         this.minStudentId = minStudentId;

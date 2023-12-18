@@ -4,19 +4,26 @@ import com.dku.council.domain.post.service.ThumbnailService;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.domain.with_dankook.exception.TradeCooltimeException;
+import com.dku.council.domain.with_dankook.model.dto.list.SummarizedTradeDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateTradeDto;
 import com.dku.council.domain.with_dankook.model.entity.TradeImage;
 import com.dku.council.domain.with_dankook.model.entity.type.Trade;
 import com.dku.council.domain.with_dankook.repository.TradeRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookMemoryRepository;
+import com.dku.council.domain.with_dankook.repository.spec.WithDankookSpec;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import com.dku.council.infra.nhn.s3.model.ImageRequest;
 import com.dku.council.infra.nhn.s3.model.UploadedImage;
 import com.dku.council.infra.nhn.s3.service.ImageUploadService;
+import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Clock;
@@ -28,6 +35,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class TradeService {
 
     public static final String TRADE_KEY = "trade";
@@ -36,14 +44,17 @@ public class TradeService {
     private final WithDankookMemoryRepository withDankookMemoryRepository;
     private final UserRepository userRepository;
 
+    private final WithDankookService<Trade> withDankookService;
     private final ImageUploadService imageUploadService;
     private final ThumbnailService thumbnailService;
+    private final ObjectUploadContext objectUploadContext;
 
     private final Clock clock;
 
     @Value("${app.with-dankook.trade.write-cooltime}")
     private final Duration writeCooltime;
 
+    @Transactional
     public Long create(Long userId, RequestCreateTradeDto dto) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Instant now = Instant.now(clock);
@@ -57,6 +68,7 @@ public class TradeService {
                 .price(dto.getPrice())
                 .content(dto.getContent())
                 .tradePlace(dto.getTradePlace())
+                .chatLink(dto.getChatLink())
                 .build();
 
         attachImages(trade, dto.getImages());
@@ -91,5 +103,19 @@ public class TradeService {
         for(TradeImage tradeImage : tradeImages) {
             tradeImage.changeTrade(trade);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SummarizedTradeDto> list(String keyword, Pageable pageable, int bodySize) {
+        Specification<Trade> spec = WithDankookSpec.withTitleOrBody(keyword);
+        spec = spec.and(WithDankookSpec.withActive());
+        Page<Trade> result = tradeRepository.findAll(spec, pageable);
+        return result.map((trade) ->
+                new SummarizedTradeDto(withDankookService.makeListDto(bodySize, trade), trade, objectUploadContext));
+    }
+
+    @Transactional
+    public void delete(Long tradeId, Long userId, boolean isAdmin) {
+        withDankookService.delete(tradeRepository, tradeId, userId, isAdmin);
     }
 }
