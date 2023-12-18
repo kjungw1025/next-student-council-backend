@@ -54,4 +54,8 @@ public abstract class WithDankook extends BaseEntity {
     }
 
     public abstract String getDisplayingUsername();
+
+    public void markAsDeleted(boolean byAdmin) {
+        this.withDankookStatus = byAdmin ? WithDankookStatus.DELETED_BY_ADMIN : WithDankookStatus.DELETED;
+    }
 }
