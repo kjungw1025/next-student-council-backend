@@ -37,7 +37,7 @@ public class BearEats extends WithDankook {
 
 
     @Builder
-    private BearEats(@NonNull User user, @NonNull String chatLink,@NonNull String restaurant, @NonNull String deliveryPlace, @NonNull LocalDateTime deliveryTime, @NonNull String content) {
+    private BearEats(User user, String chatLink, String restaurant, String deliveryPlace, LocalDateTime deliveryTime, String content) {
         super(user, chatLink);
         this.restaurant = restaurant;
         this.deliveryPlace = deliveryPlace;
