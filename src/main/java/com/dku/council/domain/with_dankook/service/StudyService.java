@@ -115,6 +115,15 @@ public class StudyService {
                 ));
     }
 
+    @Transactional(readOnly = true)
+    public Page<SummarizedStudyDto> listMyPosts(Long userId, Pageable pageable) {
+        return studyRepository.findAllByUserId(userId, pageable)
+                .map(study -> new SummarizedStudyDto(withDankookService.makeListDto(50, study),
+                        study,
+                        withDankookUserService.recruitedCount(withDankookService.makeListDto(50, study).getId())
+                ));
+    }
+
     @Transactional
     public void delete(Long studyId, Long userId, boolean isAdmin) {
         withDankookService.delete(studyRepository, studyId, userId, isAdmin);

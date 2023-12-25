@@ -57,6 +57,20 @@ public class StudyController {
     }
 
     /**
+     * 내가 작성한 단터디 게시글 목록 조회
+     *
+     * @param pageable 페이징 size, sort, page
+     * @return         페이징된 내가 쓴 단터디 게시판 목록
+     */
+    @GetMapping("/my")
+    @UserAuth
+    public ResponsePage<SummarizedStudyDto> listMyPosts(AppAuthentication auth,
+                                                        @ParameterObject Pageable pageable) {
+        Page<SummarizedStudyDto> list = studyService.listMyPosts(auth.getUserId(), pageable);
+        return new ResponsePage<>(list);
+    }
+
+    /**
      * 단터디 게시글 등록
      */
     @PostMapping
