@@ -1,16 +1,23 @@
 package com.dku.council.domain.with_dankook.service;
 
+import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.service.ThumbnailService;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
+import com.dku.council.domain.with_dankook.exception.ImageSizeExceededException;
 import com.dku.council.domain.with_dankook.exception.TradeCooltimeException;
+import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
+import com.dku.council.domain.with_dankook.model.WithDankookStatus;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedTradeDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateTradeDto;
+import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleTradeDto;
 import com.dku.council.domain.with_dankook.model.entity.TradeImage;
 import com.dku.council.domain.with_dankook.model.entity.type.Trade;
 import com.dku.council.domain.with_dankook.repository.TradeRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookMemoryRepository;
 import com.dku.council.domain.with_dankook.repository.spec.WithDankookSpec;
+import com.dku.council.global.auth.role.UserRole;
+import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import com.dku.council.infra.nhn.s3.model.ImageRequest;
 import com.dku.council.infra.nhn.s3.model.UploadedImage;
@@ -19,6 +26,7 @@ import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +39,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,9 +54,11 @@ public class TradeService {
     private final UserRepository userRepository;
 
     private final WithDankookService<Trade> withDankookService;
+    private final LikeService likeService;
     private final ImageUploadService imageUploadService;
     private final ThumbnailService thumbnailService;
     private final ObjectUploadContext objectUploadContext;
+    private final MessageSource messageSource;
 
     private final Clock clock;
 
@@ -80,6 +91,9 @@ public class TradeService {
     }
 
     private void attachImages(Trade trade, List<MultipartFile> dtoImages) {
+        if (dtoImages.size() > 10) {
+            throw new ImageSizeExceededException();
+        }
         List<UploadedImage> images = imageUploadService.newContext().uploadImages(
                 ImageRequest.ofList(dtoImages),
                 trade.getClass().getSimpleName());
@@ -111,11 +125,44 @@ public class TradeService {
         spec = spec.and(WithDankookSpec.withActive());
         Page<Trade> result = tradeRepository.findAll(spec, pageable);
         return result.map((trade) ->
-                new SummarizedTradeDto(withDankookService.makeListDto(bodySize, trade), trade, objectUploadContext));
+                new SummarizedTradeDto(withDankookService.makeListDto(bodySize, trade), trade, objectUploadContext, messageSource));
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseSingleTradeDto findOne(Long tradeId, Long userId, UserRole role) {
+        Trade trade = findTrade(tradeRepository, tradeId, role);
+        return new ResponseSingleTradeDto(withDankookService.makeSingleDto(userId, trade), trade, objectUploadContext, messageSource);
+    }
+
+    private Trade findTrade(TradeRepository tradeRepository, Long tradeId, UserRole role) {
+        Optional<Trade> trade;
+        if (role.isAdmin()) {
+            trade = tradeRepository.findWithClosedById(tradeId);
+        } else {
+            trade = tradeRepository.findById(tradeId);
+        }
+        return trade.orElseThrow(WithDankookNotFoundException::new);
     }
 
     @Transactional
     public void delete(Long tradeId, Long userId, boolean isAdmin) {
         withDankookService.delete(tradeRepository, tradeId, userId, isAdmin);
+    }
+
+    @Transactional
+    public void close(Long tradeId, Long userId) {
+        tradeRepository.findById(tradeId).ifPresent(trade -> {
+            if (trade.getMasterUser().getId().equals(userId)) {
+                trade.close();
+            } else{
+                throw new NotGrantedException();
+            }
+        });
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SummarizedTradeDto> listMyPosts(Long userId, Pageable pageable) {
+        return tradeRepository.findAllByUserId(userId, pageable)
+                .map(trade -> new SummarizedTradeDto(withDankookService.makeListDto(50, trade), trade, objectUploadContext, messageSource));
     }
 }
