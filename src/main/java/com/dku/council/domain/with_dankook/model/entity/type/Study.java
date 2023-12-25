@@ -1,16 +1,15 @@
 package com.dku.council.domain.with_dankook.model.entity.type;
 
-import com.dku.council.domain.tag.model.entity.StudyTag;
+import com.dku.council.domain.studytag.model.entity.StudyTag;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static lombok.AccessLevel.*;
 
@@ -36,20 +35,22 @@ public class Study extends WithDankook {
     @NotNull
     private LocalDateTime endTime;
 
-    @OneToMany
-    private List<StudyTag> tags = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_tag_id")
+    private StudyTag tag;
 
     @NotNull
     @Lob
     private String content;
 
     @Builder
-    private Study(User user, String chatLink, String title, int minStudentId, LocalDateTime startTime, LocalDateTime endTime, String content) {
+    private Study(User user, String chatLink, String title, int minStudentId, LocalDateTime startTime, LocalDateTime endTime, StudyTag tag, String content) {
         super(user, chatLink);
         this.title = title;
         this.minStudentId = minStudentId;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.tag = tag;
         this.content = content;
     }
     @Override
