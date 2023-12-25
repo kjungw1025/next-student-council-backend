@@ -5,14 +5,17 @@ import com.dku.council.domain.studytag.repository.StudyTagRepository;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.domain.with_dankook.exception.StudyCooltimeException;
+import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateStudyDto;
+import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleStudyDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
 import com.dku.council.domain.with_dankook.model.entity.type.Study;
 import com.dku.council.domain.with_dankook.repository.StudyRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookMemoryRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
 import com.dku.council.domain.with_dankook.repository.spec.WithDankookSpec;
+import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -122,6 +126,25 @@ public class StudyService {
                         study,
                         withDankookUserService.recruitedCount(withDankookService.makeListDto(50, study).getId())
                 ));
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseSingleStudyDto findOne(Long studyId, Long userId, UserRole role) {
+        Study study = findStudy(studyRepository, studyId, role);
+        return new ResponseSingleStudyDto(withDankookService.makeSingleDto(userId, study),
+                study,
+                withDankookUserService.recruitedCount(withDankookService.makeSingleDto(userId, study).getId())
+                );
+    }
+
+    private Study findStudy(StudyRepository studyRepository, Long studyId, UserRole role) {
+        Optional<Study> study;
+        if (role.isAdmin()) {
+            study = studyRepository.findWithClosedById(studyId);
+        } else {
+            study = studyRepository.findById(studyId);
+        }
+        return study.orElseThrow(WithDankookNotFoundException::new);
     }
 
     @Transactional

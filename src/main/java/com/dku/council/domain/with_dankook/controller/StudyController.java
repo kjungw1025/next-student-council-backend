@@ -3,6 +3,7 @@ package com.dku.council.domain.with_dankook.controller;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateStudyDto;
+import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleStudyDto;
 import com.dku.council.domain.with_dankook.service.StudyService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.UserAuth;
@@ -68,6 +69,17 @@ public class StudyController {
                                                         @ParameterObject Pageable pageable) {
         Page<SummarizedStudyDto> list = studyService.listMyPosts(auth.getUserId(), pageable);
         return new ResponsePage<>(list);
+    }
+
+    /**
+     * 단터디 게시글 상세 조회
+     *
+     */
+    @GetMapping("/{id}")
+    @UserAuth
+    public ResponseSingleStudyDto findOne(AppAuthentication auth,
+                                          @PathVariable Long id) {
+        return studyService.findOne(id, auth.getUserId(), auth.getUserRole());
     }
 
     /**
