@@ -1,6 +1,5 @@
-package com.dku.council.domain.with_dankook.model.dto.list;
+package com.dku.council.domain.with_dankook.model.dto.response;
 
-import com.dku.council.domain.with_dankook.model.WithDankookStatus;
 import com.dku.council.domain.with_dankook.model.dto.TradeImageDto;
 import com.dku.council.domain.with_dankook.model.entity.type.Trade;
 import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
@@ -12,9 +11,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import java.util.List;
 
 @Getter
-public class SummarizedTradeDto extends SummarizedWithDankookDto{
+public class ResponseSingleTradeDto extends ResponseSingleWithDankookDto {
 
-    @Schema(description = "제목", example = "게시글 제목")
+    @Schema(description = "제목", example = "물물교환")
     private final String title;
 
     @Schema(description = "가격", example = "10000")
@@ -32,7 +31,7 @@ public class SummarizedTradeDto extends SummarizedWithDankookDto{
     @Schema(description = "거래 상태", example = "거래중")
     private final String status;
 
-    public SummarizedTradeDto(SummarizedWithDankookDto dto, Trade trade, ObjectUploadContext context, MessageSource messageSource){
+    public ResponseSingleTradeDto(ResponseSingleWithDankookDto dto, Trade trade, ObjectUploadContext context, MessageSource messageSource) {
         super(dto);
         this.title = trade.getTitle();
         this.price = trade.getPrice();

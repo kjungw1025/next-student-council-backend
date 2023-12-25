@@ -58,4 +58,12 @@ public abstract class WithDankook extends BaseEntity {
     public void markAsDeleted(boolean byAdmin) {
         this.withDankookStatus = byAdmin ? WithDankookStatus.DELETED_BY_ADMIN : WithDankookStatus.DELETED;
     }
+
+    public boolean isClosed() {
+        return withDankookStatus == WithDankookStatus.CLOSED;
+    }
+
+    public void close() {
+        this.withDankookStatus = WithDankookStatus.CLOSED;
+    }
 }
