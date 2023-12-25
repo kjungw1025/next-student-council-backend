@@ -21,11 +21,15 @@ public class SummarizedWithDankookDto {
     @Schema(description = "채팅 링크", example = "https://open.kakao.com/o/ghjgjgjg")
     private final String chatLink;
 
+    @Schema(description = "게시글 타입", example = "TRADE")
+    private final String type;
+
     public SummarizedWithDankookDto(int bodySize, WithDankook withDankook) {
         this.id = withDankook.getId();
         this.author = withDankook.getDisplayingUsername();
         this.createdAt = withDankook.getCreatedAt();
         this.chatLink = withDankook.getChatLink();
+        this.type = withDankook.getClass().getSimpleName().toUpperCase();
     }
 
     public SummarizedWithDankookDto(SummarizedWithDankookDto copy) {
@@ -33,5 +37,6 @@ public class SummarizedWithDankookDto {
         this.author = copy.getAuthor();
         this.createdAt = copy.getCreatedAt();
         this.chatLink = copy.getChatLink();
+        this.type = copy.getType();
     }
 }
