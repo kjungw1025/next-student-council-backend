@@ -1,24 +1,34 @@
 package com.dku.council.domain.with_dankook.service;
 
+import com.dku.council.domain.like.model.LikeTarget;
+import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.exception.PostNotFoundException;
 import com.dku.council.domain.user.repository.UserRepository;
+import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedWithDankookDto;
+import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleWithDankookDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import com.dku.council.domain.with_dankook.repository.WithDankookRepository;
 import com.dku.council.domain.with_dankook.repository.spec.WithDankookSpec;
+import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.NotGrantedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class WithDankookService<E extends WithDankook> {
 
     protected final UserRepository userRepository;
+
+    protected final LikeService likeService;
 
     /**
      * With-Dankook 게시판 글 목록 조회
@@ -52,6 +62,66 @@ public class WithDankookService<E extends WithDankook> {
 
     public SummarizedWithDankookDto makeListDto(int bodySize, E withDankook) {
         return new SummarizedWithDankookDto(bodySize, withDankook);
+    }
+
+    /**
+     * With-Dankook 게시판 글 단건 조회
+     *
+     * @param repository    조회할 게시글 repository
+     * @param withDankookId 조회할 게시글 id
+     * @param userId        요청한 사용자 id
+     * @param role          요청한 사용자의 권한
+     * @return              조회한 게시글
+     */
+    @Transactional
+    public ResponseSingleWithDankookDto findOne(WithDankookRepository<E> repository, Long withDankookId, @Nullable Long userId,
+                                                UserRole role) {
+        E withDankook = findWithDankook(repository, withDankookId, role);
+        return makeSingleDto(userId, withDankook);
+    }
+
+    @Transactional
+    public <T> T findOne(WithDankookRepository<E> repository, Long withDankookId, Long userId, UserRole role,
+                         PostResultMapper<T, ResponseSingleWithDankookDto, E> mapper) {
+        E withDankook = findWithDankook(repository, withDankookId, role);
+        ResponseSingleWithDankookDto dto = makeSingleDto(userId, withDankook);
+
+        try {
+            return mapper.map(dto, withDankook);
+        } catch (Exception e) {
+            throw new WithDankookNotFoundException();
+        }
+    }
+
+    public ResponseSingleWithDankookDto makeSingleDto(Long userId, E withDankook) {
+        int likes = likeService.getCountOfLikes(withDankook.getId(), LikeTarget.WITH_DANKOOK);
+        boolean isMine = false;
+        boolean isLiked = false;
+
+        if (userId != null) {
+            isMine = withDankook.getMasterUser().getId().equals(userId);
+            isLiked = likeService.isLiked(withDankook.getId(), userId, LikeTarget.WITH_DANKOOK);
+        }
+
+        return new ResponseSingleWithDankookDto(likes, isMine, isLiked, withDankook);
+    }
+
+    /**
+     * With-Dankook 게시판 글을 조회합니다.
+     *
+     * @param repository     조회할 게시글 repository
+     * @param withDankookId  조회할 게시글 id
+     * @param role           요청한 사용자의 권한
+     * @return               조회한 게시글
+     */
+    private E findWithDankook(WithDankookRepository<E> repository, Long withDankookId, UserRole role) {
+        Optional<E> withDankook;
+        if (role.isAdmin()) {
+            withDankook = repository.findWithClosedById(withDankookId);
+        } else {
+            withDankook = repository.findById(withDankookId);
+        }
+        return withDankook.orElseThrow(WithDankookNotFoundException::new);
     }
 
     /**
