@@ -57,17 +57,17 @@ class TradeServiceTest {
 
     private TradeService tradeService;
 
-    @BeforeEach
-    public void setup() {
-        tradeService = new TradeService(tradeRepository, withDankookMemoryRepository, userRepository,
-                withDankookService, likeService, imageUploadService, thumbnailService, objectUploadContext,
-                clock, writeCooltime);
-    }
-
-    @Test
-    @DisplayName("글 작성 - 쿨타임 이전에 작성한 적 없는 경우")
-    public void create() {
-
-    }
+//    @BeforeEach
+//    public void setup() {
+//        tradeService = new TradeService(tradeRepository, withDankookMemoryRepository, userRepository,
+//                withDankookService, likeService, imageUploadService, thumbnailService, objectUploadContext,
+//                clock, writeCooltime);
+//    }
+//
+//    @Test
+//    @DisplayName("글 작성 - 쿨타임 이전에 작성한 적 없는 경우")
+//    public void create() {
+//
+//    }
 
 }
