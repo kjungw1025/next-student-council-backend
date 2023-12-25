@@ -4,6 +4,8 @@ import com.dku.council.domain.with_dankook.model.WithDankookStatus;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.JoinType;
+
 public class WithDankookSpec {
 
     public static <T extends WithDankook> Specification<T> withActive() {
@@ -23,4 +25,17 @@ public class WithDankookSpec {
                         builder.like(root.get("content"), pattern)
                 );
     }
+
+    public static <T extends WithDankook> Specification<T> withStudyTagName(String studyTagName) {
+        if (studyTagName == null || studyTagName.equals("null")) {
+            return Specification.where(null);
+        }
+
+        String pattern = "%" + studyTagName + "%";
+        return (root, query, builder) -> {
+            root.fetch("tag", JoinType.LEFT); // 태그가 없는 엔티티를 포함하려면 LEFT JOIN을 사용
+            return builder.like(root.get("tag").get("name"), pattern);
+        };
+    }
+
 }
