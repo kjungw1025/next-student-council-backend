@@ -3,6 +3,7 @@ package com.dku.council.domain.with_dankook.model.dto;
 import com.dku.council.domain.with_dankook.model.entity.TradeImage;
 import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
 import org.springframework.http.MediaType;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Getter
 public class TradeImageDto {
 
     @Schema(description = "이미지 아이디", example = "1")
