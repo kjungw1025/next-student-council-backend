@@ -35,8 +35,8 @@ public class Dormitory extends WithDankook {
     private String duration;
 
     @Builder
-    private Dormitory(User user, String chatLink, String title, int minStudentId, String livingHall, String duration) {
-        super(user, chatLink);
+    private Dormitory(User user, String title, int minStudentId, String livingHall, String duration) {
+        super(user);
         this.title = title;
         this.minStudentId = minStudentId;
         this.livingHall = livingHall;

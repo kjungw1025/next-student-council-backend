@@ -40,8 +40,8 @@ public class Trade extends WithDankook {
     private List<TradeImage> images = new ArrayList<>();
 
     @Builder
-    private Trade(User user, String chatLink, String title, int price, String content, String tradePlace) {
-        super(user, chatLink);
+    private Trade(User user, String title, int price, String content, String tradePlace) {
+        super(user);
         this.title = title;
         this.price = price;
         this.content = content;

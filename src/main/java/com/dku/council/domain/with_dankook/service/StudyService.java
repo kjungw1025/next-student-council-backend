@@ -4,8 +4,11 @@ import com.dku.council.domain.studytag.model.entity.StudyTag;
 import com.dku.council.domain.studytag.repository.StudyTagRepository;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
+import com.dku.council.domain.with_dankook.exception.InvalidMinStudentIdException;
+import com.dku.council.domain.with_dankook.exception.InvalidStatusException;
 import com.dku.council.domain.with_dankook.exception.StudyCooltimeException;
 import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
+import com.dku.council.domain.with_dankook.model.ParticipantStatus;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleStudyDto;
@@ -71,7 +74,6 @@ public class StudyService {
                 .endTime(dto.getEndTime())
                 .tag(studyTag)
                 .content(dto.getContent())
-                .chatLink(dto.getChatLink())
                 .build();
 
         Long result = studyRepository.save(study).getId();
@@ -145,6 +147,28 @@ public class StudyService {
             study = studyRepository.findById(studyId);
         }
         return study.orElseThrow(WithDankookNotFoundException::new);
+    }
+
+    @Transactional
+    public void enter(Long id, Long userId, UserRole userRole) {
+        Study study = findStudy(studyRepository, id, userRole);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        boolean isValid = isInvalidParticipant(study, user);
+        if (study.getMinStudentId() < Integer.parseInt(String.valueOf(user.getYearOfAdmission()).substring(2))) {
+            throw new InvalidMinStudentIdException();
+        } else if(isValid) {
+            throw new InvalidStatusException();
+        } else{
+            withDankookService.enter(studyRepository, id, userId, userRole);
+        }
+    }
+
+    private boolean isInvalidParticipant(Study study, User user) {
+        return study.getUsers().stream().anyMatch(
+                withDankookUser -> withDankookUser.getParticipant().getId().equals(user.getId()) &&
+                        withDankookUser.getParticipantStatus().equals(ParticipantStatus.INVALID)
+        );
     }
 
     @Transactional

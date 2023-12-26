@@ -27,8 +27,8 @@ public class EatingAlong extends WithDankook {
     private String content;
 
     @Builder
-    private EatingAlong(User user, String chatLink, String title, String content) {
-        super(user, chatLink);
+    private EatingAlong(User user, String title, String content) {
+        super(user);
         this.title = title;
         this.content = content;
     }

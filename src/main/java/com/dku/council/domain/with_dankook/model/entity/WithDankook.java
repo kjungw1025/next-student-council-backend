@@ -39,17 +39,11 @@ public abstract class WithDankook extends BaseEntity {
     @OneToMany(mappedBy = "withDankook", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WithDankookUser> users = new ArrayList<>();
 
-    @NonNull
-    @Lob
-    @Column(name = "chat_link")
-    private String chatLink;
-
     @Enumerated(STRING)
     private WithDankookStatus withDankookStatus;
 
-    protected WithDankook(User user, String chatLink) {
+    protected WithDankook(User user) {
         this.masterUser = user;
-        this.chatLink = chatLink;
         this.withDankookStatus = ACTIVE;
     }
 

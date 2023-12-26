@@ -2,6 +2,7 @@ package com.dku.council.domain.with_dankook.model.dto.request;
 
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.with_dankook.model.entity.type.Study;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -20,11 +21,13 @@ public class RequestCreateStudyDto extends RequestCreateWithDankookDto<Study> {
     private final int minStudentId;
 
     @NotNull
-    @Schema(description = "스터디 시작 시간", example = "2023-12-25 17:30:00")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
+    @Schema(description = "스터디 시작 시간", example = "2023-12-25 17:30")
     private final LocalDateTime startTime;
 
     @NotNull
-    @Schema(description = "스터디 끝나는 시간", example = "2023-12-25 18:30:00")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
+    @Schema(description = "스터디 끝나는 시간", example = "2023-12-25 18:30")
     private final LocalDateTime endTime;
 
     @Schema(description = "해시태그", example = "자격증")
@@ -34,24 +37,18 @@ public class RequestCreateStudyDto extends RequestCreateWithDankookDto<Study> {
     @Schema(description = "본문", example = "내용")
     private final String content;
 
-    @NotBlank
-    @Schema(description = "오픈채팅방 링크", example = "https://open.kakao.com/o/abc123")
-    private final String chatLink;
-
     public RequestCreateStudyDto (@NotBlank String title,
                                   @NotBlank int minStudentId,
                                   @NotBlank LocalDateTime startTime,
                                   @NotBlank LocalDateTime endTime,
                                   String tag,
-                                  @NotBlank String content,
-                                  @NotBlank String chatLink) {
+                                  @NotBlank String content) {
         this.title = title;
         this.minStudentId = minStudentId;
         this.startTime = startTime;
         this.endTime = endTime;
         this.tag = tag;
         this.content = content;
-        this.chatLink = chatLink;
     }
 
     public Study toEntity(User user) {
@@ -62,7 +59,6 @@ public class RequestCreateStudyDto extends RequestCreateWithDankookDto<Study> {
                 .endTime(endTime)
                 .content(content)
                 .user(user)
-                .chatLink(chatLink)
                 .build();
     }
 }

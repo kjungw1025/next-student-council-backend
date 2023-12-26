@@ -132,4 +132,13 @@ public class PetitionService {
                     return new SummarizedPetitionDto(dto, post, expiresTime, statisticService.count(post.getId()));
                 });
     }
+
+    @Transactional(readOnly = true)
+    public Page<SummarizedPetitionDto> listMyAgreedPosts(Long userId, Pageable pageable, int bodySize) {
+        return repository.findAllAgreedByUserId(userId, pageable)
+                .map(post -> {
+                    SummarizedGenericPostDto dto = postService.makeListDto(bodySize, post);
+                    return new SummarizedPetitionDto(dto, post, expiresTime, statisticService.count(post.getId()));
+                });
+    }
 }
