@@ -17,13 +17,13 @@ public class SummarizedStudyDto extends SummarizedWithDankookDto {
     private final String tag;
 
     @Schema(description = "모집된 인원", example = "1")
-    private final int recruited;
+    private final int recruitedCount;
 
-    public SummarizedStudyDto(SummarizedWithDankookDto dto, Study study, int recruited) {
+    public SummarizedStudyDto(SummarizedWithDankookDto dto, Study study, int recruitedCount) {
         super(dto);
         this.title = study.getTitle();
         this.content = study.getContent();
         this.tag = study.getTag().getName();
-        this.recruited = recruited;
+        this.recruitedCount = recruitedCount;
     }
 }
