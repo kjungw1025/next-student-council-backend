@@ -29,4 +29,8 @@ public interface PetitionRepository extends GenericPostRepository<Petition>{
     @Query("select p from Petition p where p.user.id=:userId and p.status='ACTIVE'")
     Page<Petition> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 
+    @Query("select p from Petition p " +
+            "join fetch PetitionStatistic ps on p.id = ps.petition.id " +
+            "where ps.user.id=:userId and p.status='ACTIVE' ")
+    Page<Petition> findAllAgreedByUserId (@Param("userId") Long userId, Pageable pageable);
 }
