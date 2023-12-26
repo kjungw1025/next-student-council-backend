@@ -7,8 +7,11 @@ import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.domain.with_dankook.exception.AlreadyEnteredException;
 import com.dku.council.domain.with_dankook.exception.AlreadyFullRecruitedException;
+import com.dku.council.domain.with_dankook.exception.InvalidStatusException;
 import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
+import com.dku.council.domain.with_dankook.model.ParticipantStatus;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedWithDankookDto;
+import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateWithDankookDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleWithDankookDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
@@ -132,6 +135,16 @@ public class WithDankookService<E extends WithDankook> {
         return withDankook.orElseThrow(WithDankookNotFoundException::new);
     }
 
+    @Transactional
+    public Long create(WithDankookRepository<E> repository, Long userId, RequestCreateWithDankookDto<E> dto) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        E withDankook = dto.toEntity(user);
+
+        E result = repository.save(withDankook);
+        return result.getId();
+    }
+
     /**
      * With-Dankook 게시판 글에 참여를 신청합니다.
      *
@@ -144,16 +157,23 @@ public class WithDankookService<E extends WithDankook> {
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
+        boolean isInvalid = isInvalidParticipant(withDankook, user);
         if (withDankookUserService.isParticipant(withDankookId, user.getId())) {
             throw new AlreadyEnteredException();
         } else if (withDankookUserService.recruitedCount(withDankook.getId()) >= 4){
             throw new AlreadyFullRecruitedException();
+        } else if (isInvalid) {
+            throw new InvalidStatusException();
         } else {
             WithDankookUser withDankookUser = WithDankookUser.builder()
                     .user(user)
                     .withDankook(withDankook)
                     .build();
             withDankookUserRepository.save(withDankookUser);
+        }
+
+        if (withDankookUserService.recruitedCount(withDankook.getId()) == 4) {
+            withDankook.markAsFull();
         }
     }
     /**
@@ -174,6 +194,13 @@ public class WithDankookService<E extends WithDankook> {
         } else {
             throw new NotGrantedException();
         }
+    }
+
+    public boolean isInvalidParticipant(E withDankook, User user) {
+        return withDankook.getUsers().stream().anyMatch(
+                withDankookUser -> withDankookUser.getParticipant().getId().equals(user.getId()) &&
+                        withDankookUser.getParticipantStatus().equals(ParticipantStatus.INVALID)
+        );
     }
 
     @FunctionalInterface

@@ -123,7 +123,7 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public Page<SummarizedStudyDto> listMyPosts(Long userId, Pageable pageable) {
-        return studyRepository.findAllByUserId(userId, pageable)
+        return studyRepository.findAllStudyByUserId(userId, pageable)
                 .map(study -> new SummarizedStudyDto(withDankookService.makeListDto(50, study),
                         study,
                         withDankookUserService.recruitedCount(withDankookService.makeListDto(50, study).getId())
@@ -135,8 +135,7 @@ public class StudyService {
         Study study = findStudy(studyRepository, studyId, role);
         return new ResponseSingleStudyDto(withDankookService.makeSingleDto(userId, study),
                 study,
-                withDankookUserService.recruitedCount(withDankookService.makeSingleDto(userId, study).getId())
-                );
+                withDankookUserService.recruitedCount(withDankookService.makeSingleDto(userId, study).getId()));
     }
 
     private Study findStudy(StudyRepository studyRepository, Long studyId, UserRole role) {
@@ -154,21 +153,11 @@ public class StudyService {
         Study study = findStudy(studyRepository, id, userRole);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        boolean isValid = isInvalidParticipant(study, user);
         if (study.getMinStudentId() < Integer.parseInt(String.valueOf(user.getYearOfAdmission()).substring(2))) {
             throw new InvalidMinStudentIdException();
-        } else if(isValid) {
-            throw new InvalidStatusException();
-        } else{
+        } else {
             withDankookService.enter(studyRepository, id, userId, userRole);
         }
-    }
-
-    private boolean isInvalidParticipant(Study study, User user) {
-        return study.getUsers().stream().anyMatch(
-                withDankookUser -> withDankookUser.getParticipant().getId().equals(user.getId()) &&
-                        withDankookUser.getParticipantStatus().equals(ParticipantStatus.INVALID)
-        );
     }
 
     @Transactional
