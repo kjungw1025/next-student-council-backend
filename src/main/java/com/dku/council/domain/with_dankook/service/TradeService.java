@@ -79,7 +79,6 @@ public class TradeService {
                 .price(dto.getPrice())
                 .content(dto.getContent())
                 .tradePlace(dto.getTradePlace())
-                .chatLink(dto.getChatLink())
                 .build();
 
         attachImages(trade, dto.getImages());

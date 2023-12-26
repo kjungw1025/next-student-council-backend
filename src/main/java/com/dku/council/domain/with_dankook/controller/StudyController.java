@@ -94,6 +94,17 @@ public class StudyController {
     }
 
     /**
+     * 단터디 게시글 신청
+     *
+     * @param id   게시글 id
+     */
+    @PostMapping("/{id}/enter")
+    @UserAuth
+    public void enter(AppAuthentication auth, @PathVariable @Valid Long id) {
+        studyService.enter(id, auth.getUserId(), auth.getUserRole());
+    }
+
+    /**
      * 단터디 게시글 삭제
      *
      * @param auth 사용자 인증정보

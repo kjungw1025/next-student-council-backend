@@ -3,15 +3,21 @@ package com.dku.council.domain.with_dankook.service;
 import com.dku.council.domain.like.model.LikeTarget;
 import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.exception.PostNotFoundException;
+import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
+import com.dku.council.domain.with_dankook.exception.AlreadyEnteredException;
+import com.dku.council.domain.with_dankook.exception.AlreadyFullRecruitedException;
 import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedWithDankookDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleWithDankookDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
+import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
 import com.dku.council.domain.with_dankook.repository.WithDankookRepository;
+import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
 import com.dku.council.domain.with_dankook.repository.spec.WithDankookSpec;
 import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.NotGrantedException;
+import com.dku.council.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +33,10 @@ import java.util.Optional;
 public class WithDankookService<E extends WithDankook> {
 
     protected final UserRepository userRepository;
+    protected final WithDankookUserRepository withDankookUserRepository;
 
     protected final LikeService likeService;
+    protected final WithDankookUserService withDankookUserService;
 
     /**
      * With-Dankook 게시판 글 목록 조회
@@ -124,6 +132,30 @@ public class WithDankookService<E extends WithDankook> {
         return withDankook.orElseThrow(WithDankookNotFoundException::new);
     }
 
+    /**
+     * With-Dankook 게시판 글에 참여를 신청합니다.
+     *
+     * @param withDankookId  게시글 id
+     * @param userId         사용자 id
+     */
+    @Transactional
+    public void enter(WithDankookRepository<E> repository, Long withDankookId, Long userId, UserRole role) {
+        E withDankook = findWithDankook(repository, withDankookId, role);
+
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        if (withDankookUserService.isParticipant(withDankookId, user.getId())) {
+            throw new AlreadyEnteredException();
+        } else if (withDankookUserService.recruitedCount(withDankook.getId()) >= 4){
+            throw new AlreadyFullRecruitedException();
+        } else {
+            WithDankookUser withDankookUser = WithDankookUser.builder()
+                    .user(user)
+                    .withDankook(withDankook)
+                    .build();
+            withDankookUserRepository.save(withDankookUser);
+        }
+    }
     /**
      * With-Dankook 게시판 글 삭제. 실제 DB에서 삭제는 하지 않는다.
      *
