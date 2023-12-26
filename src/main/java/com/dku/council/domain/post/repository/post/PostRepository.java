@@ -46,4 +46,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "and p.status='ACTIVE'")
     Long countAllByUserId(@Param("userId") Long userId);
 
+    /**
+     * user 가 작성한 청원 게시글의 총 개수를 가져옵니다.
+     */
+    @Query("select count(*) from Post p " +
+            "where p.user.id=:userId and " +
+            "TYPE(p) IN (Petition) and " +
+            "p.status='ACTIVE' ")
+    Long countAllPetitionByUserId(@Param("userId") Long userId);
+
+    /**
+     * user 가 동의한 청원 게시글의 총 개수를 가져옵니다.
+     */
+    @Query("select count(*) from Post p " +
+            "join PetitionStatistic as ps on p.id = ps.petition.id " +
+            "where ps.user.id=:userId and " +
+            "p.status='ACTIVE' ")
+    Long countAllAgreedPetitionByUserId(Long userId);
 }
