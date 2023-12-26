@@ -30,9 +30,11 @@ public class Study extends WithDankook {
     private int minStudentId;
 
     @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:MM")
     private LocalDateTime startTime;
 
     @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:MM")
     private LocalDateTime endTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,8 +46,8 @@ public class Study extends WithDankook {
     private String content;
 
     @Builder
-    private Study(User user, String chatLink, String title, int minStudentId, LocalDateTime startTime, LocalDateTime endTime, StudyTag tag, String content) {
-        super(user, chatLink);
+    private Study(User user, String title, int minStudentId, LocalDateTime startTime, LocalDateTime endTime, StudyTag tag, String content) {
+        super(user);
         this.title = title;
         this.minStudentId = minStudentId;
         this.startTime = startTime;
