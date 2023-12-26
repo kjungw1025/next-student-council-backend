@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 import static com.dku.council.domain.with_dankook.model.ParticipantStatus.VALID;
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.*;
 
@@ -31,6 +32,7 @@ public class WithDankookUser extends BaseEntity {
     @JoinColumn(name = "with_dankook_id")
     private WithDankook withDankook;
 
+    @Enumerated(STRING)
     private ParticipantStatus participantStatus;
 
     @Builder
