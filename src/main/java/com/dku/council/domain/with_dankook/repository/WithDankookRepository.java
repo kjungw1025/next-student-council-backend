@@ -29,4 +29,8 @@ public interface WithDankookRepository<T extends WithDankook> extends JpaReposit
     @Query("select w from WithDankook w " +
             "where w.masterUser.id=:userId and (w.withDankookStatus='ACTIVE' or w.withDankookStatus='CLOSED')")
     Page<T> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("select w from WithDankook w " +
+            "where w.withDankookStatus='ACTIVE' order by w.createdAt desc")
+    Page<T> findTop5OrderByCreatedAtDesc(Pageable pageable);
 }
