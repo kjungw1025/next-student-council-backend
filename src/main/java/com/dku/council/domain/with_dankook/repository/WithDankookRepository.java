@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 public interface WithDankookRepository<T extends WithDankook> extends JpaRepository<T, Long>, JpaSpecificationExecutor<T> {
@@ -33,4 +34,11 @@ public interface WithDankookRepository<T extends WithDankook> extends JpaReposit
     @Query("select w from WithDankook w " +
             "where w.withDankookStatus='ACTIVE' order by w.createdAt desc")
     Page<T> findTop5OrderByCreatedAtDesc(Pageable pageable);
+
+    @Query("select w from WithDankook w " +
+            "where w.withDankookStatus='ACTIVE' or w.withDankookStatus='FULL' order by w.createdAt desc")
+    Page<T> findAllWithActive(Pageable pageable);
+
+    @Override
+    Page<T> findAll(Pageable pageable);
 }
