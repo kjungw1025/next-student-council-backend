@@ -88,9 +88,9 @@ public class BearEatsService {
     private BearEats findBearEats(BearEatsRepository bearEatsRepository, Long id, UserRole role) {
         Optional<BearEats> bearEats;
         if (role.isAdmin()) {
-            bearEats = bearEatsRepository.findWithClosedById(id);
+            bearEats = bearEatsRepository.findWithAllStatusById(id);
         } else {
-            bearEats = bearEatsRepository.findById(id);
+            bearEats = bearEatsRepository.findWithClosedAndFullById(id);
         }
         return bearEats.orElseThrow(WithDankookNotFoundException::new);
     }

@@ -141,9 +141,9 @@ public class StudyService {
     private Study findStudy(StudyRepository studyRepository, Long studyId, UserRole role) {
         Optional<Study> study;
         if (role.isAdmin()) {
-            study = studyRepository.findWithClosedById(studyId);
+            study = studyRepository.findWithAllStatusById(studyId);
         } else {
-            study = studyRepository.findById(studyId);
+            study = studyRepository.findWithClosedAndFullById(studyId);
         }
         return study.orElseThrow(WithDankookNotFoundException::new);
     }
