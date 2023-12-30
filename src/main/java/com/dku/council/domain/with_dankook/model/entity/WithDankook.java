@@ -64,4 +64,8 @@ public abstract class WithDankook extends BaseEntity {
     public void close() {
         this.withDankookStatus = WithDankookStatus.CLOSED;
     }
+
+    public String getStatus() {
+        return this.withDankookStatus.toString();
+    }
 }

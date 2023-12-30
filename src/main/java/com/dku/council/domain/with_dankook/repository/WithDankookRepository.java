@@ -27,10 +27,31 @@ public interface WithDankookRepository<T extends WithDankook> extends JpaReposit
     Optional<T> findWithClosedById(@Param("withDankookId") Long withDankookId);
 
     @Query("select w from WithDankook w " +
+            "join fetch w.masterUser u " +
+            "join fetch u.major " +
+            "where w.id=:withDankookId and (w.withDankookStatus='CLOSED' or w.withDankookStatus='FULL' or w.withDankookStatus='ACTIVE')")
+    Optional<T> findWithClosedAndFullById(@Param("withDankookId") Long withDankookId);
+
+    @Query("select w from WithDankook w " +
+            "join fetch w.masterUser u " +
+            "join fetch u.major " +
+            "where w.id=:withDankookId ")
+    Optional<T> findWithAllStatusById(@Param("withDankookId") Long withDankookId);
+
+    @Query("select w from WithDankook w " +
             "where w.masterUser.id=:userId and (w.withDankookStatus='ACTIVE' or w.withDankookStatus='CLOSED')")
     Page<T> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 
     @Query("select w from WithDankook w " +
             "where w.withDankookStatus='ACTIVE' order by w.createdAt desc")
     Page<T> findTop5OrderByCreatedAtDesc(Pageable pageable);
+
+    @Query(value = "select w.type from with_dankook w " +
+                    "where w.with_dankook_id = :withDankookId ", nativeQuery = true)
+    String findWithDankookType(@Param("withDankookId") Long withDankookId);
+
+    @Query("select COUNT(*) from WithDankook w " +
+            "where w.id = :withDankookId and " +
+            "w.withDankookStatus = 'FULL' ")
+    int findWithFullById(@Param("withDankookId") Long withDankookId);
 }

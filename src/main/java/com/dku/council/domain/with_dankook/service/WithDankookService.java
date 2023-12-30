@@ -37,6 +37,7 @@ public class WithDankookService<E extends WithDankook> {
 
     protected final UserRepository userRepository;
     protected final WithDankookUserRepository withDankookUserRepository;
+    protected final WithDankookRepository<WithDankook> withDankookRepository;
 
     protected final LikeService likeService;
     protected final WithDankookUserService withDankookUserService;
@@ -206,5 +207,13 @@ public class WithDankookService<E extends WithDankook> {
     @FunctionalInterface
     public interface PostResultMapper<T, D, E extends WithDankook> {
         T map(D dto, E withDankook);
+    }
+
+    public boolean isFullStatus(Long withDankookId) {
+        if (withDankookRepository.findWithFullById(withDankookId) == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
