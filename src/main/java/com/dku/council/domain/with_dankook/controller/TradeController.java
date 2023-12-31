@@ -3,13 +3,10 @@ package com.dku.council.domain.with_dankook.controller;
 import com.dku.council.domain.like.model.LikeTarget;
 import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
-import com.dku.council.domain.with_dankook.model.WithDankookStatus;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedTradeDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateTradeDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleTradeDto;
-import com.dku.council.domain.with_dankook.model.entity.type.Trade;
 import com.dku.council.domain.with_dankook.service.TradeService;
-import com.dku.council.domain.with_dankook.service.WithDankookService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.UserAuth;
 import com.dku.council.global.model.dto.ResponseIdDto;
@@ -22,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 @Tag(name = "단국 거래 게시판", description = "단국 거래 게시판 API")
 @RestController

@@ -4,8 +4,11 @@ import com.dku.council.domain.studytag.model.entity.StudyTag;
 import com.dku.council.domain.studytag.repository.StudyTagRepository;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
+import com.dku.council.domain.with_dankook.exception.InvalidMinStudentIdException;
+import com.dku.council.domain.with_dankook.exception.InvalidStatusException;
 import com.dku.council.domain.with_dankook.exception.StudyCooltimeException;
 import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
+import com.dku.council.domain.with_dankook.model.ParticipantStatus;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleStudyDto;
@@ -71,7 +74,6 @@ public class StudyService {
                 .endTime(dto.getEndTime())
                 .tag(studyTag)
                 .content(dto.getContent())
-                .chatLink(dto.getChatLink())
                 .build();
 
         Long result = studyRepository.save(study).getId();
@@ -121,7 +123,7 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public Page<SummarizedStudyDto> listMyPosts(Long userId, Pageable pageable) {
-        return studyRepository.findAllByUserId(userId, pageable)
+        return studyRepository.findAllStudyByUserId(userId, pageable)
                 .map(study -> new SummarizedStudyDto(withDankookService.makeListDto(50, study),
                         study,
                         withDankookUserService.recruitedCount(withDankookService.makeListDto(50, study).getId())
@@ -133,18 +135,29 @@ public class StudyService {
         Study study = findStudy(studyRepository, studyId, role);
         return new ResponseSingleStudyDto(withDankookService.makeSingleDto(userId, study),
                 study,
-                withDankookUserService.recruitedCount(withDankookService.makeSingleDto(userId, study).getId())
-                );
+                withDankookUserService.recruitedCount(withDankookService.makeSingleDto(userId, study).getId()));
     }
 
     private Study findStudy(StudyRepository studyRepository, Long studyId, UserRole role) {
         Optional<Study> study;
         if (role.isAdmin()) {
-            study = studyRepository.findWithClosedById(studyId);
+            study = studyRepository.findWithAllStatusById(studyId);
         } else {
-            study = studyRepository.findById(studyId);
+            study = studyRepository.findWithClosedAndFullById(studyId);
         }
         return study.orElseThrow(WithDankookNotFoundException::new);
+    }
+
+    @Transactional
+    public void enter(Long id, Long userId, UserRole userRole) {
+        Study study = findStudy(studyRepository, id, userRole);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        if (study.getMinStudentId() < Integer.parseInt(String.valueOf(user.getYearOfAdmission()).substring(2))) {
+            throw new InvalidMinStudentIdException();
+        } else {
+            withDankookService.enter(studyRepository, id, userId, userRole);
+        }
     }
 
     @Transactional

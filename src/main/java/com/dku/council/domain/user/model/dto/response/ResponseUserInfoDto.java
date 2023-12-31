@@ -19,5 +19,7 @@ public class ResponseUserInfoDto {
     private final Long writePostCount;
     private final Long commentedPostCount;
     private final Long likedPostCount;
+    private final Long petitionCount;
+    private final Long agreedPetitionCount;
     private final boolean admin;
 }

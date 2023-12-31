@@ -1,9 +1,13 @@
 package com.dku.council.domain.with_dankook.service;
 
+import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
+import com.dku.council.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,5 +23,20 @@ public class WithDankookUserService {
      */
     public int recruitedCount(Long withDankookId) {
         return withDankookUserRepository.findRecruitedById(withDankookId);
+    }
+
+    /**
+     * With-Dankook 게시판에 참여한 유저인지 확인합니다.
+     *
+     * @param withDankookId   게시글 id
+     * @param userId          유저 id
+     * @return                참여한 유저인지 여부
+     */
+    public boolean isParticipant(Long withDankookId, Long userId) {
+        return withDankookUserRepository.isExistsByWithDankookIdAndUserId(withDankookId, userId).isPresent();
+    }
+
+    public boolean isPossibleWriteReview(Long withDankookId, Long userId) {
+        return withDankookUserRepository.checkReviewStatus(withDankookId, userId).isPresent();
     }
 }

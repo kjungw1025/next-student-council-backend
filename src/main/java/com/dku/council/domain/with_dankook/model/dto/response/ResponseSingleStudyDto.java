@@ -1,10 +1,13 @@
 package com.dku.council.domain.with_dankook.model.dto.response;
 
+import com.dku.council.domain.with_dankook.model.dto.RecruitedUsersDto;
 import com.dku.council.domain.with_dankook.model.entity.type.Study;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class ResponseSingleStudyDto extends ResponseSingleWithDankookDto {
@@ -28,9 +31,12 @@ public class ResponseSingleStudyDto extends ResponseSingleWithDankookDto {
     private final String content;
 
     @Schema(description = "모집된 인원", example = "1")
-    private final int recruited;
+    private final int recruitedCount;
 
-    public ResponseSingleStudyDto(ResponseSingleWithDankookDto dto, Study study, int recruited) {
+    @Schema(description = "모집된 사용자들")
+    private final List<RecruitedUsersDto> recruitedUsers;
+
+    public ResponseSingleStudyDto(ResponseSingleWithDankookDto dto, Study study, int recruitedCount) {
         super(dto);
         this.title = study.getTitle();
         this.minStudentId = study.getMinStudentId();
@@ -38,6 +44,9 @@ public class ResponseSingleStudyDto extends ResponseSingleWithDankookDto {
         this.endTime = study.getEndTime();
         this.content = study.getContent();
         this.tag = study.getTag().getName();
-        this.recruited = recruited;
+        this.recruitedCount = recruitedCount;
+        this.recruitedUsers = study.getUsers().stream()
+                .map(RecruitedUsersDto::new)
+                .collect(Collectors.toList());
     }
 }

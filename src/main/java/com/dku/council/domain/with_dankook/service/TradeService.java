@@ -79,7 +79,6 @@ public class TradeService {
                 .price(dto.getPrice())
                 .content(dto.getContent())
                 .tradePlace(dto.getTradePlace())
-                .chatLink(dto.getChatLink())
                 .build();
 
         attachImages(trade, dto.getImages());
@@ -137,9 +136,9 @@ public class TradeService {
     private Trade findTrade(TradeRepository tradeRepository, Long tradeId, UserRole role) {
         Optional<Trade> trade;
         if (role.isAdmin()) {
-            trade = tradeRepository.findWithClosedById(tradeId);
+            trade = tradeRepository.findWithAllStatusById(tradeId);
         } else {
-            trade = tradeRepository.findById(tradeId);
+            trade = tradeRepository.findWithClosedById(tradeId);
         }
         return trade.orElseThrow(WithDankookNotFoundException::new);
     }
