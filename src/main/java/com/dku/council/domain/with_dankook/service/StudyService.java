@@ -133,12 +133,6 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SummarizedStudyPossibleReviewDto> listMyPossibleReviewPosts(Long userId, Pageable pageable) {
-        return studyRepository.findAllPossibleReviewPost(userId, pageable)
-                .map(study -> new SummarizedStudyPossibleReviewDto(study, userId));
-    }
-
-    @Transactional(readOnly = true)
     public ResponseSingleStudyDto findOne(Long studyId, Long userId, UserRole role) {
         Study study = findStudy(studyRepository, studyId, role);
         return new ResponseSingleStudyDto(withDankookService.makeSingleDto(userId, study),
