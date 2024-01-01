@@ -10,7 +10,6 @@ import com.dku.council.domain.with_dankook.exception.StudyCooltimeException;
 import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
 import com.dku.council.domain.with_dankook.model.ParticipantStatus;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyDto;
-import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyPossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleStudyDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
