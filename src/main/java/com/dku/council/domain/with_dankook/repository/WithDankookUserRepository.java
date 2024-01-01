@@ -25,7 +25,6 @@ public interface WithDankookUserRepository extends JpaRepository<WithDankookUser
 
     @Query("select u from WithDankookUser u " +
             "where u.withDankook.id = :withDankookId and " +
-                    "u.withDankook.withDankookStatus = 'FULL' and " +
                     "u.reviewStatus = false and " +
                     "u.participant.id = :userId and " +
                     "u.participantStatus = 'VALID' ")

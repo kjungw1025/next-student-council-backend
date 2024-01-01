@@ -30,7 +30,7 @@ public interface WithDankookRepository<T extends WithDankook> extends JpaReposit
             "join fetch w.masterUser u " +
             "join fetch u.major " +
             "where w.id=:withDankookId and (w.withDankookStatus='CLOSED' or w.withDankookStatus='FULL' or w.withDankookStatus='ACTIVE')")
-    Optional<T> findWithClosedAndFullById(@Param("withDankookId") Long withDankookId);
+    Optional<T> findWithNotDeletedById(@Param("withDankookId") Long withDankookId);
 
     @Query("select w from WithDankook w " +
             "join fetch w.masterUser u " +
@@ -52,6 +52,15 @@ public interface WithDankookRepository<T extends WithDankook> extends JpaReposit
 
     @Query("select COUNT(*) from WithDankook w " +
             "where w.id = :withDankookId and " +
-            "w.withDankookStatus = 'FULL' ")
-    int findWithFullById(@Param("withDankookId") Long withDankookId);
+            "w.withDankookStatus = 'CLOSED'")
+    int findWithClosedByIdToCreateReview(@Param("withDankookId") Long withDankookId);
+
+    @Query("select COUNT(*) from WithDankook w " +
+            "where w.id = :withDankookId and (w.withDankookStatus in ('FULL', 'CLOSED'))")
+    int findWithClosedOrFullByIdToCreateReview(@Param("withDankookId") Long withDankookId);
+
+    @Query("select COUNT(*) from WithDankook w " +
+            "where w.id = :withDankookId and " +
+            "((w.withDankookStatus in ('FULL', 'CLOSED')) or (w.withDankookStatus = 'ACTIVE' and w.endTime <= CURRENT_TIMESTAMP)) ")
+    int findWithClosedOrFullOrActiveByIdToCreateReview(@Param("withDankookId") Long withDankookId);
 }

@@ -138,7 +138,7 @@ public class TradeService {
         if (role.isAdmin()) {
             trade = tradeRepository.findWithAllStatusById(tradeId);
         } else {
-            trade = tradeRepository.findWithClosedById(tradeId);
+            trade = tradeRepository.findWithNotDeletedById(tradeId);
         }
         return trade.orElseThrow(WithDankookNotFoundException::new);
     }

@@ -23,8 +23,8 @@ public class RequestCreateReviewDto {
     @Schema(description = "리뷰내용 번호 리스트", example = "[1, 3, 4]")
     private final List<Integer> reviewList;
 
-    public RequestCreateReviewDto(@NotBlank Long withDankookId,
-                                  @NotBlank Long targetUserId,
+    public RequestCreateReviewDto(@NotNull Long withDankookId,
+                                  @NotNull Long targetUserId,
                                   Boolean isPositive,
                                   @NotBlank List<Integer> reviewList) {
         this.withDankookId = withDankookId;
