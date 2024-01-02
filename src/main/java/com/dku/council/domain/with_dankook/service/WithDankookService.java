@@ -10,6 +10,7 @@ import com.dku.council.domain.with_dankook.exception.AlreadyFullRecruitedExcepti
 import com.dku.council.domain.with_dankook.exception.InvalidStatusException;
 import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
 import com.dku.council.domain.with_dankook.model.ParticipantStatus;
+import com.dku.council.domain.with_dankook.model.WithDankookStatus;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedWithDankookDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateWithDankookDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleWithDankookDto;
@@ -209,11 +210,21 @@ public class WithDankookService<E extends WithDankook> {
         T map(D dto, E withDankook);
     }
 
-    public boolean isFullStatus(Long withDankookId) {
-        if (withDankookRepository.findWithFullById(withDankookId) == 1) {
-            return true;
-        } else {
-            return false;
+    public void isPossibleCreateReview(Long withDankookId) {
+        String withDankookType = withDankookRepository.findWithDankookType(withDankookId);
+
+        if (withDankookType.equals("Trade")) {
+            if (withDankookRepository.findWithClosedByIdToCreateReview(withDankookId) != 1) {
+                throw new InvalidStatusException();
+            }
+        } else if (withDankookType.equals("Study") || withDankookType.equals("Dormitory")) {
+            if (withDankookRepository.findWithClosedOrFullOrActiveByIdToCreateReview(withDankookId) != 1) {
+                throw new InvalidStatusException();
+            }
+        } else if (withDankookType.equals("BearEats") || withDankookType.equals("EatingAlong")) {
+            if (withDankookRepository.findWithClosedOrFullByIdToCreateReview(withDankookId) != 1) {
+                throw new InvalidStatusException();
+            }
         }
     }
 }

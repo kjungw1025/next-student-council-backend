@@ -45,25 +45,7 @@ public class ReviewController {
     @UserAuth
     public void create(AppAuthentication auth,
                                 @Valid @RequestBody RequestCreateReviewDto dto) {
-        if (auth.getUserId() == dto.getTargetUserId()) {
-            throw new InvalidCreateReviewToMyselfException();
-        } else {
-            if (withDankookUserService.isParticipant(dto.getWithDankookId(), auth.getUserId())) {
-                // with-dankook 게시판의 상태가 모집 완료 상태(FULL)가 아니라면
-                if (!withDankookService.isFullStatus(dto.getWithDankookId())) {
-                    throw new InvalidStatusException();
-                }
-
-                // 리뷰를 이미 작성한 사용자라면
-                if (!withDankookUserService.isPossibleWriteReview(dto.getWithDankookId(), auth.getUserId())) {
-                    throw new AlreadyWrittenReviewException();
-                }
-
-                reviewService.create(auth.getUserId(), dto);
-            } else {
-                throw new WithDankookUserNotFoundException();
-            }
-        }
+        reviewService.create(auth.getUserId(), dto);
     }
 
     /**

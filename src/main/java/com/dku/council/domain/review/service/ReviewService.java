@@ -1,5 +1,7 @@
 package com.dku.council.domain.review.service;
 
+import com.dku.council.domain.review.exception.AlreadyWrittenReviewException;
+import com.dku.council.domain.review.exception.InvalidCreateReviewToMyselfException;
 import com.dku.council.domain.review.exception.ReviewNotFoundException;
 import com.dku.council.domain.review.model.dto.request.RequestCreateReviewDto;
 import com.dku.council.domain.review.model.dto.response.ResponseReviewPositiveCountDto;
@@ -9,11 +11,14 @@ import com.dku.council.domain.review.repository.ReviewCommentRepository;
 import com.dku.council.domain.review.repository.ReviewRepository;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
+import com.dku.council.domain.with_dankook.exception.InvalidStatusException;
 import com.dku.council.domain.with_dankook.exception.WithDankookUserNotFoundException;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
 import com.dku.council.domain.with_dankook.repository.WithDankookRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
+import com.dku.council.domain.with_dankook.service.WithDankookService;
+import com.dku.council.domain.with_dankook.service.WithDankookUserService;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,11 +47,32 @@ public class ReviewService {
 
     private final MessageSource messageSource;
 
+    private final WithDankookService withDankookService;
+    private final WithDankookUserService withDankookUserService;
+
     /**
      * With-Dankook 타입에 해당하는 리뷰 작성
      */
     @Transactional
     public void create(Long writerUserId, RequestCreateReviewDto dto) {
+        // 리뷰 작성자가 본인에 대해서 리뷰를 작성하려고 한다면
+        if (writerUserId == dto.getTargetUserId()) {
+            throw new InvalidCreateReviewToMyselfException();
+        }
+
+        // 리뷰 작성자가 리뷰를 작성하려는 특정 with-dankook 게시글에 참여를 했었다면
+        if (withDankookUserService.isParticipant(dto.getWithDankookId(), writerUserId)) {
+            // with-dankook 게시판의 타입에 따라 리뷰를 작성할 수 있는 상태 인지 확인
+            withDankookService.isPossibleCreateReview(dto.getWithDankookId());
+
+            // 리뷰를 이미 작성한 사용자라면
+            if (!withDankookUserService.isPossibleWriteReview(dto.getWithDankookId(), writerUserId)) {
+                throw new AlreadyWrittenReviewException();
+            }
+        } else {
+            throw new WithDankookUserNotFoundException();
+        }
+
         User user = userRepository.findById(dto.getTargetUserId()).orElseThrow(UserNotFoundException::new);
         String withDankookType = withDankookRepository.findWithDankookType(dto.getWithDankookId());
 

@@ -90,7 +90,7 @@ public class BearEatsService {
         if (role.isAdmin()) {
             bearEats = bearEatsRepository.findWithAllStatusById(id);
         } else {
-            bearEats = bearEatsRepository.findWithClosedAndFullById(id);
+            bearEats = bearEatsRepository.findWithNotDeletedById(id);
         }
         return bearEats.orElseThrow(WithDankookNotFoundException::new);
     }

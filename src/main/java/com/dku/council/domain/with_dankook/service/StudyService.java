@@ -19,6 +19,7 @@ import com.dku.council.domain.with_dankook.repository.WithDankookMemoryRepositor
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
 import com.dku.council.domain.with_dankook.repository.spec.WithDankookSpec;
 import com.dku.council.global.auth.role.UserRole;
+import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -143,7 +144,7 @@ public class StudyService {
         if (role.isAdmin()) {
             study = studyRepository.findWithAllStatusById(studyId);
         } else {
-            study = studyRepository.findWithClosedAndFullById(studyId);
+            study = studyRepository.findWithNotDeletedById(studyId);
         }
         return study.orElseThrow(WithDankookNotFoundException::new);
     }
@@ -163,5 +164,16 @@ public class StudyService {
     @Transactional
     public void delete(Long studyId, Long userId, boolean isAdmin) {
         withDankookService.delete(studyRepository, studyId, userId, isAdmin);
+    }
+
+    @Transactional
+    public void close(Long tradeId, Long userId) {
+        studyRepository.findById(tradeId).ifPresent(study -> {
+            if (study.getMasterUser().getId().equals(userId)) {
+                study.close();
+            } else{
+                throw new NotGrantedException();
+            }
+        });
     }
 }
