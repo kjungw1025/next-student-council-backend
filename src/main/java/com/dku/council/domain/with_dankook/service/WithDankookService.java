@@ -10,6 +10,7 @@ import com.dku.council.domain.with_dankook.exception.AlreadyFullRecruitedExcepti
 import com.dku.council.domain.with_dankook.exception.InvalidStatusException;
 import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
 import com.dku.council.domain.with_dankook.model.ParticipantStatus;
+import com.dku.council.domain.with_dankook.model.WithDankookStatus;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedWithDankookDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateWithDankookDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleWithDankookDto;
@@ -37,6 +38,7 @@ public class WithDankookService<E extends WithDankook> {
 
     protected final UserRepository userRepository;
     protected final WithDankookUserRepository withDankookUserRepository;
+    protected final WithDankookRepository<WithDankook> withDankookRepository;
 
     protected final LikeService likeService;
     protected final WithDankookUserService withDankookUserService;
@@ -206,5 +208,23 @@ public class WithDankookService<E extends WithDankook> {
     @FunctionalInterface
     public interface PostResultMapper<T, D, E extends WithDankook> {
         T map(D dto, E withDankook);
+    }
+
+    public void isPossibleCreateReview(Long withDankookId) {
+        String withDankookType = withDankookRepository.findWithDankookType(withDankookId);
+
+        if (withDankookType.equals("Trade")) {
+            if (withDankookRepository.findWithClosedByIdToCreateReview(withDankookId) != 1) {
+                throw new InvalidStatusException();
+            }
+        } else if (withDankookType.equals("Study") || withDankookType.equals("Dormitory")) {
+            if (withDankookRepository.findWithClosedOrFullOrActiveByIdToCreateReview(withDankookId) != 1) {
+                throw new InvalidStatusException();
+            }
+        } else if (withDankookType.equals("BearEats") || withDankookType.equals("EatingAlong")) {
+            if (withDankookRepository.findWithClosedOrFullByIdToCreateReview(withDankookId) != 1) {
+                throw new InvalidStatusException();
+            }
+        }
     }
 }

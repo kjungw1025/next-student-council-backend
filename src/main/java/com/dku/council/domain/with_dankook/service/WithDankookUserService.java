@@ -35,4 +35,8 @@ public class WithDankookUserService {
     public boolean isParticipant(Long withDankookId, Long userId) {
         return withDankookUserRepository.isExistsByWithDankookIdAndUserId(withDankookId, userId).isPresent();
     }
+
+    public boolean isPossibleWriteReview(Long withDankookId, Long userId) {
+        return withDankookUserRepository.checkReviewStatus(withDankookId, userId).isPresent();
+    }
 }
