@@ -2,6 +2,7 @@ package com.dku.council.domain.with_dankook.controller;
 
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyDto;
+import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyPossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleStudyDto;
 import com.dku.council.domain.with_dankook.service.StudyService;
@@ -22,7 +23,6 @@ import javax.validation.Valid;
 @RequestMapping("with-dankook/study")
 @RequiredArgsConstructor
 public class StudyController {
-
     private final StudyService studyService;
 
     /**
@@ -115,5 +115,17 @@ public class StudyController {
     public void delete(AppAuthentication auth,
                        @PathVariable Long id) {
         studyService.delete(id, auth.getUserId(), auth.isAdmin());
+    }
+
+    /**
+     * 단터디 게시글 모집 완료 처리
+     * 유저가 처리하거나 관리자가 강제로 처리할 수 있습니다.
+     *
+     * @param id   게시글 id
+     */
+    @PatchMapping("/{id}")
+    @UserAuth
+    public void close(AppAuthentication auth, @PathVariable Long id) {
+        studyService.close(id, auth.getUserId());
     }
 }
