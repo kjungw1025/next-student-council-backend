@@ -39,8 +39,8 @@ public class ResponseSingleWithDankookDto {
     @Schema(description = "내가 좋아요를 눌렀는지?", example = "false")
     private final boolean isLiked;
 
-    @Schema(description = "닫힘 여부", example = "false")
-    private final boolean isClosed;
+    @Schema(description = "게시판 상태 여부", example = "CLOSED")
+    private final String status;
 
     public ResponseSingleWithDankookDto(int likes, boolean isMine, boolean isLiked, WithDankook withDankook) {
         this.id = withDankook.getId();
@@ -53,7 +53,7 @@ public class ResponseSingleWithDankookDto {
         this.likes = likes;
         this.isMine = isMine;
         this.isLiked = isLiked;
-        this.isClosed = withDankook.isClosed();
+        this.status = withDankook.getStatus();
     }
 
     public ResponseSingleWithDankookDto(ResponseSingleWithDankookDto copy) {
@@ -67,6 +67,6 @@ public class ResponseSingleWithDankookDto {
         this.likes = copy.likes;
         this.isMine = copy.isMine;
         this.isLiked = copy.isLiked;
-        this.isClosed = copy.isClosed;
+        this.status = copy.status;
     }
 }
