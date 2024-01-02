@@ -35,10 +35,17 @@ public class WithDankookUser extends BaseEntity {
     @Enumerated(STRING)
     private ParticipantStatus participantStatus;
 
+    private boolean reviewStatus;
+
     @Builder
     public WithDankookUser(User user, WithDankook withDankook) {
         this.participant = user;
         this.withDankook = withDankook;
         this.participantStatus = VALID;
+        this.reviewStatus = false;
+    }
+
+    public void changeReviewStatus() {
+        this.reviewStatus = true;
     }
 }

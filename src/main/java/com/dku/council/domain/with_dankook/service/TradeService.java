@@ -136,9 +136,9 @@ public class TradeService {
     private Trade findTrade(TradeRepository tradeRepository, Long tradeId, UserRole role) {
         Optional<Trade> trade;
         if (role.isAdmin()) {
-            trade = tradeRepository.findWithClosedById(tradeId);
+            trade = tradeRepository.findWithAllStatusById(tradeId);
         } else {
-            trade = tradeRepository.findById(tradeId);
+            trade = tradeRepository.findWithNotDeletedById(tradeId);
         }
         return trade.orElseThrow(WithDankookNotFoundException::new);
     }

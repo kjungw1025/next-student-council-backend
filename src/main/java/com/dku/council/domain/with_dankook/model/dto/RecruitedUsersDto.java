@@ -7,6 +7,9 @@ import lombok.Getter;
 @Getter
 public class RecruitedUsersDto {
 
+    @Schema(description = "유저 아이디", example = "1")
+    private final Long id;
+
     @Schema(description = "닉네임", example = "닉네임")
     private final String nickname;
 
@@ -17,6 +20,7 @@ public class RecruitedUsersDto {
     private final String studentId;
 
     public RecruitedUsersDto(WithDankookUser user) {
+        this.id = user.getParticipant().getId();
         this.nickname = user.getParticipant().getNickname();
         this.majorName = user.getParticipant().getMajor().getName();
         this.studentId = user.getParticipant().getStudentId();
