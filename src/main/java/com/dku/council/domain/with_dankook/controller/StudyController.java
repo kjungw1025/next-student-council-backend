@@ -2,7 +2,6 @@ package com.dku.council.domain.with_dankook.controller;
 
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyDto;
-import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyPossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleStudyDto;
 import com.dku.council.domain.with_dankook.service.StudyService;

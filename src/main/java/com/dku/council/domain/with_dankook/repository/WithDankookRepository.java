@@ -1,6 +1,5 @@
 package com.dku.council.domain.with_dankook.repository;
 
-import com.dku.council.domain.with_dankook.model.dto.list.SummarizedTradeDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
