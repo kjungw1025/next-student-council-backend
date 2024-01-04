@@ -1,7 +1,9 @@
 package com.dku.council.domain.user.controller;
 
 import com.dku.council.domain.post.model.dto.list.SummarizedGenericPostDto;
+import com.dku.council.domain.post.model.dto.list.SummarizedPetitionDto;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
+import com.dku.council.domain.post.service.post.PetitionService;
 import com.dku.council.domain.user.model.dto.request.*;
 import com.dku.council.domain.user.model.dto.response.*;
 import com.dku.council.domain.user.service.*;
@@ -29,6 +31,7 @@ public class UserController {
     private final UserFindService userFindService;
     private final SignupService signupService;
     private final MyPostService myPostService;
+    private final PetitionService petitionService;
     private final UserWithdrawService userWithdrawService;
 
     /**
@@ -204,6 +207,32 @@ public class UserController {
         Page<SummarizedGenericPostDto> commentedPosts =
                 myPostService.listMyCommentedPosts(auth.getUserId(), pageable, bodySize);
         return new ResponsePage<>(commentedPosts);
+    }
+
+    /**
+     * 내가 쓴 청원 글 조회
+     */
+    @GetMapping("/petition")
+    @UserAuth
+    public ResponsePage<SummarizedPetitionDto> listMyPosts(AppAuthentication auth,
+                                                           @ParameterObject Pageable pageable,
+                                                           @RequestParam(defaultValue = "50") int bodySize) {
+        Page<SummarizedPetitionDto> posts =
+                petitionService.listMyPosts(auth.getUserId(), pageable, bodySize);
+        return new ResponsePage<>(posts);
+    }
+
+    /**
+     * 내가 동의한 청원 글 조회
+     */
+    @GetMapping("/petition/agreed")
+    @UserAuth
+    public ResponsePage<SummarizedPetitionDto> listMyAgreedPosts(AppAuthentication auth,
+                                                                 @ParameterObject Pageable pageable,
+                                                                 @RequestParam(defaultValue = "50") int bodySize) {
+        Page<SummarizedPetitionDto> posts =
+                petitionService.listMyAgreedPosts(auth.getUserId(), pageable, bodySize);
+        return new ResponsePage<>(posts);
     }
 
     /**

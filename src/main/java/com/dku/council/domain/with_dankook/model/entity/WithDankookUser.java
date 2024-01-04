@@ -48,4 +48,16 @@ public class WithDankookUser extends BaseEntity {
     public void changeReviewStatus() {
         this.reviewStatus = true;
     }
+
+    public void changeStatusToWaiting() {
+        this.participantStatus = ParticipantStatus.WAITING;
+    }
+
+    public void changeStatusToValid() {
+        this.participantStatus = ParticipantStatus.VALID;
+    }
+
+    public void changeStatusToInvalid() {
+        this.participantStatus = ParticipantStatus.INVALID;
+    }
 }

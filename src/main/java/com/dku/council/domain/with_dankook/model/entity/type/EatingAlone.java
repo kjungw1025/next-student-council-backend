@@ -12,7 +12,7 @@ import static lombok.AccessLevel.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class EatingAlong extends WithDankook {
+public class EatingAlone extends WithDankook {
 
     @Id
     @GeneratedValue
@@ -27,7 +27,7 @@ public class EatingAlong extends WithDankook {
     private String content;
 
     @Builder
-    private EatingAlong(User user, String title, String content) {
+    private EatingAlone(User user, String title, String content) {
         super(user);
         this.title = title;
         this.content = content;

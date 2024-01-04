@@ -1,6 +1,7 @@
-package com.dku.council.domain.with_dankook.repository;
+package com.dku.council.domain.with_dankook.repository.with_dankook;
 
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
+import com.dku.council.domain.with_dankook.model.entity.type.Roommate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,7 +19,6 @@ public interface WithDankookRepository<T extends WithDankook> extends JpaReposit
             "join fetch u.major " +
             "where w.id=:id and w.withDankookStatus ='ACTIVE' ")
     Optional<T> findById(@Param("id") Long id);
-
     @Query("select w from WithDankook w " +
             "join fetch w.masterUser u " +
             "join fetch u.major " +
@@ -55,7 +55,7 @@ public interface WithDankookRepository<T extends WithDankook> extends JpaReposit
     int findWithClosedByIdToCreateReview(@Param("withDankookId") Long withDankookId);
 
     @Query("select COUNT(*) from WithDankook w " +
-            "where w.id = :withDankookId and (w.withDankookStatus in ('FULL', 'CLOSED'))")
+            "where w.id = :withDankookId and (w.withDankookStatus = 'FULL' or w.withDankookStatus = 'CLOSED')")
     int findWithClosedOrFullByIdToCreateReview(@Param("withDankookId") Long withDankookId);
 
     @Query(value = "select COUNT(*) from with_dankook w " +

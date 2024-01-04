@@ -1,12 +1,10 @@
-package com.dku.council.domain.with_dankook.repository;
+package com.dku.council.domain.with_dankook.repository.with_dankook;
 
 import com.dku.council.domain.with_dankook.model.entity.type.Study;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface StudyRepository extends WithDankookRepository<Study>{
 
