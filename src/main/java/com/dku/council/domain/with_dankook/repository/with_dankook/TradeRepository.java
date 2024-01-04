@@ -1,4 +1,4 @@
-package com.dku.council.domain.with_dankook.repository;
+package com.dku.council.domain.with_dankook.repository.with_dankook;
 
 import com.dku.council.domain.with_dankook.model.entity.type.Trade;
 

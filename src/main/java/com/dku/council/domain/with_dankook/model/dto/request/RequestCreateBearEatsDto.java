@@ -15,20 +15,20 @@ public class RequestCreateBearEatsDto extends RequestCreateWithDankookDto<BearEa
 
     @NotNull
     @Schema(description = "음식점", example = "피자헛")
-    private String restaurant;
+    private final String restaurant;
 
     @NotNull
     @Schema(description = "배달 주문 장소", example = "피자헛")
-    private String deliveryPlace;
+    private final String deliveryPlace;
 
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
     @Schema(description = "배달 시간", example = "2023-12-25 17:30")
-    private LocalDateTime deliveryTime;
+    private final LocalDateTime deliveryTime;
 
     @NotBlank
     @Schema(description = "본문", example = "내용")
-    private String content;
+    private final String content;
 
     public RequestCreateBearEatsDto(@NotNull String restaurant,
                                     @NotNull String deliveryPlace,

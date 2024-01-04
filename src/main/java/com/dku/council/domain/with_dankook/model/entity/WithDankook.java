@@ -57,6 +57,10 @@ public abstract class WithDankook extends BaseEntity {
         this.withDankookStatus = WithDankookStatus.FULL;
     }
 
+    public void markAsClosed() {
+        this.withDankookStatus = WithDankookStatus.CLOSED;
+    }
+
     public boolean isClosed() {
         return withDankookStatus == WithDankookStatus.CLOSED;
     }
