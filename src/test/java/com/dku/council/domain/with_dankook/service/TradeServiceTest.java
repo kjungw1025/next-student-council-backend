@@ -1,26 +1,20 @@
 package com.dku.council.domain.with_dankook.service;
 
 import com.dku.council.domain.like.service.LikeService;
-import com.dku.council.domain.post.repository.PostTimeMemoryRepository;
 import com.dku.council.domain.post.service.ThumbnailService;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.domain.with_dankook.model.entity.type.Trade;
-import com.dku.council.domain.with_dankook.repository.TradeRepository;
-import com.dku.council.domain.with_dankook.repository.WithDankookMemoryRepository;
+import com.dku.council.domain.with_dankook.repository.with_dankook.TradeRepository;
+import com.dku.council.domain.with_dankook.repository.with_dankook.WithDankookMemoryRepository;
 import com.dku.council.infra.nhn.s3.service.ImageUploadService;
 import com.dku.council.infra.nhn.s3.service.ObjectUploadContext;
 import com.dku.council.util.ClockUtil;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
 import java.time.Duration;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class TradeServiceTest {
