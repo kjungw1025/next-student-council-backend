@@ -13,6 +13,7 @@ import com.dku.council.domain.with_dankook.model.entity.type.EatingAlone;
 import com.dku.council.domain.with_dankook.repository.with_dankook.EatingAloneRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
 import com.dku.council.global.auth.role.UserRole;
+import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,5 +105,16 @@ public class EatingAloneService {
     @Transactional
     public void delete(Long id, Long userId, boolean isAdmin) {
         withDankookService.delete(eatingAloneRepository, id, userId, isAdmin);
+    }
+
+    @Transactional
+    public void close(Long tradeId, Long userId) {
+        eatingAloneRepository.findById(tradeId).ifPresent(eatingAlone -> {
+            if (eatingAlone.getMasterUser().getId().equals(userId)) {
+                eatingAlone.close();
+            } else{
+                throw new NotGrantedException();
+            }
+        });
     }
 }

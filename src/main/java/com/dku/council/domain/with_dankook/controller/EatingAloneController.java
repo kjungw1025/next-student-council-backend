@@ -99,4 +99,16 @@ public class EatingAloneController {
                        @PathVariable @Valid Long id) {
         eatingAloneService.delete(id, auth.getUserId(), auth.getUserRole().isAdmin());
     }
+
+    /**
+     * 단혼밥 게시글 모집 완료 처리
+     * 유저가 처리하거나 관리자가 강제로 처리할 수 있습니다.
+     *
+     * @param id   게시글 id
+     */
+    @PatchMapping("/{id}")
+    @UserAuth
+    public void close(AppAuthentication auth, @PathVariable Long id) {
+        eatingAloneService.close(id, auth.getUserId());
+    }
 }
