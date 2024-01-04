@@ -1,4 +1,4 @@
-package com.dku.council.domain.with_dankook.repository;
+package com.dku.council.domain.with_dankook.repository.with_dankook;
 
 import java.time.Duration;
 import java.time.Instant;

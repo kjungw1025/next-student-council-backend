@@ -1,6 +1,7 @@
 package com.dku.council.domain.with_dankook.model.entity.type;
 
 import com.dku.council.domain.user.model.entity.User;
+import com.dku.council.domain.with_dankook.model.entity.ResidenceDuration;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import lombok.*;
 
@@ -15,7 +16,7 @@ import static lombok.AccessLevel.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-public class Dormitory extends WithDankook {
+public class Roommate extends WithDankook {
 
     @Id
     @GeneratedValue
@@ -29,18 +30,17 @@ public class Dormitory extends WithDankook {
     private int minStudentId;
 
     @NotNull
-    private String livingHall;
+    private String livingPlace;
 
-    @NotNull
-    private String duration;
+    private ResidenceDuration residenceDuration;
 
     @Builder
-    private Dormitory(User user, String title, int minStudentId, String livingHall, String duration) {
+    private Roommate(User user, String title, int minStudentId, String livingPlace, ResidenceDuration residenceDuration) {
         super(user);
         this.title = title;
         this.minStudentId = minStudentId;
-        this.livingHall = livingHall;
-        this.duration = duration;
+        this.livingPlace = livingPlace;
+        this.residenceDuration = residenceDuration;
     }
 
     @Override

@@ -11,11 +11,10 @@ import com.dku.council.domain.review.repository.ReviewCommentRepository;
 import com.dku.council.domain.review.repository.ReviewRepository;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
-import com.dku.council.domain.with_dankook.exception.InvalidStatusException;
 import com.dku.council.domain.with_dankook.exception.WithDankookUserNotFoundException;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
-import com.dku.council.domain.with_dankook.repository.WithDankookRepository;
+import com.dku.council.domain.with_dankook.repository.with_dankook.WithDankookRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
 import com.dku.council.domain.with_dankook.service.WithDankookService;
 import com.dku.council.domain.with_dankook.service.WithDankookUserService;
@@ -56,7 +55,7 @@ public class ReviewService {
     @Transactional
     public void create(Long writerUserId, RequestCreateReviewDto dto) {
         // 리뷰 작성자가 본인에 대해서 리뷰를 작성하려고 한다면
-        if (writerUserId == dto.getTargetUserId()) {
+        if (writerUserId.equals(dto.getTargetUserId())) {
             throw new InvalidCreateReviewToMyselfException();
         }
 

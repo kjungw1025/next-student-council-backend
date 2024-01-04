@@ -38,6 +38,8 @@ public class RoomMateSurvey extends BaseEntity {
     @NotNull
     private boolean noiseHabit;
 
+    private String noiseHabitDetail;
+
     @Enumerated(EnumType.STRING)
     private SleepTime sleepTime;
 
@@ -48,13 +50,14 @@ public class RoomMateSurvey extends BaseEntity {
     private String tendency;
 
     @Builder
-    public RoomMateSurvey(@NonNull User user, @NonNull String mbti, boolean sleepHabit, boolean sleepSensitive, boolean smoking, boolean noiseHabit, @NonNull SleepTime sleepTime, @NonNull CleanUpCount cleanUpCount, String tendency) {
+    public RoomMateSurvey(User user, String mbti, boolean sleepHabit, boolean sleepSensitive, boolean smoking, boolean noiseHabit, String noiseHabitDetail, SleepTime sleepTime, CleanUpCount cleanUpCount, String tendency) {
         this.user = user;
         this.mbti = mbti;
         this.sleepHabit = sleepHabit;
         this.sleepSensitive = sleepSensitive;
         this.smoking = smoking;
         this.noiseHabit = noiseHabit;
+        this.noiseHabitDetail = noiseHabitDetail;
         this.sleepTime = sleepTime;
         this.cleanUpCount = cleanUpCount;
         this.tendency = tendency;

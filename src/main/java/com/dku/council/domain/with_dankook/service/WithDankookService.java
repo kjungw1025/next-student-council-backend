@@ -16,7 +16,7 @@ import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateWithDa
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleWithDankookDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
-import com.dku.council.domain.with_dankook.repository.WithDankookRepository;
+import com.dku.council.domain.with_dankook.repository.with_dankook.WithDankookRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
 import com.dku.council.domain.with_dankook.repository.spec.WithDankookSpec;
 import com.dku.council.global.auth.role.UserRole;
@@ -217,10 +217,10 @@ public class WithDankookService<E extends WithDankook> {
             if (withDankookRepository.findWithClosedByIdToCreateReview(withDankookId) != 1) {
                 throw new InvalidStatusException();
             }
-        } else if (withDankookType.equals("Study") || withDankookType.equals("Dormitory")) {
-            if (withDankookRepository.findWithClosedOrFullOrActiveByIdToCreateReview(withDankookId) != 1) {
-                throw new InvalidStatusException();
-            }
+//        } else if (withDankookType.equals("Study") || withDankookType.equals("Dormitory")) {
+//            if (withDankookRepository.findWithClosedOrFullOrActiveByIdToCreateReview(withDankookId) != 1) {
+//                throw new InvalidStatusException();
+//            }
         } else if (withDankookType.equals("BearEats") || withDankookType.equals("EatingAlong")) {
             if (withDankookRepository.findWithClosedOrFullByIdToCreateReview(withDankookId) != 1) {
                 throw new InvalidStatusException();

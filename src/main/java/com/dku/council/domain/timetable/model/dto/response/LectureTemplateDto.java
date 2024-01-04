@@ -55,7 +55,7 @@ public class LectureTemplateDto {
             this.grade = template.getGrade();
         } else {
             this.major = null;
-            this.grade = null;
+            this.grade = 0;
         }
     }
 }
