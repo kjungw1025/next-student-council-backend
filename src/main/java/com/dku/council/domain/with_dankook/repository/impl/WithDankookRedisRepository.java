@@ -1,6 +1,6 @@
 package com.dku.council.domain.with_dankook.repository.impl;
 
-import com.dku.council.domain.with_dankook.repository.WithDankookMemoryRepository;
+import com.dku.council.domain.with_dankook.repository.with_dankook.WithDankookMemoryRepository;
 import com.dku.council.global.base.AbstractKeyValueCacheRepository;
 import com.dku.council.global.config.redis.RedisKeys;
 import com.fasterxml.jackson.databind.ObjectMapper;
