@@ -10,7 +10,7 @@ import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateBearEa
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleBearEatsDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
 import com.dku.council.domain.with_dankook.model.entity.type.BearEats;
-import com.dku.council.domain.with_dankook.repository.BearEatsRepository;
+import com.dku.council.domain.with_dankook.repository.with_dankook.BearEatsRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
 import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.UserNotFoundException;

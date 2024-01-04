@@ -10,7 +10,7 @@ import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateEating
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleEatingAloneDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
 import com.dku.council.domain.with_dankook.model.entity.type.EatingAlone;
-import com.dku.council.domain.with_dankook.repository.EatingAloneRepository;
+import com.dku.council.domain.with_dankook.repository.with_dankook.EatingAloneRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
 import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.UserNotFoundException;
