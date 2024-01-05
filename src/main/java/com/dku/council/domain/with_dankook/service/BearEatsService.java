@@ -6,6 +6,7 @@ import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedBearEatsDto;
+import com.dku.council.domain.with_dankook.model.dto.list.SummarizedBearEatsPossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateBearEatsDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleBearEatsDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -78,6 +83,22 @@ public class BearEatsService {
         return bearEatsRepository.findAllBearEatsByUserId(userId, pageable)
                 .map(bearEats -> new SummarizedBearEatsDto(withDankookService.makeListDto(50, bearEats), bearEats,
                         withDankookuserSerivce.recruitedCount(withDankookService.makeListDto(50, bearEats).getId())));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SummarizedBearEatsPossibleReviewDto> listMyPossibleReviewPosts(Long userId, Pageable pageable) {
+        List<SummarizedBearEatsPossibleReviewDto> list = bearEatsRepository.findAllPossibleReviewPost(userId, pageable)
+                .map(bearEats -> {
+                    SummarizedBearEatsPossibleReviewDto dto = new SummarizedBearEatsPossibleReviewDto(bearEats, userId);
+                    if (!dto.getTargetUserList().isEmpty()) {
+                        return dto;
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .stream().collect(Collectors.toList());
+        return new PageImpl<>(list);
     }
 
     public ResponseSingleBearEatsDto findOne(Long id, Long userId, UserRole role) {
