@@ -213,18 +213,28 @@ public class WithDankookService<E extends WithDankook> {
     public void isPossibleCreateReview(Long withDankookId) {
         String withDankookType = withDankookRepository.findWithDankookType(withDankookId);
 
-        if (withDankookType.equals("Trade")) {
-            if (withDankookRepository.findWithClosedByIdToCreateReview(withDankookId) != 1) {
-                throw new InvalidStatusException();
-            }
-//        } else if (withDankookType.equals("Study") || withDankookType.equals("Dormitory")) {
-//            if (withDankookRepository.findWithClosedOrFullOrActiveByIdToCreateReview(withDankookId) != 1) {
-//                throw new InvalidStatusException();
-//            }
-        } else if (withDankookType.equals("BearEats") || withDankookType.equals("EatingAlong")) {
-            if (withDankookRepository.findWithClosedOrFullByIdToCreateReview(withDankookId) != 1) {
-                throw new InvalidStatusException();
-            }
+        switch (withDankookType) {
+            case "Trade":
+            case "Roommate":
+                if (withDankookRepository.findWithClosedByIdToCreateReview(withDankookId) != 1) {
+                    throw new InvalidStatusException();
+                }
+                break;
+            case "Study":
+                if (withDankookRepository.findWithClosedOrFullOrActiveEndTimeByIdToCreateReview(withDankookId) != 1) {
+                    throw new InvalidStatusException();
+                }
+                break;
+            case "EatingAlong":
+                if (withDankookRepository.findWithClosedOrFullByIdToCreateReview(withDankookId) != 1) {
+                    throw new InvalidStatusException();
+                }
+                break;
+            case "BearEats":
+                if (withDankookRepository.findWithClosedOrFullOrActiveDeliveryTimeByIdToCreateReview(withDankookId) != 1) {
+                    throw new InvalidStatusException();
+                }
+                break;
         }
     }
 }
