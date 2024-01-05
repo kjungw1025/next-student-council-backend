@@ -13,7 +13,6 @@ import com.dku.council.domain.with_dankook.model.entity.type.Roommate;
 import com.dku.council.domain.with_dankook.repository.RoomMateSurveyRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
 import com.dku.council.domain.with_dankook.repository.with_dankook.RoommateRepository;
-import com.dku.council.domain.with_dankook.repository.with_dankook.WithDankookRepository;
 import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
@@ -117,7 +116,7 @@ public class RoommateService {
         }
 
         if (targetUser.getParticipantStatus().equals(ParticipantStatus.WAITING)
-                && !withDankookUserRepository.findByUserIdCheckingValid(targetUserId)) {
+                && withDankookUserRepository.findByUserIdCheckingValid(roommateId, targetUserId).isEmpty()) {
             targetUser.changeStatusToValid();
             withDankookUserRepository.save(targetUser);
         } else {
