@@ -8,6 +8,7 @@ import com.dku.council.domain.with_dankook.exception.InvalidMinStudentIdExceptio
 import com.dku.council.domain.with_dankook.exception.StudyCooltimeException;
 import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyDto;
+import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyPossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleStudyDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -127,6 +132,22 @@ public class StudyService {
                         study,
                         withDankookUserService.recruitedCount(withDankookService.makeListDto(50, study).getId())
                 ));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SummarizedStudyPossibleReviewDto> listMyPossibleReviewPosts(Long userId, Pageable pageable) {
+        List<SummarizedStudyPossibleReviewDto> list = studyRepository.findAllPossibleReviewPost(userId, pageable)
+                .map(study -> {
+                    SummarizedStudyPossibleReviewDto dto = new SummarizedStudyPossibleReviewDto(study, userId);
+                    if (!dto.getTargetUserList().isEmpty()) {
+                        return dto;
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .stream().collect(Collectors.toList());
+        return new PageImpl<>(list);
     }
 
     @Transactional(readOnly = true)
