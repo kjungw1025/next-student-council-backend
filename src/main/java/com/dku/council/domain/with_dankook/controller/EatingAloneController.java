@@ -2,6 +2,7 @@ package com.dku.council.domain.with_dankook.controller;
 
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedEatingAloneDto;
+import com.dku.council.domain.with_dankook.model.dto.list.SummarizedEatingAlonePossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateEatingAloneDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleEatingAloneDto;
 import com.dku.council.domain.with_dankook.service.EatingAloneService;
@@ -110,5 +111,19 @@ public class EatingAloneController {
     @UserAuth
     public void close(AppAuthentication auth, @PathVariable Long id) {
         eatingAloneService.close(id, auth.getUserId());
+    }
+
+    /**
+     * 내가 참여한 단혼밥 게시글 중, 리뷰 작성이 가능한 게시글 목록 조회
+     *
+     * @param pageable 페이징 size, sort, page
+     * @return         페이징된 리뷰 작성이 가능한 단혼밥 게시글 목록 조회
+     */
+    @GetMapping("/my/possible/review")
+    @UserAuth
+    public ResponsePage<SummarizedEatingAlonePossibleReviewDto> listPossibleReviewPosts(AppAuthentication auth,
+                                                                                        @ParameterObject Pageable pageable) {
+        Page<SummarizedEatingAlonePossibleReviewDto> list = eatingAloneService.listMyPossibleReviewPosts(auth.getUserId(), pageable);
+        return new ResponsePage<>(list);
     }
 }
