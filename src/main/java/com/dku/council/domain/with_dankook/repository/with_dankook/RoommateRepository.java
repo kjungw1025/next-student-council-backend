@@ -20,4 +20,13 @@ public interface RoommateRepository extends WithDankookRepository<Roommate>{
             "where r.masterUser.id = :userId and " +
             "(r.withDankookStatus != 'DELETED' or r.withDankookStatus != 'DELETED_BY_ADMIN') ")
     Optional<Roommate> findByUserId(@Param("userId") Long userId);
+
+    @Query("select r from Roommate r " +
+            "join WithDankookUser u " +
+            "on r.id = u.withDankook.id " +
+            "where u.participant.id = :userId and u.reviewStatus = false and " +
+            "(r.withDankookStatus = 'CLOSED') " +
+            "order by r.lastModifiedAt DESC ")
+    Page<Roommate> findAllPossibleReviewPost(@Param("userId") Long userId,
+                                          Pageable pageable);
 }

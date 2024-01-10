@@ -6,6 +6,7 @@ import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.domain.with_dankook.exception.WithDankookNotFoundException;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedEatingAloneDto;
+import com.dku.council.domain.with_dankook.model.dto.list.SummarizedEatingAlonePossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateEatingAloneDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleEatingAloneDto;
 import com.dku.council.domain.with_dankook.model.entity.WithDankookUser;
@@ -13,11 +14,13 @@ import com.dku.council.domain.with_dankook.model.entity.type.EatingAlone;
 import com.dku.council.domain.with_dankook.repository.with_dankook.EatingAloneRepository;
 import com.dku.council.domain.with_dankook.repository.WithDankookUserRepository;
 import com.dku.council.global.auth.role.UserRole;
+import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -80,6 +86,22 @@ public class EatingAloneService {
                         withDankookUserService.recruitedCount(withDankookService.makeListDto(50, eatingAlone).getId())));
     }
 
+    @Transactional(readOnly = true)
+    public Page<SummarizedEatingAlonePossibleReviewDto> listMyPossibleReviewPosts(Long userId, Pageable pageable) {
+        List<SummarizedEatingAlonePossibleReviewDto> list = eatingAloneRepository.findAllPossibleReviewPost(userId, pageable)
+                .map(eatingAlone -> {
+                    SummarizedEatingAlonePossibleReviewDto dto = new SummarizedEatingAlonePossibleReviewDto(eatingAlone, userId);
+                    if (!dto.getTargetUserList().isEmpty()) {
+                        return dto;
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .stream().collect(Collectors.toList());
+        return new PageImpl<>(list);
+    }
+
     public ResponseSingleEatingAloneDto findOne(Long id, Long userId, UserRole role) {
         EatingAlone eatingAlone = findEatingAlone(eatingAloneRepository, id, role);
         return new ResponseSingleEatingAloneDto(withDankookService.makeSingleDto(userId, eatingAlone), eatingAlone,
@@ -104,5 +126,16 @@ public class EatingAloneService {
     @Transactional
     public void delete(Long id, Long userId, boolean isAdmin) {
         withDankookService.delete(eatingAloneRepository, id, userId, isAdmin);
+    }
+
+    @Transactional
+    public void close(Long tradeId, Long userId) {
+        eatingAloneRepository.findById(tradeId).ifPresent(eatingAlone -> {
+            if (eatingAlone.getMasterUser().getId().equals(userId)) {
+                eatingAlone.close();
+            } else{
+                throw new NotGrantedException();
+            }
+        });
     }
 }

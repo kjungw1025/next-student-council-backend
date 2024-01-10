@@ -36,11 +36,13 @@ public interface WithDankookUserRepository extends JpaRepository<WithDankookUser
     Optional<WithDankookUser> findByUserIdAndWithDankookId(@Param("userId") Long userId, @Param("withDankookId") Long withDankookId);
 
     @Query("select u from WithDankookUser u " +
-            "where u.participant.id =: targetUserId and " +
-            "u.participantStatus = 'VALID' ")
-    boolean findByUserIdCheckingValid(@Param("targetUserId") Long targetUserId);
+            "where u.withDankook.id = :withDankookId and " +
+                    "u.participant.id = :targetUserId and " +
+                    "u.participantStatus = 'VALID' ")
+    Optional<WithDankookUser> findByUserIdCheckingValid(@Param("withDankookId") Long withDankookId,
+                                                        @Param("targetUserId") Long targetUserId);
 
     @Query("select u from WithDankookUser u " +
-            "where u.participant.id =: userId ")
+            "where u.participant.id = :userId ")
     Optional<WithDankookUser> findByParticipantId(@Param("userId") Long userId);
 }
