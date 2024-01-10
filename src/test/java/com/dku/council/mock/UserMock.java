@@ -65,6 +65,8 @@ public class UserMock {
                 .status(UserStatus.ACTIVE)
                 .role(role)
                 .nickname(NICKNAME)
+                .age("20")
+                .gender("남자")
                 .yearOfAdmission(2017)
                 .academicStatus("재학")
                 .major(major)

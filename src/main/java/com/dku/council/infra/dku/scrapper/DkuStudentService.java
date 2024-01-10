@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Slf4j
@@ -113,6 +116,8 @@ public class DkuStudentService extends DkuScrapper {
         String studentName = getElementValueOrThrow(doc, "nm");
         String studentId = getElementValueOrThrow(doc, "stuid");
         String studentState = getElementValueOrThrow(doc, "scregStaNm");
+        String gender = getElementValueOrThrow(doc, "sexNm");
+        String age = getAgeOrThrow(doc, "bday");
 
         String major, department = "";
         int yearOfAdmission;
@@ -134,7 +139,23 @@ public class DkuStudentService extends DkuScrapper {
             throw new DkuFailedCrawlingException(t);
         }
 
-        return new StudentInfo(studentName, studentId, yearOfAdmission, studentState, major, department);
+        return new StudentInfo(studentName, studentId, age, gender, yearOfAdmission, studentState, major, department);
+    }
+
+    private String getAgeOrThrow(Document doc, String id) {
+        String value = Optional.ofNullable(doc.getElementById(id))
+                .map(Element::val)
+                .orElseThrow(() -> new DkuFailedCrawlingException(new NullPointerException(id)));
+        if (value.isBlank()) {
+            throw new DkuFailedCrawlingException(new NullPointerException(id));
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate birthday = LocalDate.parse(value, formatter);
+
+        LocalDate currentDate = LocalDate.now();
+        Period age = Period.between(birthday, currentDate);
+
+        return String.valueOf(age.getYears() + 1) ;
     }
 
     private String getElementValueOrThrow(Document doc, String id) {

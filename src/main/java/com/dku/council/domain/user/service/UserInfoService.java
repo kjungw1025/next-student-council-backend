@@ -41,11 +41,14 @@ public class UserInfoService {
         Long writePostCount = postRepository.countAllByUserId(userId);
         Long commentedPostCount = commentRepository.countAllCommentedByUserId(userId);
         Long likedPostCount = likeService.getCountOfLikedElements(userId, LikeTarget.POST);
+        Long petitionCount = postRepository.countAllPetitionByUserId(userId);
+        Long agreedPetitionCount = postRepository.countAllAgreedPetitionByUserId(userId);
 
         return new ResponseUserInfoDto(user.getStudentId(), user.getName(),
-                user.getNickname(), year, major.getName(), major.getDepartment(),
-                phoneNumber, writePostCount, commentedPostCount, likedPostCount,
-                user.getUserRole().isAdmin());
+                user.getNickname(), user.getAge(), user.getGender(), year,
+                major.getName(), major.getDepartment(), phoneNumber,
+                writePostCount, commentedPostCount, likedPostCount,
+                petitionCount, agreedPetitionCount, user.getUserRole().isAdmin());
     }
 
     @Transactional(readOnly = true)

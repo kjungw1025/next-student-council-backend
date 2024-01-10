@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 public class DkuUserInfo {
     private final String studentName;
     private final String studentId;
+    private final String age;
+    private final String gender;
     private final int yearOfAdmission;
     private final String studentState;
 
@@ -18,6 +20,8 @@ public class DkuUserInfo {
     public DkuUserInfo(StudentInfo info) {
         this.studentName = info.getStudentName();
         this.studentId = info.getStudentId();
+        this.age = info.getAge();
+        this.gender = info.getGender();
         this.yearOfAdmission = info.getYearOfAdmission();
         this.studentState = info.getStudentState();
         this.majorName = info.getMajorName();

@@ -5,10 +5,12 @@ import com.dku.council.domain.user.exception.AlreadyNicknameException;
 import com.dku.council.domain.user.exception.AlreadyPhoneException;
 import com.dku.council.domain.user.exception.AlreadyStudentIdException;
 import com.dku.council.domain.user.exception.MajorNotFoundException;
+import com.dku.council.domain.user.model.UserStatus;
 import com.dku.council.domain.user.model.entity.Major;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.MajorRepository;
 import com.dku.council.domain.user.repository.UserRepository;
+import com.dku.council.global.auth.role.UserRole;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +57,9 @@ public class TestController {
                         @RequestParam String nickname,
                         @RequestParam Long majorId,
                         @RequestParam Integer yearOfAdmission,
-                        @RequestParam String phone) {
+                        @RequestParam String phone,
+                        @RequestParam String age,
+                        @RequestParam String gender) {
         if (userRepository.findByStudentId(studentId).isPresent()) {
             throw new AlreadyStudentIdException();
         }
@@ -78,10 +82,14 @@ public class TestController {
                 .password(encryptedPassword)
                 .name(name)
                 .nickname(nickname)
+                .age(age)
+                .gender(gender)
                 .major(major)
                 .yearOfAdmission(yearOfAdmission)
                 .academicStatus("재학")
                 .phone(phone)
+                .status(UserStatus.ACTIVE)
+                .role(UserRole.USER)
                 .build();
 
         userRepository.save(user);
