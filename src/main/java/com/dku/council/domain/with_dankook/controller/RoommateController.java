@@ -2,6 +2,7 @@ package com.dku.council.domain.with_dankook.controller;
 
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedRoommateDto;
+import com.dku.council.domain.with_dankook.model.dto.list.SummarizedRoommatePossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateRoommateDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateSurveyDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleRoommateDto;
@@ -135,5 +136,19 @@ public class RoommateController {
     public ResponseBooleanDto isSurveyExist(AppAuthentication auth) {
         boolean result = surveyService.checkSurvey(auth.getUserId());
         return new ResponseBooleanDto(result);
+    }
+
+    /**
+     * 내가 참여한 구해줘! 룸메 게시글 중, 리뷰 작성이 가능한 게시글 목록 조회
+     *
+     * @param pageable 페이징 size, sort, page
+     * @return         페이징된 리뷰 작성이 가능한 구해줘! 룸메 게시글 목록 조회
+     */
+    @GetMapping("/my/possible/review")
+    @UserAuth
+    public ResponsePage<SummarizedRoommatePossibleReviewDto> listPossibleReviewPosts(AppAuthentication auth,
+                                                                                     @ParameterObject Pageable pageable) {
+        Page<SummarizedRoommatePossibleReviewDto> list = roommateService.listMyPossibleReviewPosts(auth.getUserId(), pageable);
+        return new ResponsePage<>(list);
     }
 }

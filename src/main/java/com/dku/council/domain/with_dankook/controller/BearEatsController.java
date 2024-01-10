@@ -2,6 +2,7 @@ package com.dku.council.domain.with_dankook.controller;
 
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedBearEatsDto;
+import com.dku.council.domain.with_dankook.model.dto.list.SummarizedBearEatsPossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateBearEatsDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleBearEatsDto;
 import com.dku.council.domain.with_dankook.service.BearEatsService;
@@ -97,5 +98,31 @@ public class BearEatsController {
     public void delete(AppAuthentication auth,
                        @PathVariable Long id) {
         bearEatsService.delete(id, auth.getUserId(), auth.isAdmin());
+    }
+
+    /**
+     * BearEats 게시글 모집 완료 처리
+     * 유저가 처리하거나 관리자가 강제로 처리할 수 있습니다.
+     *
+     * @param id   게시글 id
+     */
+    @PatchMapping("/{id}")
+    @UserAuth
+    public void close(AppAuthentication auth, @PathVariable Long id) {
+        bearEatsService.close(id, auth.getUserId());
+    }
+
+    /**
+     * 내가 참여한 BearEats 게시글 중, 리뷰 작성이 가능한 게시글 목록 조회
+     *
+     * @param pageable 페이징 size, sort, page
+     * @return         페이징된 리뷰 작성이 가능한 BearEats 게시글 목록 조회
+     */
+    @GetMapping("/my/possible/review")
+    @UserAuth
+    public ResponsePage<SummarizedBearEatsPossibleReviewDto> listPossibleReviewPosts(AppAuthentication auth,
+                                                                                     @ParameterObject Pageable pageable) {
+        Page<SummarizedBearEatsPossibleReviewDto> list = bearEatsService.listMyPossibleReviewPosts(auth.getUserId(), pageable);
+        return new ResponsePage<>(list);
     }
 }

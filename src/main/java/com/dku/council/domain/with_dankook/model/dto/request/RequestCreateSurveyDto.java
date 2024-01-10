@@ -41,7 +41,7 @@ public class RequestCreateSurveyDto {
     private final SleepTime sleepTime;
 
     @NotNull
-    @Schema(description = "청소횟수", example = "ONCE_A_WEEK")
+    @Schema(description = "청소횟수", example = "ONCE_UNDER_WEEK")
     private final CleanUpCount cleanUpCount;
 
     @Schema(description = "기타 성향", example = "")

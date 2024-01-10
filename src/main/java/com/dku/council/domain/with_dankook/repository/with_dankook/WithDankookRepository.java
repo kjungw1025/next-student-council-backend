@@ -61,5 +61,10 @@ public interface WithDankookRepository<T extends WithDankook> extends JpaReposit
     @Query(value = "select COUNT(*) from with_dankook w " +
             "where w.with_dankook_id = :withDankookId and " +
             "((w.with_dankook_status in ('FULL', 'CLOSED')) or (w.with_dankook_status = 'ACTIVE' and w.end_time <= CURRENT_TIMESTAMP())) ", nativeQuery = true)
-    int findWithClosedOrFullOrActiveByIdToCreateReview(@Param("withDankookId") Long withDankookId);
+    int findWithClosedOrFullOrActiveEndTimeByIdToCreateReview(@Param("withDankookId") Long withDankookId);
+
+    @Query(value = "select COUNT(*) from with_dankook w " +
+            "where w.with_dankook_id = :withDankookId and " +
+            "((w.with_dankook_status in ('FULL', 'CLOSED')) or (w.with_dankook_status = 'ACTIVE' and w.delivery_time <= CURRENT_TIMESTAMP())) ", nativeQuery = true)
+    int findWithClosedOrFullOrActiveDeliveryTimeByIdToCreateReview(@Param("withDankookId") Long withDankookId);
 }
