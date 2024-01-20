@@ -38,6 +38,6 @@ class ErrorResponseDtoTest {
         DateTimeFormatter.ISO_DATE_TIME.parse(dto.getTimestamp());
         assertThat(dto.getCode()).isEqualTo("LocalizedMessageException");
         assertThat(dto.getMessage()).isEqualTo(List.of("localizedMessage"));
-        assertThat(dto.getStatus()).isEqualTo(HttpStatus.OK);
+        assertThat(dto.getStatus()).isEqualTo(HttpStatus.OK.name());
     }
 }

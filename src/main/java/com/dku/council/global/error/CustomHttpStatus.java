@@ -10,7 +10,7 @@ public enum CustomHttpStatus{
      */
     REQUIRED_DKU_UPDATE(600, CustomSeries.DKU_ERROR, "Required DkuInfo");
 
-    private static final CustomHttpStatus[] VALUES;
+    public static final CustomHttpStatus[] VALUES;
 
     static {
         VALUES = values();
