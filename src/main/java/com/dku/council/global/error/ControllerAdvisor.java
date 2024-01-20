@@ -36,15 +36,19 @@ public class ControllerAdvisor {
     protected ResponseEntity<ErrorResponseDto> localizedException(LocalizedMessageException e, Locale locale) {
         ErrorResponseDto dto = new ErrorResponseDto(messageSource, locale, e);
         log.error("A problem has occurred in controller advice: [id={}]", dto.getTrackingId(), e);
-        return filter(e, ResponseEntity.status(findHttpStatus(e.getStatus())).body(dto));
+        if (containsEnum(e.getStatus())) {
+            return filter(e, ResponseEntity.status(e.getStatusCode()).body(dto));
+        }
+        return filter(e, ResponseEntity.status(HttpStatus.valueOf(e.getStatus())).body(dto));
     }
 
-    private int findHttpStatus(String status) {
-        if (CustomHttpStatus.valueOf(status) != null) {
-            return CustomHttpStatus.valueOf(status).value();
-        } else {
-            return HttpStatus.valueOf(status).value();
+    private boolean containsEnum(String constantName) {
+        for (CustomHttpStatus status : CustomHttpStatus.VALUES) {
+            if (status.name().equals(constantName)) {
+                return true;
+            }
         }
+        return false;
     }
 
     @ExceptionHandler
