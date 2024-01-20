@@ -46,7 +46,7 @@ public class DkuAuthBatchService {
         if (info.getStudentState().equals("재학")) {
             User user = userRepository.findByStudentId(dto.getDkuStudentId())
                     .orElseThrow(UserNotFoundException::new);
-            user.changeIsDkuChecked();
+            user.updateDkuInfo(info.getAge(), info.getGender());
         }
         else {
             throw new FailedAuthRefreshException();

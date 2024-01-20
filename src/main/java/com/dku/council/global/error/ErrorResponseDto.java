@@ -14,7 +14,8 @@ import java.util.UUID;
 public class ErrorResponseDto {
     private final String timestamp;
     private final String trackingId;
-    private final HttpStatus status;
+    private final int statusCode;
+    private final String status;
     private final String code;
     private final List<Object> message;
 
@@ -22,6 +23,7 @@ public class ErrorResponseDto {
     public ErrorResponseDto(MessageSource messageSource, Locale locale, LocalizedMessageException e) {
         this.timestamp = LocalDateTime.now().toString();
         this.trackingId = UUID.randomUUID().toString();
+        this.statusCode = e.getStatusCode();
         this.status = e.getStatus();
         this.code = e.getCode();
         this.message = e.getMessages(messageSource, locale);
