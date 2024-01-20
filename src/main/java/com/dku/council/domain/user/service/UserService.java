@@ -43,10 +43,6 @@ public class UserService {
         User user = userRepository.findByStudentId(dto.getStudentId())
                 .orElseThrow(UserNotFoundException::new);
 
-        if (!user.isDkuChecked()) {
-            throw new DkuAuthNotRefreshedException();
-        }
-
         if (passwordEncoder.matches(dto.getPassword(), user.getPassword()) && user.isDkuChecked()) {
             AuthenticationToken token = jwtProvider.issue(user);
             userInfoService.cacheUserInfo(user.getId(), user);
