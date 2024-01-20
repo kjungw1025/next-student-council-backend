@@ -8,6 +8,7 @@ import com.dku.council.domain.post.model.dto.request.RequestCreateReplyDto;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.post.model.dto.response.ResponsePetitionDto;
 import com.dku.council.domain.post.service.post.PetitionService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.auth.role.UserAuth;
@@ -35,6 +36,7 @@ public class PetitionController {
 
     private final PetitionService petitionService;
     private final LikeService likeService;
+    private final UserService userService;
 
     /**
      * 게시글 목록으로 조회
@@ -65,6 +67,7 @@ public class PetitionController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @UserAuth
     public ResponseIdDto create(AppAuthentication auth, @Valid @ModelAttribute RequestCreatePetitionDto request) {
+        userService.isDkuChecked(auth.getUserId());
         Long postId = petitionService.create(auth.getUserId(), request);
         return new ResponseIdDto(postId);
     }
@@ -80,6 +83,7 @@ public class PetitionController {
     public ResponsePetitionDto findOne(AppAuthentication auth,
                                        @PathVariable Long id,
                                        HttpServletRequest request) {
+        userService.isDkuChecked(auth.getUserId());
         return petitionService.findOnePetition(id, auth.getUserId(), auth.getUserRole(),
                 RemoteAddressUtil.getProxyableAddr(request));
     }
@@ -130,6 +134,7 @@ public class PetitionController {
     @UserAuth
     public void agreePetition(AppAuthentication auth,
                               @PathVariable Long postId) {
+        userService.isDkuChecked(auth.getUserId());
         petitionService.agreePetition(postId, auth.getUserId());
     }
 
@@ -143,6 +148,7 @@ public class PetitionController {
     @PostMapping("/like/{id}")
     @UserAuth
     public void like(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.like(id, auth.getUserId(), POST);
     }
 
@@ -155,6 +161,7 @@ public class PetitionController {
     @DeleteMapping("/like/{id}")
     @UserAuth
     public void cancelLike(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.cancelLike(id, auth.getUserId(), POST);
     }
 }

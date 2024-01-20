@@ -3,6 +3,7 @@ package com.dku.council.domain.homebus.controller;
 import com.dku.council.domain.homebus.model.dto.HomeBusDto;
 import com.dku.council.domain.homebus.model.dto.RequestCancelTicketDto;
 import com.dku.council.domain.homebus.service.HomeBusUserService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.UserAuth;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +20,7 @@ import java.util.List;
 public class HomeBusUserController {
 
     private final HomeBusUserService service;
+    private final UserService userService;
 
     /**
      * 귀향버스 목록 조회.
@@ -29,6 +31,7 @@ public class HomeBusUserController {
     @GetMapping
     @UserAuth
     public List<HomeBusDto> listBus(AppAuthentication auth) {
+        userService.isDkuChecked(auth.getUserId());
         return service.listBus(auth.getUserId());
     }
 
@@ -39,6 +42,7 @@ public class HomeBusUserController {
     @PostMapping("/ticket/{busId}")
     @UserAuth
     public void createTicket(AppAuthentication auth, @PathVariable Long busId) {
+        userService.isDkuChecked(auth.getUserId());
         service.createTicket(auth.getUserId(), busId);
     }
 
@@ -51,6 +55,7 @@ public class HomeBusUserController {
     @UserAuth
     public void deleteTicket(AppAuthentication auth, @PathVariable Long busId,
                              @Valid @RequestBody RequestCancelTicketDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         service.deleteTicket(auth.getUserId(), busId, dto);
     }
 }

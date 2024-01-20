@@ -4,6 +4,7 @@ import com.dku.council.domain.ticket.model.dto.response.ResponseManagerTicketDto
 import com.dku.council.domain.ticket.model.dto.response.ResponseResendSmsDto;
 import com.dku.council.domain.ticket.model.dto.response.ResponseTicketDto;
 import com.dku.council.domain.ticket.service.TicketVerifyService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.auth.role.UserAuth;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class TicketVerifyController {
 
     private final TicketVerifyService ticketVerifyService;
+    private final UserService userService;
 
     /**
      * 내 티켓 조회하기
@@ -28,6 +30,7 @@ public class TicketVerifyController {
     @GetMapping("/event/{eventId}")
     @UserAuth
     public ResponseTicketDto myTicket(AppAuthentication auth, @PathVariable Long eventId) {
+        userService.isDkuChecked(auth.getUserId());
         return ticketVerifyService.myTicket(auth.getUserId(), eventId);
     }
 
