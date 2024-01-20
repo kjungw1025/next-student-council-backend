@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,7 +36,15 @@ public class ControllerAdvisor {
     protected ResponseEntity<ErrorResponseDto> localizedException(LocalizedMessageException e, Locale locale) {
         ErrorResponseDto dto = new ErrorResponseDto(messageSource, locale, e);
         log.error("A problem has occurred in controller advice: [id={}]", dto.getTrackingId(), e);
-        return filter(e, ResponseEntity.status(e.getStatus()).body(dto));
+        return filter(e, ResponseEntity.status(findHttpStatus(e.getStatus())).body(dto));
+    }
+
+    private int findHttpStatus(String status) {
+        if (CustomHttpStatus.valueOf(status) != null) {
+            return CustomHttpStatus.valueOf(status).value();
+        } else {
+            return HttpStatus.valueOf(status).value();
+        }
     }
 
     @ExceptionHandler

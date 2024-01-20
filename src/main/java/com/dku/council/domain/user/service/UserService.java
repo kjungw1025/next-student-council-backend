@@ -43,7 +43,7 @@ public class UserService {
         User user = userRepository.findByStudentId(dto.getStudentId())
                 .orElseThrow(UserNotFoundException::new);
 
-        if (passwordEncoder.matches(dto.getPassword(), user.getPassword()) && user.isDkuChecked()) {
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             AuthenticationToken token = jwtProvider.issue(user);
             userInfoService.cacheUserInfo(user.getId(), user);
             return new ResponseLoginDto(token);

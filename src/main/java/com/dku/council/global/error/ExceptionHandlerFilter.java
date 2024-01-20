@@ -38,7 +38,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
     private void writeErrorResponse(HttpServletResponse response, Locale locale, LocalizedMessageException ex) throws IOException {
         ErrorResponseDto dto = new ErrorResponseDto(messageSource, locale, ex);
         log.error("A problem has occurred in filter: [id={}]", dto.getTrackingId(), ex);
-        writeResponse(response, dto, ex.getStatus().value());
+        writeResponse(response, dto, Integer.parseInt(ex.getCode()));
     }
 
     private void writeUnexpectedErrorResponse(HttpServletResponse response, Locale locale, Exception ex) throws IOException {
