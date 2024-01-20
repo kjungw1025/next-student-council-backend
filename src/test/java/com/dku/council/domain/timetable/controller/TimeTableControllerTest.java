@@ -13,6 +13,7 @@ import com.dku.council.domain.timetable.model.dto.response.ListTimeTableDto;
 import com.dku.council.domain.timetable.model.dto.response.TimeScheduleDto;
 import com.dku.council.domain.timetable.model.dto.response.TimeTableDto;
 import com.dku.council.domain.timetable.service.TimeTableService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.mock.LectureMock;
 import com.dku.council.util.base.AbstractAuthControllerTest;
 import com.dku.council.util.test.ImportsForMvc;
@@ -43,6 +44,9 @@ class TimeTableControllerTest extends AbstractAuthControllerTest {
 
     @MockBean
     private TimeTableService timeTableService;
+
+    @MockBean
+    private UserService userService;
 
     private final LocalTime start = LocalTime.of(10, 0);
     private final LocalTime end = LocalTime.of(13, 0);

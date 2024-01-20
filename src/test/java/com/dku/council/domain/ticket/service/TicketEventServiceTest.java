@@ -6,6 +6,7 @@ import com.dku.council.domain.ticket.model.entity.TicketEvent;
 import com.dku.council.domain.ticket.repository.TicketEventMemoryRepository;
 import com.dku.council.domain.ticket.repository.TicketEventRepository;
 import com.dku.council.domain.ticket.service.TicketEventService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.mock.TicketEventMock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,9 @@ class TicketEventServiceTest {
 
     @InjectMocks
     private TicketEventService service;
+
+    @Mock
+    private UserService userService;
 
     private final TicketEvent testEntity = TicketEventMock.createDummy();
 
