@@ -7,6 +7,7 @@ import com.dku.council.domain.ticket.model.entity.Ticket;
 import com.dku.council.domain.ticket.repository.TicketRepository;
 import com.dku.council.domain.user.model.UserInfo;
 import com.dku.council.domain.user.service.UserInfoService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.infra.nhn.sms.service.SMSService;
 import com.dku.council.mock.TicketMock;
 import com.dku.council.mock.UserInfoMock;
@@ -43,8 +44,13 @@ class TicketVerifyServiceTest {
     @Mock
     private MessageSource messageSource;
 
+    @Mock
+    private UserService userService;
+
     private static final int DIGIT_COUNT = 6;
     private TicketVerifyService service;
+
+
 
 
     @BeforeEach

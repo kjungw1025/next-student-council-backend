@@ -8,6 +8,7 @@ import com.dku.council.domain.post.model.dto.request.RequestCreateCoalitionDto;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.post.model.dto.response.ResponseSingleGenericPostDto;
 import com.dku.council.domain.post.service.post.CoalitionService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.auth.role.UserAuth;
@@ -34,6 +35,7 @@ public class CoalitionController {
 
     private final CoalitionService service;
     private final LikeService likeService;
+    private final UserService userService;
 
     /**
      * 게시글 목록으로 조회
@@ -76,6 +78,7 @@ public class CoalitionController {
     public ResponseSingleGenericPostDto findOne(AppAuthentication auth,
                                                 @PathVariable Long id,
                                                 HttpServletRequest request) {
+        userService.isDkuChecked(auth.getUserId());
         return service.findOne(id, auth.getUserId(), auth.getUserRole(),
                 RemoteAddressUtil.getProxyableAddr(request));
     }
@@ -100,6 +103,7 @@ public class CoalitionController {
     @PostMapping("/like/{id}")
     @UserAuth
     public void like(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.like(id, auth.getUserId(), POST);
     }
 
@@ -112,6 +116,7 @@ public class CoalitionController {
     @DeleteMapping("/like/{id}")
     @UserAuth
     public void cancelLike(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.cancelLike(id, auth.getUserId(), LikeTarget.POST);
     }
 }

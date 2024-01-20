@@ -6,6 +6,7 @@ import com.dku.council.domain.report.model.dto.list.ResponseReportCategoryDto;
 import com.dku.council.domain.report.model.dto.response.ResponseSingleReportedPostDto;
 import com.dku.council.domain.report.model.dto.response.SummarizedReportedPostDto;
 import com.dku.council.domain.report.service.ReportService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.auth.role.UserAuth;
@@ -25,6 +26,7 @@ import java.util.List;
 public class ReportController {
 
     private final ReportService reportService;
+    private final UserService userService;
 
     /**
      * 게시글 신고
@@ -35,6 +37,7 @@ public class ReportController {
     @PostMapping("{id}")
     @UserAuth
     public void report(@PathVariable Long id, AppAuthentication auth, RequestCreateReportDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         reportService.report(id, auth.getUserId(), dto);
     }
 

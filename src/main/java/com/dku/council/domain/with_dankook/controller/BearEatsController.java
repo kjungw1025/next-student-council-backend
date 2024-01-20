@@ -1,6 +1,7 @@
 package com.dku.council.domain.with_dankook.controller;
 
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedBearEatsDto;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedBearEatsPossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateBearEatsDto;
@@ -25,6 +26,7 @@ import javax.validation.Valid;
 public class BearEatsController {
 
     private final BearEatsService bearEatsService;
+    private final UserService userService;
 
     /**
      * BearEats 게시글 목록 조회
@@ -50,6 +52,7 @@ public class BearEatsController {
     @UserAuth
     public ResponsePage<SummarizedBearEatsDto> listMyPots(AppAuthentication auth,
                                                           @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedBearEatsDto> list = bearEatsService.listMyPosts(auth.getUserId(), pageable);
         return new ResponsePage<>(list);
     }
@@ -63,6 +66,7 @@ public class BearEatsController {
     @UserAuth
     public ResponseSingleBearEatsDto findOne(AppAuthentication auth,
                                              @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         return bearEatsService.findOne(id, auth.getUserId(), auth.getUserRole());
     }
 
@@ -73,6 +77,7 @@ public class BearEatsController {
     @UserAuth
     public ResponseIdDto create(AppAuthentication auth,
                                 @Valid @RequestBody RequestCreateBearEatsDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         Long id = bearEatsService.create(auth.getUserId(), dto);
         return new ResponseIdDto(id);
     }
@@ -85,6 +90,7 @@ public class BearEatsController {
     @PostMapping("/{id}/enter")
     @UserAuth
     public void enter(AppAuthentication auth, @PathVariable @Valid Long id) {
+        userService.isDkuChecked(auth.getUserId());
         bearEatsService.enter(id, auth.getUserId(), auth.getUserRole());
     }
 
@@ -97,6 +103,7 @@ public class BearEatsController {
     @UserAuth
     public void delete(AppAuthentication auth,
                        @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         bearEatsService.delete(id, auth.getUserId(), auth.isAdmin());
     }
 
@@ -109,6 +116,7 @@ public class BearEatsController {
     @PatchMapping("/{id}")
     @UserAuth
     public void close(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         bearEatsService.close(id, auth.getUserId());
     }
 
@@ -122,6 +130,7 @@ public class BearEatsController {
     @UserAuth
     public ResponsePage<SummarizedBearEatsPossibleReviewDto> listPossibleReviewPosts(AppAuthentication auth,
                                                                                      @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedBearEatsPossibleReviewDto> list = bearEatsService.listMyPossibleReviewPosts(auth.getUserId(), pageable);
         return new ResponsePage<>(list);
     }

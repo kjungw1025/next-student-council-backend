@@ -7,6 +7,7 @@ import com.dku.council.domain.ticket.model.dto.response.ResponseCaptchaKeyDto;
 import com.dku.council.domain.ticket.model.dto.response.ResponseTicketTurnDto;
 import com.dku.council.domain.ticket.service.TicketEventService;
 import com.dku.council.domain.ticket.service.TicketService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.auth.role.UserAuth;
@@ -32,6 +33,7 @@ public class TicketController {
     private final TicketService ticketService;
     private final TicketEventService ticketEventService;
     private final CaptchaService captchaService;
+    private final UserService userService;
 
     /**
      * 티켓 이벤트 목록 가져오기
@@ -78,6 +80,7 @@ public class TicketController {
     @GetMapping("/reservation/{eventId}")
     @UserAuth
     public ResponseTicketTurnDto myReservationOrder(AppAuthentication auth, @PathVariable Long eventId) {
+        userService.isDkuChecked(auth.getUserId());
         return ticketService.myReservationOrder(auth.getUserId(), eventId);
     }
 
@@ -89,7 +92,8 @@ public class TicketController {
      */
     @GetMapping("/captcha/key")
     @UserAuth
-    public ResponseCaptchaKeyDto captchaKey() {
+    public ResponseCaptchaKeyDto captchaKey(AppAuthentication auth) {
+        userService.isDkuChecked(auth.getUserId());
         String captchaKey = captchaService.requestCaptchaKey();
         return new ResponseCaptchaKeyDto(captchaKey);
     }
@@ -104,7 +108,8 @@ public class TicketController {
     @GetMapping(value = "/captcha/image/{key}",
             produces = MediaType.IMAGE_JPEG_VALUE)
     @UserAuth
-    public byte[] captchaImage(@PathVariable String key) {
+    public byte[] captchaImage(AppAuthentication auth, @PathVariable String key) {
+        userService.isDkuChecked(auth.getUserId());
         return captchaService.requestCaptchaImage(key);
     }
 
@@ -119,6 +124,8 @@ public class TicketController {
     @UserAuth
     public ResponseTicketTurnDto enroll(AppAuthentication auth,
                                         @Valid @RequestBody RequestEnrollDto dto) {
+        userService.isDkuChecked(auth.getUserId());
+
         Instant now = Instant.now(clock);
 
         captchaService.verifyCaptcha(dto.getCaptchaKey(), dto.getCaptchaValue());

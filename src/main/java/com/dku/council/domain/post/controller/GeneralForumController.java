@@ -12,6 +12,7 @@ import com.dku.council.domain.post.model.dto.response.ResponseGeneralForumDto;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.post.service.post.GeneralForumService;
 import com.dku.council.domain.user.model.entity.User;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.auth.role.UserAuth;
@@ -38,6 +39,7 @@ public class GeneralForumController {
     private final CommentService commentService;
     private final GeneralForumService forumService;
     private final LikeService likeService;
+    private final UserService userService;
 
     /**
      * 게시글 목록 및 태그 조회
@@ -65,6 +67,7 @@ public class GeneralForumController {
     public ResponsePage<SummarizedGenericPostDto> listMyPosts(AppAuthentication auth,
                                                               @ParameterObject Pageable pageable,
                                                               @RequestParam(defaultValue = "50") int bodySize) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedGenericPostDto> posts =
                 forumService.listMyPosts(auth.getUserId(), pageable, bodySize);
         return new ResponsePage<>(posts);
@@ -77,6 +80,7 @@ public class GeneralForumController {
     @UserAuth
     public ResponseIdDto create(AppAuthentication auth,
                                 @Valid @ModelAttribute RequestCreateGeneralForumDto request) {
+        userService.isDkuChecked(auth.getUserId());
         Long postId = forumService.create(auth.getUserId(), request);
         return new ResponseIdDto(postId);
     }
@@ -92,6 +96,7 @@ public class GeneralForumController {
     public ResponseGeneralForumDto findOne(AppAuthentication auth,
                                            @PathVariable Long id,
                                            HttpServletRequest request) {
+        userService.isDkuChecked(auth.getUserId());
         return forumService.findOne(id, auth.getUserId(), auth.getUserRole(),
                 RemoteAddressUtil.getProxyableAddr(request));
     }
@@ -106,6 +111,7 @@ public class GeneralForumController {
     @DeleteMapping("/{id}")
     @UserAuth
     public void delete(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         forumService.delete(id, auth.getUserId(), auth.isAdmin());
     }
 
@@ -143,6 +149,7 @@ public class GeneralForumController {
     public ResponsePage<CommentDto> listComment(AppAuthentication auth,
                                                 @PathVariable Long postId,
                                                 @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<CommentDto> comments = commentService.list(postId, auth.getUserId(), pageable,
                 (ent, dto) -> {
                     User user = ent.getUser();
@@ -162,6 +169,7 @@ public class GeneralForumController {
     public ResponseIdDto createComment(AppAuthentication auth,
                                        @PathVariable Long postId,
                                        @Valid @RequestBody RequestCreateCommentDto commentDto) {
+        userService.isDkuChecked(auth.getUserId());
         Long id = commentService.create(postId, auth.getUserId(), commentDto.getText());
         return new ResponseIdDto(id);
     }
@@ -178,6 +186,7 @@ public class GeneralForumController {
     public ResponseIdDto editComment(AppAuthentication auth,
                                      @PathVariable Long id,
                                      @Valid @RequestBody RequestCreateCommentDto commentDto) {
+        userService.isDkuChecked(auth.getUserId());
         Long editId = commentService.edit(id, auth.getUserId(), commentDto.getText());
         return new ResponseIdDto(editId);
     }
@@ -191,6 +200,7 @@ public class GeneralForumController {
     @DeleteMapping("/comment/{id}")
     @UserAuth
     public ResponseIdDto deleteComment(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         Long deleteId = commentService.delete(id, auth.getUserId(), auth.isAdmin());
         return new ResponseIdDto(deleteId);
     }
@@ -204,6 +214,7 @@ public class GeneralForumController {
     @PostMapping("/like/{id}")
     @UserAuth
     public void like(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.like(id, auth.getUserId(), LikeTarget.POST);
     }
 
@@ -216,6 +227,7 @@ public class GeneralForumController {
     @DeleteMapping("/like/{id}")
     @UserAuth
     public void cancelLike(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.cancelLike(id, auth.getUserId(), LikeTarget.POST);
     }
 }
