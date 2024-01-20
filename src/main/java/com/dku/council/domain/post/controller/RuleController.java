@@ -5,6 +5,7 @@ import com.dku.council.domain.post.model.dto.request.RequestCreateRuleDto;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.post.model.dto.response.ResponseSingleGenericPostDto;
 import com.dku.council.domain.post.service.post.RuleService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.auth.role.UserAuth;
@@ -28,6 +29,7 @@ import javax.validation.Valid;
 public class RuleController {
 
     private final RuleService postService;
+    private final UserService userService;
 
     /**
      * 게시글 목록으로 조회
@@ -67,6 +69,7 @@ public class RuleController {
     public ResponseSingleGenericPostDto findOne(AppAuthentication auth,
                                                 @PathVariable Long id,
                                                 HttpServletRequest request) {
+        userService.isDkuChecked(auth.getUserId());
         return postService.findOne(id, auth.getUserId(), auth.getUserRole(),
                 RemoteAddressUtil.getProxyableAddr(request));
     }

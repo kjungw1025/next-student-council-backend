@@ -3,6 +3,7 @@ package com.dku.council.domain.with_dankook.controller;
 import com.dku.council.domain.like.model.LikeTarget;
 import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedTradeDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateTradeDto;
 import com.dku.council.domain.with_dankook.model.dto.response.ResponseSingleTradeDto;
@@ -28,6 +29,7 @@ public class TradeController {
 
     private final TradeService tradeService;
     private final LikeService likeService;
+    private final UserService userService;
 
     /**
      * 단국 거래 게시글 목록 조회
@@ -55,6 +57,7 @@ public class TradeController {
     @UserAuth
     public ResponseSingleTradeDto findOne(AppAuthentication auth,
                                           @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         return tradeService.findOne(id, auth.getUserId(), auth.getUserRole());
     }
 
@@ -65,6 +68,7 @@ public class TradeController {
     @UserAuth
     public ResponseIdDto create(AppAuthentication auth,
                                 @Valid @ModelAttribute RequestCreateTradeDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         Long id = tradeService.create(auth.getUserId(), dto);
         return new ResponseIdDto(id);
     }
@@ -77,6 +81,7 @@ public class TradeController {
     @DeleteMapping("/{id}")
     @UserAuth
     public void delete(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         tradeService.delete(id, auth.getUserId(), auth.isAdmin());
     }
 
@@ -89,6 +94,7 @@ public class TradeController {
     @PatchMapping("/{id}")
     @UserAuth
     public void close(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         tradeService.close(id, auth.getUserId());
     }
 
@@ -101,6 +107,7 @@ public class TradeController {
     @PostMapping("/{id}/like")
     @UserAuth
     public void like(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.like(id, auth.getUserId(), LikeTarget.WITH_DANKOOK);
     }
 
@@ -113,6 +120,7 @@ public class TradeController {
     @DeleteMapping("/{id}/like")
     @UserAuth
     public void cancelLike(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.cancelLike(id, auth.getUserId(), LikeTarget.WITH_DANKOOK);
     }
 
@@ -126,6 +134,7 @@ public class TradeController {
     @UserAuth
     public ResponsePage<SummarizedTradeDto> listMyPosts(AppAuthentication auth,
                                                          @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedTradeDto> list = tradeService.listMyPosts(auth.getUserId(), pageable);
         return new ResponsePage<>(list);
     }

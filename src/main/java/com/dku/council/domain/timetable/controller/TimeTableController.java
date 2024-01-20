@@ -10,6 +10,7 @@ import com.dku.council.domain.timetable.model.dto.response.TimeTableDto;
 import com.dku.council.domain.timetable.model.entity.LectureTemplate;
 import com.dku.council.domain.timetable.repository.spec.LectureTemplateSpec;
 import com.dku.council.domain.timetable.service.TimeTableService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.UserAuth;
 import com.dku.council.global.model.dto.ResponseIdDto;
@@ -30,6 +31,7 @@ import java.util.List;
 public class TimeTableController {
 
     private final TimeTableService timeTableService;
+    private final UserService userService;
 
     /**
      * 수업 목록 조회
@@ -51,6 +53,7 @@ public class TimeTableController {
     @GetMapping
     @UserAuth
     public List<ListTimeTableDto> list(AppAuthentication auth) {
+        userService.isDkuChecked(auth.getUserId());
         return timeTableService.list(auth.getUserId());
     }
 
@@ -64,6 +67,7 @@ public class TimeTableController {
     @GetMapping("/{tableId}")
     @UserAuth
     public TimeTableDto findOne(AppAuthentication auth, @PathVariable Long tableId) {
+        userService.isDkuChecked(auth.getUserId());
         return timeTableService.findOne(auth.getUserId(), tableId);
     }
 
@@ -77,6 +81,7 @@ public class TimeTableController {
     @PostMapping
     @UserAuth
     public ResponseIdDto create(AppAuthentication auth, @Valid @RequestBody CreateTimeTableRequestDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         Long id = timeTableService.create(auth.getUserId(), dto);
         return new ResponseIdDto(id);
     }
@@ -95,6 +100,7 @@ public class TimeTableController {
     public ResponseIdDto update(AppAuthentication auth,
                                 @PathVariable Long tableId,
                                 @Valid @RequestBody UpdateTimeTableRequestDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         Long id = timeTableService.update(auth.getUserId(), tableId, dto.getLectures());
         return new ResponseIdDto(id);
     }
@@ -112,6 +118,7 @@ public class TimeTableController {
     public ResponseIdDto updateName(AppAuthentication auth,
                                     @PathVariable Long tableId,
                                     @Valid @RequestBody UpdateTimeTableNameRequestDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         Long id = timeTableService.updateName(auth.getUserId(), tableId, dto.getName());
         return new ResponseIdDto(id);
     }
@@ -126,6 +133,7 @@ public class TimeTableController {
     @DeleteMapping("/{tableId}")
     @UserAuth
     public ResponseIdDto delete(AppAuthentication auth, @PathVariable Long tableId) {
+        userService.isDkuChecked(auth.getUserId());
         Long id = timeTableService.delete(auth.getUserId(), tableId);
         return new ResponseIdDto(id);
     }

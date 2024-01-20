@@ -2,6 +2,7 @@ package com.dku.council.domain.comment.controller;
 
 import com.dku.council.domain.like.model.LikeTarget;
 import com.dku.council.domain.like.service.LikeService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.UserAuth;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final LikeService likeService;
+    private final UserService userService;
     
     /**
      * 댓글에 좋아요 표시.
@@ -25,6 +27,7 @@ public class CommentController {
     @PostMapping("/like/{id}")
     @UserAuth
     public void like(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.like(id, auth.getUserId(), LikeTarget.COMMENT);
     }
 
@@ -37,6 +40,7 @@ public class CommentController {
     @DeleteMapping("/like/{id}")
     @UserAuth
     public void cancelLike(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.cancelLike(id, auth.getUserId(), LikeTarget.COMMENT);
     }
 }

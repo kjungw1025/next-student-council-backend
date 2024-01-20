@@ -6,6 +6,7 @@ import com.dku.council.domain.review.exception.InvalidCreateReviewToMyselfExcept
 import com.dku.council.domain.review.model.dto.request.RequestCreateReviewDto;
 import com.dku.council.domain.review.model.dto.response.ResponseReviewPositiveCountDto;
 import com.dku.council.domain.review.service.ReviewService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.domain.with_dankook.exception.InvalidStatusException;
 import com.dku.council.domain.with_dankook.exception.WithDankookUserNotFoundException;
 import com.dku.council.domain.with_dankook.model.entity.WithDankook;
@@ -28,8 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
-    private final WithDankookUserService withDankookUserService;
-    private final WithDankookService<WithDankook> withDankookService;
+    private final UserService userService;
 
     /**
      * 모집이 완료된 with-dankook 게시판들에 대한 리뷰 작성
@@ -45,6 +45,7 @@ public class ReviewController {
     @UserAuth
     public void create(AppAuthentication auth,
                                 @Valid @RequestBody RequestCreateReviewDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         reviewService.create(auth.getUserId(), dto);
     }
 
@@ -67,6 +68,7 @@ public class ReviewController {
     @UserAuth
     public ResponsePage<ResponseReviewPositiveCountDto> listTop3Review(AppAuthentication auth,
                                                                        @Valid @RequestParam String withDankookType) {
+        userService.isDkuChecked(auth.getUserId());
         Page<ResponseReviewPositiveCountDto> list = reviewService.rank(withDankookType, Pageable.ofSize(3));
         return new ResponsePage<>(list);
     }
@@ -90,6 +92,7 @@ public class ReviewController {
     @UserAuth
     public Map<String, Integer> AllReceivedPositiveReview(AppAuthentication auth,
                                                           @Valid @RequestParam String withDankookType) {
+        userService.isDkuChecked(auth.getUserId());
         return reviewService.findAllUserPositiveReviewDetail(withDankookType, auth.getUserId());
     }
 
@@ -112,6 +115,7 @@ public class ReviewController {
     @UserAuth
     public Map<String, Integer> AllReceivedNegativeReview(AppAuthentication auth,
                                                           @Valid @RequestParam String withDankookType) {
+        userService.isDkuChecked(auth.getUserId());
         return reviewService.findAllUserNegativeReviewDetail(withDankookType, auth.getUserId());
     }
 }
