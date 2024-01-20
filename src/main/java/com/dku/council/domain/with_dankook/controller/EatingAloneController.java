@@ -1,6 +1,7 @@
 package com.dku.council.domain.with_dankook.controller;
 
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedEatingAloneDto;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedEatingAlonePossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateEatingAloneDto;
@@ -25,6 +26,7 @@ import javax.validation.Valid;
 public class EatingAloneController {
 
     private final EatingAloneService eatingAloneService;
+    private final UserService userService;
 
     /**
      * 단혼밥 게시글 목록 조회
@@ -50,6 +52,7 @@ public class EatingAloneController {
     @UserAuth
     public ResponsePage<SummarizedEatingAloneDto> listMyPosts(AppAuthentication auth,
                                                               @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedEatingAloneDto> list = eatingAloneService.listMyPosts(auth.getUserId(), pageable);
         return new ResponsePage<>(list);
     }
@@ -63,6 +66,7 @@ public class EatingAloneController {
     @UserAuth
     public ResponseSingleEatingAloneDto findOne(AppAuthentication auth,
                                                 @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         return eatingAloneService.findOne(id, auth.getUserId(), auth.getUserRole());
     }
 
@@ -73,6 +77,7 @@ public class EatingAloneController {
     @UserAuth
     public ResponseIdDto create(AppAuthentication auth,
                                 @Valid @RequestBody RequestCreateEatingAloneDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         Long id = eatingAloneService.create(auth.getUserId(), dto);
         return new ResponseIdDto(id);
     }
@@ -86,6 +91,7 @@ public class EatingAloneController {
     @UserAuth
     public void enter(AppAuthentication auth,
                        @PathVariable @Valid Long id) {
+        userService.isDkuChecked(auth.getUserId());
         eatingAloneService.enter(id, auth.getUserId(), auth.getUserRole());
     }
 
@@ -98,6 +104,7 @@ public class EatingAloneController {
     @UserAuth
     public void delete(AppAuthentication auth,
                        @PathVariable @Valid Long id) {
+        userService.isDkuChecked(auth.getUserId());
         eatingAloneService.delete(id, auth.getUserId(), auth.getUserRole().isAdmin());
     }
 
@@ -110,6 +117,7 @@ public class EatingAloneController {
     @PatchMapping("/{id}")
     @UserAuth
     public void close(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         eatingAloneService.close(id, auth.getUserId());
     }
 
@@ -123,6 +131,7 @@ public class EatingAloneController {
     @UserAuth
     public ResponsePage<SummarizedEatingAlonePossibleReviewDto> listPossibleReviewPosts(AppAuthentication auth,
                                                                                         @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedEatingAlonePossibleReviewDto> list = eatingAloneService.listMyPossibleReviewPosts(auth.getUserId(), pageable);
         return new ResponsePage<>(list);
     }

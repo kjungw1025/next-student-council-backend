@@ -4,6 +4,7 @@ import com.dku.council.domain.post.model.dto.list.SummarizedConferenceDto;
 import com.dku.council.domain.post.model.dto.request.RequestCreateConferenceDto;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.post.service.post.ConferenceService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.model.dto.ResponseIdDto;
@@ -24,6 +25,7 @@ import javax.validation.Valid;
 public class ConferenceController {
 
     private final ConferenceService service;
+    private final UserService userService;
 
     /**
      * 게시글 목록으로 조회

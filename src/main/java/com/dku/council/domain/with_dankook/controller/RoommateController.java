@@ -1,6 +1,7 @@
 package com.dku.council.domain.with_dankook.controller;
 
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedRoommateDto;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedRoommatePossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateRoommateDto;
@@ -29,6 +30,21 @@ public class RoommateController {
 
     private final RoommateService roommateService;
     private final SurveyService surveyService;
+    private final UserService userService;
+
+    /**
+     *  구해줘! 룸메 설문조사 작성 여부 확인
+     *  <p>구해줘! 룸메 페이지로 로딩될 때 사용되어야 한다.</p>
+     *
+     *  설문조사를 하지 않았을 때는 설문조사를 먼저 받아야하며, 설문조사가 꼭 있어야만 다른 기능 사용이 가능하다.
+     */
+    @GetMapping("/survey")
+    @UserAuth
+    public ResponseBooleanDto isSurveyExist(AppAuthentication auth) {
+        userService.isDkuChecked(auth.getUserId());
+        boolean result = surveyService.checkSurvey(auth.getUserId());
+        return new ResponseBooleanDto(result);
+    }
 
     /**
      * 구해줘! 룸메 설문조사 작성
@@ -43,6 +59,7 @@ public class RoommateController {
     @UserAuth
     public ResponseIdDto createSurvey(AppAuthentication auth,
                                       @RequestBody @Valid RequestCreateSurveyDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         Long result = surveyService.createSurvey(auth.getUserId(), dto);
         return new ResponseIdDto(result);
     }
@@ -55,6 +72,7 @@ public class RoommateController {
     @UserAuth
     public ResponseIdDto create(AppAuthentication auth,
                                 @RequestBody @Valid RequestCreateRoommateDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         Long result = roommateService.create(auth.getUserId(), dto);
         return new ResponseIdDto(result);
     }
@@ -71,6 +89,7 @@ public class RoommateController {
     public ResponsePage<SummarizedRoommateDto> list(AppAuthentication auth,
                                                     @RequestParam(defaultValue = "50") int bodySize,
                                                     @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedRoommateDto> list = roommateService.list(auth.getUserId(), pageable, bodySize);
         return new ResponsePage<>(list);
     }
@@ -84,6 +103,7 @@ public class RoommateController {
     @UserAuth
     public ResponseSingleRoommateDto findOne(AppAuthentication auth,
                                                            @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         return roommateService.findOne(id, auth.getUserId(), auth.getUserRole());
     }
 
@@ -97,6 +117,7 @@ public class RoommateController {
     @UserAuth
     public void apply(AppAuthentication auth,
                       @Valid @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         roommateService.apply(auth.getUserId(), id, auth.getUserRole());
     }
 
@@ -112,6 +133,7 @@ public class RoommateController {
     public void approve(AppAuthentication auth,
                         @Valid @PathVariable Long id,
                         Long targetUserId) {
+        userService.isDkuChecked(auth.getUserId());
         roommateService.approve(auth.getUserId(), id, targetUserId);
     }
 
@@ -124,18 +146,8 @@ public class RoommateController {
     @UserAuth
     public void delete(AppAuthentication auth,
                        @Valid @RequestParam Long roommateId) {
+        userService.isDkuChecked(auth.getUserId());
         roommateService.delete(auth.getUserId(), auth.isAdmin(), roommateId);
-    }
-
-    /**
-     *  구해줘! 룸메 설문조사 작성 여부 확인
-     *  <p>설문조사를 하지 않았을 때는 설문조사를 먼저 받아야하며, 설문조사가 꼭 있어야만 다른 기능 사용이 가능하다.</p>
-     */
-    @GetMapping("/survey")
-    @UserAuth
-    public ResponseBooleanDto isSurveyExist(AppAuthentication auth) {
-        boolean result = surveyService.checkSurvey(auth.getUserId());
-        return new ResponseBooleanDto(result);
     }
 
     /**
@@ -148,6 +160,7 @@ public class RoommateController {
     @UserAuth
     public ResponsePage<SummarizedRoommatePossibleReviewDto> listPossibleReviewPosts(AppAuthentication auth,
                                                                                      @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedRoommatePossibleReviewDto> list = roommateService.listMyPossibleReviewPosts(auth.getUserId(), pageable);
         return new ResponsePage<>(list);
     }

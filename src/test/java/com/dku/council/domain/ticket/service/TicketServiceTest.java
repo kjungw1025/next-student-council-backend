@@ -12,6 +12,7 @@ import com.dku.council.domain.ticket.service.TicketService;
 import com.dku.council.domain.user.exception.NotAttendingException;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.service.UserInfoService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.util.DateUtil;
 import com.dku.council.mock.TicketEventMock;
 import com.dku.council.mock.UserInfoMock;
@@ -53,6 +54,9 @@ class TicketServiceTest {
 
     @InjectMocks
     private TicketService service;
+
+    @Mock
+    private UserService userService;
 
 
     @Test

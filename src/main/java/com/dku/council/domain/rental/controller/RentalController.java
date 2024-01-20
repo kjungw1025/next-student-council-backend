@@ -10,6 +10,7 @@ import com.dku.council.domain.rental.model.entity.RentalItem;
 import com.dku.council.domain.rental.repository.spec.RentalSpec;
 import com.dku.council.domain.rental.service.RentalItemService;
 import com.dku.council.domain.rental.service.RentalService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.auth.role.UserAuth;
@@ -31,6 +32,7 @@ public class RentalController {
 
     private final RentalService rentalService;
     private final RentalItemService rentalItemService;
+    private final UserService userService;
 
     /**
      * 모든 대여 신청 현황 조회.
@@ -40,8 +42,10 @@ public class RentalController {
      */
     @GetMapping
     @UserAuth
-    public ResponsePage<RentalDto> list(@RequestParam(required = false) String keyword,
+    public ResponsePage<RentalDto> list(AppAuthentication auth,
+                                        @RequestParam(required = false) String keyword,
                                         @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Specification<Rental> spec = RentalSpec.withTitleOrBody(keyword);
         spec = spec.or(RentalSpec.withUsername(keyword));
         spec = spec.or(RentalSpec.withItemName(keyword));
@@ -56,8 +60,10 @@ public class RentalController {
      */
     @GetMapping("/{productId}")
     @UserAuth
-    public ResponsePage<RentalDto> list(@PathVariable Long productId,
+    public ResponsePage<RentalDto> list(AppAuthentication auth,
+                                        @PathVariable Long productId,
                                         @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         return rentalService.list(productId, pageable);
     }
 
@@ -83,6 +89,7 @@ public class RentalController {
     public ResponsePage<RentalDto> myList(AppAuthentication auth,
                                           @RequestParam(required = false) String keyword,
                                           @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Specification<Rental> spec = RentalSpec.withTitleOrBody(keyword);
         spec = spec.or(RentalSpec.withUser(auth.getUserId()));
         spec = spec.or(RentalSpec.withItemName(keyword));
@@ -95,6 +102,7 @@ public class RentalController {
     @PostMapping
     @UserAuth
     public ResponseIdDto create(AppAuthentication auth, @Valid @RequestBody RequestCreateRentalDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         Long id = rentalService.create(auth.getUserId(), dto);
         return new ResponseIdDto(id);
     }

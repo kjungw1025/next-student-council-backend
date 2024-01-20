@@ -1,6 +1,7 @@
 package com.dku.council.domain.with_dankook.controller;
 
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyDto;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyPossibleReviewDto;
 import com.dku.council.domain.with_dankook.model.dto.request.RequestCreateStudyDto;
@@ -24,6 +25,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class StudyController {
     private final StudyService studyService;
+    private final UserService userService;
 
     /**
      * 단터디 게시글 목록 조회
@@ -67,6 +69,7 @@ public class StudyController {
     @UserAuth
     public ResponsePage<SummarizedStudyDto> listMyPosts(AppAuthentication auth,
                                                         @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedStudyDto> list = studyService.listMyPosts(auth.getUserId(), pageable);
         return new ResponsePage<>(list);
     }
@@ -79,6 +82,7 @@ public class StudyController {
     @UserAuth
     public ResponseSingleStudyDto findOne(AppAuthentication auth,
                                           @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         return studyService.findOne(id, auth.getUserId(), auth.getUserRole());
     }
 
@@ -89,6 +93,7 @@ public class StudyController {
     @UserAuth
     public ResponseIdDto create(AppAuthentication auth,
                                 @Valid @RequestBody RequestCreateStudyDto dto) {
+        userService.isDkuChecked(auth.getUserId());
         Long id = studyService.create(auth.getUserId(), dto);
         return new ResponseIdDto(id);
     }
@@ -101,6 +106,7 @@ public class StudyController {
     @PostMapping("/{id}/enter")
     @UserAuth
     public void enter(AppAuthentication auth, @PathVariable @Valid Long id) {
+        userService.isDkuChecked(auth.getUserId());
         studyService.enter(id, auth.getUserId(), auth.getUserRole());
     }
 
@@ -114,6 +120,7 @@ public class StudyController {
     @UserAuth
     public void delete(AppAuthentication auth,
                        @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         studyService.delete(id, auth.getUserId(), auth.isAdmin());
     }
 
@@ -126,6 +133,7 @@ public class StudyController {
     @PatchMapping("/{id}")
     @UserAuth
     public void close(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         studyService.close(id, auth.getUserId());
     }
 
@@ -139,6 +147,7 @@ public class StudyController {
     @UserAuth
     public ResponsePage<SummarizedStudyPossibleReviewDto> listPossibleReviewPosts(AppAuthentication auth,
                                                                                   @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedStudyPossibleReviewDto> list = studyService.listMyPossibleReviewPosts(auth.getUserId(), pageable);
         return new ResponsePage<>(list);
     }

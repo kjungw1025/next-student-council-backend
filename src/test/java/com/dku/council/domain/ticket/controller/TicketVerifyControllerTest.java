@@ -4,6 +4,7 @@ import com.dku.council.domain.ticket.controller.TicketVerifyController;
 import com.dku.council.domain.ticket.model.dto.response.ResponseManagerTicketDto;
 import com.dku.council.domain.ticket.model.dto.response.ResponseTicketDto;
 import com.dku.council.domain.ticket.service.TicketVerifyService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.mock.user.UserAuth;
 import com.dku.council.util.base.AbstractAuthControllerTest;
 import com.dku.council.util.test.ImportsForMvc;
@@ -26,6 +27,9 @@ class TicketVerifyControllerTest extends AbstractAuthControllerTest {
 
     @MockBean
     private TicketVerifyService ticketVerifyService;
+
+    @MockBean
+    private UserService userService;
 
     @BeforeEach
     void setUp() {
