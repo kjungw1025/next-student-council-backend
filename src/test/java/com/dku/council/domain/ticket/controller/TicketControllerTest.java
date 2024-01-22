@@ -7,6 +7,7 @@ import com.dku.council.domain.ticket.model.dto.request.RequestNewTicketEventDto;
 import com.dku.council.domain.ticket.model.dto.response.ResponseTicketTurnDto;
 import com.dku.council.domain.ticket.service.TicketEventService;
 import com.dku.council.domain.ticket.service.TicketService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.infra.naver.service.CaptchaService;
 import com.dku.council.mock.TicketEventMock;
 import com.dku.council.mock.user.UserAuth;
@@ -46,6 +47,9 @@ class TicketControllerTest extends AbstractAuthControllerTest {
 
     @MockBean
     private CaptchaService captchaService;
+
+    @MockBean
+    private UserService userService;
 
     @Test
     @DisplayName("티켓 이벤트 목록 가져오기")

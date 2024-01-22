@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,7 +36,19 @@ public class ControllerAdvisor {
     protected ResponseEntity<ErrorResponseDto> localizedException(LocalizedMessageException e, Locale locale) {
         ErrorResponseDto dto = new ErrorResponseDto(messageSource, locale, e);
         log.error("A problem has occurred in controller advice: [id={}]", dto.getTrackingId(), e);
-        return filter(e, ResponseEntity.status(e.getStatus()).body(dto));
+        if (containsEnum(e.getStatus())) {
+            return filter(e, ResponseEntity.status(e.getStatusCode()).body(dto));
+        }
+        return filter(e, ResponseEntity.status(HttpStatus.valueOf(e.getStatus())).body(dto));
+    }
+
+    private boolean containsEnum(String constantName) {
+        for (CustomHttpStatus status : CustomHttpStatus.VALUES) {
+            if (status.name().equals(constantName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @ExceptionHandler

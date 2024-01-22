@@ -2,6 +2,7 @@ package com.dku.council.domain.user.service;
 
 import com.dku.council.domain.user.exception.AlreadyNicknameException;
 import com.dku.council.domain.user.exception.DkuAuthNotRefreshedException;
+import com.dku.council.domain.user.exception.RequiredDkuUpdateException;
 import com.dku.council.domain.user.exception.WrongPasswordException;
 import com.dku.council.domain.user.model.UserStatus;
 import com.dku.council.domain.user.model.dto.request.RequestExistPasswordChangeDto;
@@ -42,11 +43,7 @@ public class UserService {
         User user = userRepository.findByStudentId(dto.getStudentId())
                 .orElseThrow(UserNotFoundException::new);
 
-        if (!user.isDkuChecked()) {
-            throw new DkuAuthNotRefreshedException();
-        }
-
-        if (passwordEncoder.matches(dto.getPassword(), user.getPassword()) && user.isDkuChecked()) {
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             AuthenticationToken token = jwtProvider.issue(user);
             userInfoService.cacheUserInfo(user.getId(), user);
             return new ResponseLoginDto(token);
@@ -108,6 +105,18 @@ public class UserService {
     public void checkAlreadyNickname(String nickname) {
         if (userRepository.findByNickname(nickname).isPresent()) {
             throw new AlreadyNicknameException();
+        }
+    }
+
+    /**
+     *  단국대학교 학생 인증을 확인하기 위한 메소드이다.
+     *
+     * @UserAuth 어노테이션을 사용하는 모든 메소드에 필수적으로 사용해야 한다.
+     */
+    public void isDkuChecked(Long userId) {
+        User user = findUser(userId);
+        if (!user.isDkuChecked()) {
+            throw new RequiredDkuUpdateException();
         }
     }
 }

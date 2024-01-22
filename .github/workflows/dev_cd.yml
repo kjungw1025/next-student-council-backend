@@ -96,6 +96,9 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ubuntu
           key: ${{ secrets.NEXT_PRIVATE_PEM_KEY }}
+          proxy_host: ${{ secrets.BASTION_IP }}
+          proxy_username: ubuntu
+          proxy_key: ${{ secrets.NEXT_PRIVATE_PEM_KEY }}
           envs: GITHUB_SHA,REPO
           script: |
             ./deploy.sh ${{ secrets.DOCKER_USERNAME }} $REPO ${GITHUB_SHA::7}

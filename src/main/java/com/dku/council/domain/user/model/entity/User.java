@@ -204,6 +204,17 @@ public class User extends BaseEntity {
         this.isDkuChecked = !this.isDkuChecked;
     }
 
+    /**
+     * 단국대 학생 정보를 업데이트합니다.
+     *
+     * @param age      나이
+     * @param gender   성별
+     */
+    public void updateDkuInfo(String age, String gender) {
+        this.isDkuChecked = true;
+        this.age = age;
+        this.gender = gender;
+    }
 
     /**
      * 매년 1월 1일 사용자들의 나이 1을 증가시킵니다.

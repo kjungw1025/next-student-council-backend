@@ -4,6 +4,7 @@ import com.dku.council.domain.homebus.controller.HomeBusUserController;
 import com.dku.council.domain.homebus.model.dto.HomeBusDto;
 import com.dku.council.domain.homebus.model.dto.RequestCancelTicketDto;
 import com.dku.council.domain.homebus.service.HomeBusUserService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.mock.HomeBusMock;
 import com.dku.council.mock.user.UserAuth;
 import com.dku.council.util.base.AbstractAuthControllerTest;
@@ -30,6 +31,9 @@ class HomeBusUserControllerTest extends AbstractAuthControllerTest {
 
     @MockBean
     private HomeBusUserService homeBusUserService;
+
+    @MockBean
+    private UserService userService;
 
     @Test
     @DisplayName("귀향버스 목록 조회")

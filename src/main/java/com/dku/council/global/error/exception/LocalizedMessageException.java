@@ -1,5 +1,6 @@
 package com.dku.council.global.error.exception;
 
+import com.dku.council.global.error.CustomHttpStatus;
 import lombok.Getter;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -11,21 +12,32 @@ import java.util.Objects;
 @Getter
 public class LocalizedMessageException extends RuntimeException {
 
-    private final HttpStatus status;
+    private final int code;
+    private final String status;
     private final String messageId;
     private final Object[] arguments;
     private String customMessage = null;
 
     public LocalizedMessageException(HttpStatus status, String messageId, Object... arguments) {
         super(formatMessage(messageId, arguments));
-        this.status = status;
+        this.code = status.value();
+        this.status = status.name();
         this.messageId = messageId;
         this.arguments = arguments;
     }
 
     public LocalizedMessageException(Throwable cause, HttpStatus status, String messageId, Object... arguments) {
         super(formatMessage(messageId, arguments), cause);
-        this.status = status;
+        this.code = status.value();
+        this.status = status.name();
+        this.messageId = messageId;
+        this.arguments = arguments;
+    }
+
+    public LocalizedMessageException(CustomHttpStatus status, String messageId, Object... arguments) {
+        super(formatMessage(messageId, arguments));
+        this.code = status.value();
+        this.status = status.name();
         this.messageId = messageId;
         this.arguments = arguments;
     }
@@ -44,6 +56,10 @@ public class LocalizedMessageException extends RuntimeException {
 
     public String getCode() {
         return getClass().getSimpleName();
+    }
+
+    public int getStatusCode() {
+        return this.code;
     }
 
     public static LocalizedMessageException of(Exception e) {

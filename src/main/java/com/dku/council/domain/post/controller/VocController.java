@@ -8,6 +8,7 @@ import com.dku.council.domain.post.model.dto.request.RequestCreateVocDto;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.post.model.dto.response.ResponseVocDto;
 import com.dku.council.domain.post.service.post.VocService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.AdminAuth;
 import com.dku.council.global.auth.role.UserAuth;
@@ -33,6 +34,7 @@ public class VocController {
 
     private final VocService vocService;
     private final LikeService likeService;
+    private final UserService userService;
 
     /**
      * 게시글 목록으로 조회
@@ -68,6 +70,7 @@ public class VocController {
                                                    @RequestParam(required = false) List<Long> tagIds,
                                                    @RequestParam(defaultValue = "50") int bodySize,
                                                    @ParameterObject Pageable pageable) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedVocDto> list = vocService.listMine(keyword, tagIds, auth.getUserId(), pageable, bodySize);
         return new ResponsePage<>(list);
     }
@@ -80,6 +83,7 @@ public class VocController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @UserAuth
     public ResponseIdDto create(AppAuthentication auth, @Valid @ModelAttribute RequestCreateVocDto request) {
+        userService.isDkuChecked(auth.getUserId());
         Long postId = vocService.create(auth.getUserId(), request);
         return new ResponseIdDto(postId);
     }
@@ -95,6 +99,7 @@ public class VocController {
     public ResponseVocDto findOne(AppAuthentication auth,
                                   @PathVariable Long id,
                                   HttpServletRequest request) {
+        userService.isDkuChecked(auth.getUserId());
         return vocService.findOne(id, auth.getUserId(), auth.getUserRole(),
                 RemoteAddressUtil.getProxyableAddr(request));
     }
@@ -157,6 +162,7 @@ public class VocController {
     @PostMapping("/like/{id}")
     @UserAuth
     public void like(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.like(id, auth.getUserId(), LikeTarget.POST);
     }
 
@@ -169,6 +175,7 @@ public class VocController {
     @DeleteMapping("/like/{id}")
     @UserAuth
     public void cancelLike(AppAuthentication auth, @PathVariable Long id) {
+        userService.isDkuChecked(auth.getUserId());
         likeService.cancelLike(id, auth.getUserId(), LikeTarget.POST);
     }
 }

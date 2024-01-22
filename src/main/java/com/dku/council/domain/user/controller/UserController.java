@@ -204,6 +204,7 @@ public class UserController {
     public ResponsePage<SummarizedGenericPostDto> listMyCommentedPosts(AppAuthentication auth,
                                                                        @ParameterObject Pageable pageable,
                                                                        @RequestParam(defaultValue = "50") int bodySize) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedGenericPostDto> commentedPosts =
                 myPostService.listMyCommentedPosts(auth.getUserId(), pageable, bodySize);
         return new ResponsePage<>(commentedPosts);
@@ -217,6 +218,7 @@ public class UserController {
     public ResponsePage<SummarizedPetitionDto> listMyPosts(AppAuthentication auth,
                                                            @ParameterObject Pageable pageable,
                                                            @RequestParam(defaultValue = "50") int bodySize) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedPetitionDto> posts =
                 petitionService.listMyPosts(auth.getUserId(), pageable, bodySize);
         return new ResponsePage<>(posts);
@@ -230,6 +232,7 @@ public class UserController {
     public ResponsePage<SummarizedPetitionDto> listMyAgreedPosts(AppAuthentication auth,
                                                                  @ParameterObject Pageable pageable,
                                                                  @RequestParam(defaultValue = "50") int bodySize) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedPetitionDto> posts =
                 petitionService.listMyAgreedPosts(auth.getUserId(), pageable, bodySize);
         return new ResponsePage<>(posts);
@@ -243,6 +246,7 @@ public class UserController {
     public ResponsePage<SummarizedGenericPostDto> listMyLikedPosts(AppAuthentication auth,
                                                                    @ParameterObject Pageable pageable,
                                                                    @RequestParam(defaultValue = "50") int bodySize) {
+        userService.isDkuChecked(auth.getUserId());
         Page<SummarizedGenericPostDto> likedPosts =
                 myPostService.listMyLikedPosts(auth.getUserId(), pageable, bodySize);
         return new ResponsePage<>(likedPosts);
