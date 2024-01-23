@@ -1,13 +1,16 @@
 package com.dku.council.domain.chat.controller;
 
 import com.dku.council.domain.chat.model.MessageType;
+import com.dku.council.domain.chat.model.dto.Message;
 import com.dku.council.domain.chat.model.dto.request.RequestChatDto;
 import com.dku.council.domain.chat.model.dto.response.ResponseChatDto;
 import com.dku.council.domain.chat.service.ChatService;
+import com.dku.council.domain.chat.service.MessageSender;
 import com.dku.council.global.auth.role.UserAuth;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -27,6 +30,9 @@ import java.util.List;
 @Slf4j
 public class ChatController {
 
+    @Value("${spring.kafka.consumer.topic}")
+    private String topic;
+
     /**
      * 아래에서 사용되는 convertAndSend 를 사용하기 위한 선언
      *  convertAndSend 는 객체를 인자로 넘겨주면 자동으로 Message 객체로 변환 후 도착지로 전송한다.
@@ -34,6 +40,7 @@ public class ChatController {
     private final SimpMessageSendingOperations template;
 
     private final ChatService chatService;
+    private final MessageSender sender;
 
     /**
      * 채팅방 별, 입장 이벤트 발생시 처리되는 기능
@@ -59,15 +66,14 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("username", username);
         headerAccessor.getSessionAttributes().put("roomId", chat.getRoomId());
 
-        ResponseChatDto responseChatDto = ResponseChatDto.builder()
+        Message message = Message.builder()
                 .type(chat.getType())
                 .roomId(chat.getRoomId())
                 .sender(chat.getSender())
-                .message(chat.getMessage())
+                .message(chat.getSender() + " 님 입장!!")
                 .build();
-        responseChatDto.changeMessage(responseChatDto.getSender() + " 님 입장!!");
 
-        template.convertAndSend("/sub/chatRoom/enter" + responseChatDto.getRoomId(), responseChatDto);
+        sender.send(topic, message);
     }
 
     /**
@@ -79,15 +85,14 @@ public class ChatController {
     public void sendMessage(@Payload RequestChatDto chat) {
         log.info("CHAT {}", chat);
 
-        ResponseChatDto responseChatDto = ResponseChatDto.builder()
+        Message message = Message.builder()
                 .type(chat.getType())
                 .roomId(chat.getRoomId())
                 .sender(chat.getSender())
                 .message(chat.getMessage())
                 .build();
-        responseChatDto.changeMessage(responseChatDto.getMessage());
 
-        template.convertAndSend("/sub/chatRoom/enter" + responseChatDto.getRoomId(), responseChatDto);
+        sender.send(topic, message);
     }
 
     /**
@@ -119,14 +124,14 @@ public class ChatController {
             log.info("User Disconnected : ", username);
 
             // builder 어노테이션 활용
-            ResponseChatDto chat = ResponseChatDto.builder()
+            Message message = Message.builder()
                     .type(MessageType.LEAVE)
                     .sender(username)
                     .roomId(roomId)
                     .message(username + " 님 퇴장!!")
                     .build();
 
-            template.convertAndSend("/sub/chatRoom/enter" + roomId, chat);
+            sender.send(topic, message);
         }
     }
 
