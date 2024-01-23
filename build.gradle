@@ -78,6 +78,9 @@ dependencies {
 	// stomp
 	implementation 'org.webjars:stomp-websocket:2.3.4'
 
+	// kafka
+	implementation 'org.springframework.kafka:spring-kafka'
+
 	// gson
 	implementation 'com.google.code.gson:gson:2.9.0'
 
