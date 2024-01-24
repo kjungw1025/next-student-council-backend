@@ -27,7 +27,7 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     private static final String[] PUBLIC_URI = {
-            "/swagger-ui/**", "/api-docs/**", "/test/**"
+            "/swagger-ui/**", "/api-docs/**", "/test/**", "/chatRoom/**"
     };
 
     private static final String[] ADMIN_URI = {
