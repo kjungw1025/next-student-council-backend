@@ -48,6 +48,7 @@ public class WebConfig implements WebMvcConfigurer {
     public FilterRegistrationBean<OpenEntityManagerInViewFilter> openEntityManagerInViewFilter() {
         FilterRegistrationBean<OpenEntityManagerInViewFilter> filter = new FilterRegistrationBean<>();
         filter.addUrlPatterns("/manage/*");
+        filter.addUrlPatterns("/chatRoom/*");
         filter.setFilter(new OpenEntityManagerInViewFilter());
         return filter;
     }
