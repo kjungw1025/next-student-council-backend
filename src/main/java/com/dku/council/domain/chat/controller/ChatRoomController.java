@@ -38,7 +38,7 @@ public class ChatRoomController {
 
         log.info("SHOW ALL ChatList {}", chatService.findAllRoom());
 
-        return "/page/chatting/roomlist";
+        return "page/chatting/roomlist";
     }
 
     /**
@@ -83,7 +83,7 @@ public class ChatRoomController {
         model.addAttribute("user", userService.getUserInfoForChatting(auth.getUserId()));
         model.addAttribute("room", chatService.findRoomById(roomId));
 
-        return "/page/chatting/chatroom";
+        return "page/chatting/chatroom";
     }
 
     /**
