@@ -6,8 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class ResponseUserInfoForChattingDto {
-    private final String studentId;
-    private final String username;
+    private final Long userId;
     private final String nickname;
     private final boolean isAdmin;
 }
