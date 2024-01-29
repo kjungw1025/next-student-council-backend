@@ -15,6 +15,7 @@ var connectingElement = document.querySelector('.connecting');
 
 var stompClient = null;
 var username = null;
+var userId = null;
 
 var colors = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
@@ -27,6 +28,7 @@ const roomId = url.get('roomId');
 
 function connect(event) {
     username = document.querySelector('#name').value.trim();
+    userId = document.querySelector('#userId').value.trim();
 
     // chatPage 를 등장시킴
     chatPage.classList.remove('hidden');
@@ -47,6 +49,8 @@ function onConnected() {
     // sub 할 url => /sub/chat/room/roomId 로 구독한다
     stompClient.subscribe('/sub/chatRoom/enter' + roomId, onMessageReceived);
 
+    getPreviousMessageList();
+
     // 서버에 username 을 가진 유저가 들어왔다는 것을 알림
     // /pub/chat/enterUser 로 메시지를 보냄
     console.log("확인" + username);
@@ -54,6 +58,7 @@ function onConnected() {
         {},
         JSON.stringify({
             "roomId": roomId,
+            "userId": userId,
             sender: username,
             type: 'ENTER'
         })
@@ -85,6 +90,32 @@ function getUserList() {
     })
 }
 
+function getPreviousMessageList() {
+
+    $.ajax({
+        type: "GET",
+        url: "/chat/message/list",
+        data: {
+            "roomId": roomId
+        },
+        success: function (data) {
+            console.log("이전 메시지들 확인" + data);
+            for (let i = 0; i < data.length; i++) {
+                let previousChatMessage = {
+                    "roomId": data[i]["roomId"],
+                    "userId": data[i]["userId"],
+                    sender: data[i]["userNickname"],
+                    message: data[i]["content"],
+                    type: data[i]["messageType"],
+                    createdAt: data[i]["createdAt"]
+                };
+                console.log(previousChatMessage);
+                previousMessageReceived(JSON.stringify(previousChatMessage));
+            }
+        }
+    })
+}
+
 
 function onError(error) {
     connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
@@ -98,6 +129,7 @@ function sendMessage(event) {
     if (messageContent && stompClient) {
         var chatMessage = {
             "roomId": roomId,
+            "userId": userId,
             sender: username,
             message: messageInput.value,
             type: 'TALK'
@@ -109,51 +141,55 @@ function sendMessage(event) {
     event.preventDefault();
 }
 
-// 메시지를 받을 때도 마찬가지로 JSON 타입으로 받으며,
+// API를 통해 메시지를 받을 때도 마찬가지로 JSON 타입으로 받으며,
 // 넘어온 JSON 형식의 메시지를 parse 해서 사용한다.
 function onMessageReceived(payload) {
-    //console.log("payload 들어오냐? :"+payload);
-    var chat = JSON.parse(payload.body);
+    let chat = JSON.parse(payload.body);
+    let messageElement = document.createElement('li');
 
-    var messageElement = document.createElement('li');
+    addMessageToTheChatRoom(chat, messageElement);
+}
 
-    if (chat.type === 'ENTER') {  // chatType 이 enter 라면 아래 내용
+// 채팅방 입장 전에, 이전에 대화를 나눴던 메시지들을 보여주도록 처리하는 함수
+function previousMessageReceived(message) {
+    let chat = JSON.parse(message);
+    let messageElement = document.createElement('li');
+
+    addMessageToTheChatRoom(chat, messageElement);
+}
+
+function addMessageToTheChatRoom(chat, messageElement) {
+    if (chat.type === 'ENTER' || chat.type === 'LEAVE') {  // chatType 이 enter 라면 아래 내용
         messageElement.classList.add('event-message');
-        chat.content = chat.sender + chat.message;
-        getUserList();
-
-    } else if (chat.type === 'LEAVE') { // chatType 가 leave 라면 아래 내용
-        messageElement.classList.add('event-message');
-        chat.content = chat.sender + chat.message;
         getUserList();
 
     } else { // chatType 이 talk 라면 아래 내용
         messageElement.classList.add('chat-message');
 
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(chat.sender[0]);
+        let avatarElement = document.createElement('i');
+        let avatarText = document.createTextNode(chat.sender[0]);
         avatarElement.appendChild(avatarText);
         avatarElement.style['background-color'] = getAvatarColor(chat.sender);
 
         messageElement.appendChild(avatarElement);
 
-        var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(chat.sender);
+        let usernameElement = document.createElement('span');
+        let usernameText = document.createTextNode(chat.sender);
         usernameElement.appendChild(usernameText);
         messageElement.appendChild(usernameElement);
     }
 
-    var contentElement = document.createElement('p');
+    let contentElement = document.createElement('p');
 
     // 만약 s3DataUrl 의 값이 null 이 아니라면 => chat 내용이 파일 업로드와 관련된 내용이라면
     // img 를 채팅에 보여주는 작업
     if(chat.s3DataUrl != null){
-        var imgElement = document.createElement('img');
+        let imgElement = document.createElement('img');
         imgElement.setAttribute("src", chat.s3DataUrl);
         imgElement.setAttribute("width", "300");
         imgElement.setAttribute("height", "300");
 
-        var downBtnElement = document.createElement('button');
+        let downBtnElement = document.createElement('button');
         downBtnElement.setAttribute("class", "btn fa fa-download");
         downBtnElement.setAttribute("id", "downBtn");
         downBtnElement.setAttribute("name", chat.fileName);
@@ -166,7 +202,7 @@ function onMessageReceived(payload) {
     }else{
         // 만약 s3DataUrl 의 값이 null 이라면
         // 이전에 넘어온 채팅 내용 보여주기
-       var messageText = document.createTextNode(chat.message);
+        let messageText = document.createTextNode(chat.message);
         contentElement.appendChild(messageText);
     }
 
