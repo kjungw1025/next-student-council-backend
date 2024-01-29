@@ -12,6 +12,8 @@ public class RequestChatDto {
 
     private final String roomId;
 
+    private final Long userId;
+
     private final String sender;
 
     private final String message;

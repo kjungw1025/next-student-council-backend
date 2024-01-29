@@ -120,6 +120,6 @@ public class UserService {
 
     public ResponseUserInfoForChattingDto getUserInfoForChatting(Long memberId) {
         User user = userRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
-        return new ResponseUserInfoForChattingDto(user.getStudentId(), user.getName(), user.getNickname(), user.getUserRole().isAdmin());
+        return new ResponseUserInfoForChattingDto(user.getId(), user.getNickname(), user.getUserRole().isAdmin());
     }
 }
