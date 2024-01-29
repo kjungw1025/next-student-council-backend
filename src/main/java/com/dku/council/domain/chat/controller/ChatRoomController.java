@@ -2,6 +2,7 @@ package com.dku.council.domain.chat.controller;
 
 import com.dku.council.domain.chat.model.dto.response.ResponseChatRoomDto;
 import com.dku.council.domain.chat.service.ChatService;
+import com.dku.council.domain.chatmessage.service.ChatRoomMessageService;
 import com.dku.council.domain.user.model.dto.response.ResponseUserInfoForChattingDto;
 import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
@@ -24,6 +25,7 @@ public class ChatRoomController {
     private final ChatService chatService;
 
     private final UserService userService;
+    private final ChatRoomMessageService chatRoomMessageService;
 
     /**
      * 채팅방 리스트 화면
@@ -110,6 +112,8 @@ public class ChatRoomController {
     @DeleteMapping("/delete/{roomId}")
     @UserAuth
     public String delChatRoom(@PathVariable String roomId, AppAuthentication auth){
+
+        chatRoomMessageService.deleteChatRoomMessages(roomId);
 
         // roomId(UUID 값) 기준으로 채팅방 삭제
         chatService.delChatRoom(auth.getUserId(), roomId, auth.isAdmin());

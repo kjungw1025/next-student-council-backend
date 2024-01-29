@@ -6,6 +6,9 @@ import com.dku.council.domain.chat.model.dto.request.RequestChatDto;
 import com.dku.council.domain.chat.model.dto.response.ResponseChatDto;
 import com.dku.council.domain.chat.service.ChatService;
 import com.dku.council.domain.chat.service.MessageSender;
+import com.dku.council.domain.chatmessage.model.entity.ChatRoomMessage;
+import com.dku.council.domain.chatmessage.service.ChatRoomMessageService;
+import com.dku.council.domain.user.service.UserService;
 import com.dku.council.global.auth.role.UserAuth;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +21,9 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
@@ -39,7 +44,9 @@ public class ChatController {
      */
     private final SimpMessageSendingOperations template;
 
+    private final UserService userService;
     private final ChatService chatService;
+    private final ChatRoomMessageService chatRoomMessageService;
     private final MessageSender sender;
 
     /**
@@ -61,16 +68,22 @@ public class ChatController {
         String username = chatService.addUser(chat.getRoomId(), chat.getSender());
         log.info("enterUser에서 uuid " + username);
         log.info("enterUser에서 roomId " + chat.getRoomId());
+        log.info("enterUser에서 userId " + chat.getUserId());
 
         // 반환 결과를 socket session 에 userUUID 로 저장
         headerAccessor.getSessionAttributes().put("username", username);
+        headerAccessor.getSessionAttributes().put("userId", chat.getUserId());
         headerAccessor.getSessionAttributes().put("roomId", chat.getRoomId());
+
+        String enterMessage = chat.getSender() + " 님 입장!!";
+        // 입장 메시지 저장
+        chatRoomMessageService.create(chat.getRoomId(), chat.getType().toString(), chat.getUserId(), chat.getSender(), enterMessage);
 
         Message message = Message.builder()
                 .type(chat.getType())
                 .roomId(chat.getRoomId())
                 .sender(chat.getSender())
-                .message(chat.getSender() + " 님 입장!!")
+                .message(enterMessage)
                 .build();
 
         sender.send(topic, message);
@@ -84,6 +97,8 @@ public class ChatController {
     @MessageMapping("/chat/sendMessage")
     public void sendMessage(@Payload RequestChatDto chat) {
         log.info("CHAT {}", chat);
+
+        chatRoomMessageService.create(chat.getRoomId(), chat.getType().toString(), chat.getUserId(), chat.getSender(), chat.getMessage());
 
         Message message = Message.builder()
                 .type(chat.getType())
@@ -108,6 +123,7 @@ public class ChatController {
 
         // stomp 세션에 있던 username과 roomId 를 확인해서 채팅방 유저 리스트와 room 에서 해당 유저를 삭제
         String username = (String) headerAccessor.getSessionAttributes().get("username");
+        Long userId = (Long) headerAccessor.getSessionAttributes().get("userId");
         String roomId = (String) headerAccessor.getSessionAttributes().get("roomId");
         log.info("퇴장 controller에서 uuid " + username);
         log.info("퇴장 controller에서 roomId " + roomId);
@@ -123,12 +139,15 @@ public class ChatController {
         if (username != null) {
             log.info("User Disconnected : ", username);
 
+            String exitMessage = username + " 님 퇴장!!";
+            // 퇴장 메시지 저장
+            chatRoomMessageService.create(roomId, MessageType.LEAVE.toString(), userId, username, exitMessage);
             // builder 어노테이션 활용
             Message message = Message.builder()
                     .type(MessageType.LEAVE)
                     .sender(username)
                     .roomId(roomId)
-                    .message(username + " 님 퇴장!!")
+                    .message(exitMessage)
                     .build();
 
             sender.send(topic, message);
@@ -145,5 +164,13 @@ public class ChatController {
     @ResponseBody
     public List<String> userList(String roomId) {
         return chatService.getUserList(roomId);
+    }
+
+
+    @GetMapping("/chat/message/list")
+    @UserAuth
+    @ResponseBody
+    public List<ChatRoomMessage> list(@RequestParam("roomId") String roomId) {
+        return chatRoomMessageService.findAllChatRoomMessages(roomId);
     }
 }
