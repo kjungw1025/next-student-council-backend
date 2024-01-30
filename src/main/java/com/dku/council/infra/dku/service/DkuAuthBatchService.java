@@ -31,7 +31,7 @@ public class DkuAuthBatchService {
      */
     @Transactional
     public void resetDkuAuth() {
-        List<User> listUser = userRepository.findAllWithDkuChecked();
+        List<User> listUser = userRepository.findAllWithDkuCheckedExceptAdmin();
         for (User user : listUser) {
             user.changeIsDkuChecked();
         }
