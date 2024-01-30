@@ -46,7 +46,7 @@ public class UserInfoService {
 
         return new ResponseUserInfoDto(user.getStudentId(), user.getName(),
                 user.getNickname(), user.getAge(), user.getGender(), year,
-                major.getName(), major.getDepartment(), phoneNumber,
+                major.getName(), major.getDepartment(), phoneNumber, user.getProfileImage(),
                 writePostCount, commentedPostCount, likedPostCount,
                 petitionCount, agreedPetitionCount, user.getUserRole().isAdmin());
     }
