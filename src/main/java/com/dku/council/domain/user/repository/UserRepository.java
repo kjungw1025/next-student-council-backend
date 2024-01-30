@@ -47,8 +47,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Optional<User> findByIdWithNotActive(@Param("id") Long id);
 
     /**
-     * 학기 단위 (3.1, 9.1)로 계정 인증을 false로 변경할 때 사용한다.
+     * 학기 단위 (3.1, 9.1)로 계정 인증을 false로 변경할 때 사용한다. (단, 관리자는 제외한다.)
      */
-    @Query("select u from User u where u.status = 'ACTIVE' and u.isDkuChecked = true")
-    List<User> findAllWithDkuChecked();
+    @Query("select u from User u where u.status = 'ACTIVE' and u.isDkuChecked = true and u.userRole != 'ADMIN'")
+    List<User> findAllWithDkuCheckedExceptAdmin();
 }
