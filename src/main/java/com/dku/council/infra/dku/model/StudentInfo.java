@@ -12,6 +12,7 @@ public class StudentInfo {
     private final String gender;
     private final int yearOfAdmission;
     private final String studentState;
+    private final String profileImageUrl;
 
     private final String majorName;
     private final String departmentName;
