@@ -22,5 +22,6 @@ public class ResponseUserInfoDto {
     private final Long likedPostCount;
     private final Long petitionCount;
     private final Long agreedPetitionCount;
+    private final boolean isDkuChecked;
     private final boolean admin;
 }
