@@ -19,6 +19,7 @@ public class UserInfo {
     private final String academicStatus;
     private final String age;
     private final String gender;
+    private final String profileImage;
     private final UserStatus status;
 
     public UserInfo(User user) {
@@ -31,6 +32,7 @@ public class UserInfo {
         this.academicStatus = user.getAcademicStatus();
         this.age = user.getAge();
         this.gender = user.getGender();
+        this.profileImage = user.getProfileImage();
         this.status = user.getStatus();
     }
 

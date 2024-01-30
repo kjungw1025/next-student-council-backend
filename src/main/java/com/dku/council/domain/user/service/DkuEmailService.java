@@ -92,7 +92,7 @@ public class DkuEmailService {
         Major major = majorRepository.findById(dto.getMajorId())
                 .orElseThrow(MajorNotFoundException::new);
         DkuUserInfo info = new DkuUserInfo(dto.getStudentName(), dto.getStudentId(), dto.getAge(), dto.getGender(),
-                dto.getYearOfAdmission(), dto.getAcademicStatus(), major.getName(), major.getDepartment());
+                dto.getYearOfAdmission(), dto.getAcademicStatus(), "" ,major.getName(), major.getDepartment());
 
         dkuAuthRepository.setAuthPayload(signupToken, DKU_AUTH_NAME, info, now);
 

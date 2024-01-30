@@ -107,7 +107,8 @@ public class DKUAuthService {
                 info.getYearOfAdmission(),
                 info.getStudentState(),
                 info.getAge(),
-                info.getGender());
+                info.getGender(),
+                info.getProfileImageUrl());
 
         userInfoService.invalidateUserInfo(userId);
         return new ResponseScrappedStudentInfoDto(info);

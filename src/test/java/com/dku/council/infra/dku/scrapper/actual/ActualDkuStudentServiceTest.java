@@ -43,9 +43,10 @@ class ActualDkuStudentServiceTest {
         String webinfoLoginPath = properties.get("dku.login.webinfo-api-path");
         String infoPath = properties.get("dku.student-info.info-api-path");
         String feePath = properties.get("dku.student-info.fee-api-path");
+        String defaultProfileImage = properties.get("dku.student-info.default-profile-image");
 
         this.authService = new DkuAuthenticationService(webClient, webinfoLoginPath, infoPath);
-        this.service = new DkuStudentService(webClient, infoPath, feePath);
+        this.service = new DkuStudentService(webClient, infoPath, feePath, defaultProfileImage);
     }
 
     @Test
