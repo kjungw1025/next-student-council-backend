@@ -48,7 +48,7 @@ public class UserInfoService {
                 user.getNickname(), user.getAge(), user.getGender(), year,
                 major.getName(), major.getDepartment(), phoneNumber, user.getProfileImage(),
                 writePostCount, commentedPostCount, likedPostCount,
-                petitionCount, agreedPetitionCount, user.getUserRole().isAdmin());
+                petitionCount, agreedPetitionCount, user.isDkuChecked(), user.getUserRole().isAdmin());
     }
 
     @Transactional(readOnly = true)
