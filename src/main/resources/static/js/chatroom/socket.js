@@ -107,7 +107,7 @@ function getPreviousMessageList() {
                     sender: data[i]["userNickname"],
                     message: data[i]["content"],
                     type: data[i]["messageType"],
-                    createdAt: data[i]["createdAt"]
+                    messageTime: data[i]["createdAt"]
                 };
                 console.log(previousChatMessage);
                 previousMessageReceived(JSON.stringify(previousChatMessage));
@@ -159,18 +159,24 @@ function previousMessageReceived(message) {
 }
 
 function addMessageToTheChatRoom(chat, messageElement) {
-    if (chat.type === 'ENTER' || chat.type === 'LEAVE') {  // chatType 이 enter 라면 아래 내용
+    if (chat.type === 'ENTER' || chat.type === 'LEAVE') {  // chatType 이 enter, leave 라면 아래 내용
         messageElement.classList.add('event-message');
         getUserList();
 
     } else { // chatType 이 talk 라면 아래 내용
         messageElement.classList.add('chat-message');
 
+        let timeElement = document.createElement('span');
+        let timeText = document.createTextNode(formatLocalDateTime(chat.messageTime));
+        timeElement.appendChild(timeText);
+        messageElement.appendChild(timeElement);
+
+        messageElement.appendChild(document.createElement('br'));
+
         let avatarElement = document.createElement('i');
         let avatarText = document.createTextNode(chat.sender[0]);
         avatarElement.appendChild(avatarText);
         avatarElement.style['background-color'] = getAvatarColor(chat.sender);
-
         messageElement.appendChild(avatarElement);
 
         let usernameElement = document.createElement('span');
@@ -222,6 +228,25 @@ function getAvatarColor(messageSender) {
     var index = Math.abs(hash % colors.length);
     return colors[index];
 }
+
+function formatLocalDateTime(dateTimeString) {
+    // 주어진 문자열을 Date 객체로 변환
+    const dateTime = new Date(dateTimeString);
+
+    // 시간대 추출
+    const hours = dateTime.getHours();
+    const minutes = dateTime.getMinutes();
+
+    // 오전/오후 구분
+    const meridiem = hours >= 12 ? "오후" : "오전";
+
+    // 시간 변환 (24시간 형식에서 12시간 형식으로 변환)
+    const formattedHours = hours % 12 || 12;
+
+    // 시간대와 시간을 문자열로 결합
+    return `${meridiem} ${formattedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
+
 
 document.addEventListener('DOMContentLoaded', function () {
     connect();

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "채팅", description = "채팅 송/수신 관련 api")
@@ -66,9 +67,6 @@ public class ChatController {
 
         // 채팅방에 유저 추가 및 UserUUID 반환
         String username = chatService.addUser(chat.getRoomId(), chat.getSender());
-        log.info("enterUser에서 uuid " + username);
-        log.info("enterUser에서 roomId " + chat.getRoomId());
-        log.info("enterUser에서 userId " + chat.getUserId());
 
         // 반환 결과를 socket session 에 userUUID 로 저장
         headerAccessor.getSessionAttributes().put("username", username);
@@ -76,14 +74,17 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("roomId", chat.getRoomId());
 
         String enterMessage = chat.getSender() + " 님 입장!!";
+        LocalDateTime messageTime = LocalDateTime.now();
+
         // 입장 메시지 저장
-        chatRoomMessageService.create(chat.getRoomId(), chat.getType().toString(), chat.getUserId(), chat.getSender(), enterMessage);
+        chatRoomMessageService.create(chat.getRoomId(), chat.getType().toString(), chat.getUserId(), chat.getSender(), enterMessage, messageTime);
 
         Message message = Message.builder()
                 .type(chat.getType())
                 .roomId(chat.getRoomId())
                 .sender(chat.getSender())
                 .message(enterMessage)
+                .messageTime(messageTime)
                 .build();
 
         sender.send(topic, message);
@@ -96,15 +97,16 @@ public class ChatController {
      */
     @MessageMapping("/chat/sendMessage")
     public void sendMessage(@Payload RequestChatDto chat) {
-        log.info("CHAT {}", chat);
+        LocalDateTime messageTime = LocalDateTime.now();
 
-        chatRoomMessageService.create(chat.getRoomId(), chat.getType().toString(), chat.getUserId(), chat.getSender(), chat.getMessage());
+        chatRoomMessageService.create(chat.getRoomId(), chat.getType().toString(), chat.getUserId(), chat.getSender(), chat.getMessage(), messageTime);
 
         Message message = Message.builder()
                 .type(chat.getType())
                 .roomId(chat.getRoomId())
                 .sender(chat.getSender())
                 .message(chat.getMessage())
+                .messageTime(messageTime)
                 .build();
 
         sender.send(topic, message);
@@ -140,14 +142,17 @@ public class ChatController {
             log.info("User Disconnected : ", username);
 
             String exitMessage = username + " 님 퇴장!!";
+            LocalDateTime messageTime = LocalDateTime.now();
+
             // 퇴장 메시지 저장
-            chatRoomMessageService.create(roomId, MessageType.LEAVE.toString(), userId, username, exitMessage);
+            chatRoomMessageService.create(roomId, MessageType.LEAVE.toString(), userId, username, exitMessage, messageTime);
             // builder 어노테이션 활용
             Message message = Message.builder()
                     .type(MessageType.LEAVE)
                     .sender(username)
                     .roomId(roomId)
                     .message(exitMessage)
+                    .messageTime(messageTime)
                     .build();
 
             sender.send(topic, message);
