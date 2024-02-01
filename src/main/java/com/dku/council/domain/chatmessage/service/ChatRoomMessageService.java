@@ -23,7 +23,8 @@ public class ChatRoomMessageService {
                        String messageType,
                        Long userId,
                        String userNickname,
-                       String content) {
+                       String content,
+                       LocalDateTime messageTime) {
 
         ChatRoomMessage chatRoomMessage = new ChatRoomMessage();
         chatRoomMessage.setRoomId(roomId);
@@ -31,7 +32,7 @@ public class ChatRoomMessageService {
         chatRoomMessage.setUserId(userId);
         chatRoomMessage.setUserNickname(userNickname);
         chatRoomMessage.setContent(content);
-        chatRoomMessage.setCreatedAt(LocalDateTime.now().atZone(seoulZoneId).toLocalDateTime());
+        chatRoomMessage.setCreatedAt(messageTime.atZone(seoulZoneId).toLocalDateTime());
 
         chatRoomMessageRepository.save(chatRoomMessage);
     }
