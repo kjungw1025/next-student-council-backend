@@ -1,9 +1,10 @@
 package com.dku.council.domain.chat.service;
 
 import com.dku.council.domain.chat.model.dto.Message;
-import com.dku.council.domain.chat.model.dto.response.ResponseChatDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,6 +21,8 @@ public class MessageSender {
 
         // 메시지를 KafkaTemplate 를 사용하여 지정된 토픽으로 전송
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         try {
             String stringChat = objectMapper.writeValueAsString(data);
             log.info("MessageSender Message -> String형 : " + stringChat);

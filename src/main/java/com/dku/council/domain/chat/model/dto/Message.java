@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -24,14 +25,19 @@ public class Message {
     @NotNull
     private String message;
 
+    @NotNull
+    private LocalDateTime messageTime;
+
     @Builder
     private Message(MessageType type,
                     String roomId,
                     String sender,
-                    String message) {
+                    String message,
+                    LocalDateTime messageTime) {
         this.type = type;
         this.roomId = roomId;
         this.sender = sender;
         this.message = message;
+        this.messageTime = messageTime;
     }
 }
