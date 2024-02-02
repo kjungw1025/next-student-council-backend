@@ -204,4 +204,9 @@ public class ChatService {
         }
         log.info("삭제 완료 roomId : {}", roomId);
     }
+
+    public boolean alreadyInRoom(String roomId, Long userId) {
+        long chatRoomId = chatRoomRepository.findChatRoomByRoomId(roomId).orElseThrow(ChatRoomNotFoundException::new).getId();
+        return chatRoomUserRepository.existsUserByRoomIdAndUserId(chatRoomId, userId).isPresent();
+    }
 }
