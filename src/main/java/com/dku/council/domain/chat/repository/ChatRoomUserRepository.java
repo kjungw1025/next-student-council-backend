@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, Long> {
     @Query("select u.participant.nickname from ChatRoomUser u " +
@@ -20,4 +21,10 @@ public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, Long
             "where c.chat_room_id = :roomId and c.participant_id = :userId", nativeQuery = true)
     void deleteChatRoomUserByRoomIdAndUserId(@Param("roomId") Long roomId,
                                              @Param("userId") Long userId);
+
+    @Query("select u from ChatRoomUser u " +
+            "join ChatRoom r " +
+            "on u.chatRoom.id = r.id " +
+            "where u.chatRoom.id = :chatRoomId and u.participant.id = :userId")
+    Optional<ChatRoomUser> existsUserByRoomIdAndUserId(@Param("chatRoomId") Long chatRoomId, @Param("userId") Long userId);
 }
