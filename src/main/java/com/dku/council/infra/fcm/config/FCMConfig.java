@@ -1,35 +1,45 @@
 package com.dku.council.infra.fcm.config;
 
+import com.dku.council.infra.fcm.model.dto.request.FCMPushRequestDto;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.ApnsConfig;
+import com.google.firebase.messaging.Aps;
+import com.google.firebase.messaging.ApsAlert;
 import com.google.firebase.messaging.FirebaseMessaging;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 
-// TODO 향후 사용시 활성화
-//@Configuration
+@Configuration
+@Slf4j
 public class FCMConfig {
 
-    @Bean
-    public FirebaseMessaging firebaseMessaging() {
-        try (InputStream keyStream = FCMConfig.class.getResourceAsStream("/serviceAccountKey.json")) {
-            if (keyStream == null) {
-                throw new IOException("Not found serviceAccountKey.json file");
-            }
-            if (!FirebaseApp.getApps().isEmpty()) {
-                return FirebaseMessaging.getInstance();
-            }
+    @Value("${fcm.key.path}")
+    private String SERVICE_ACCOUNT_JSON;
+
+    @PostConstruct
+    public void init() {
+        try {
+            ClassPathResource resource = new ClassPathResource(SERVICE_ACCOUNT_JSON);
+            InputStream inputStream = resource.getInputStream();
+
             FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(keyStream))
+                    .setCredentials(GoogleCredentials.fromStream(inputStream))
+                    .setProjectId("next-dku-push-server")
                     .build();
-            FirebaseApp app = FirebaseApp.initializeApp(options);
-            return FirebaseMessaging.getInstance(app);
+
+            FirebaseApp.initializeApp(options);
+            log.info("파이어베이스 서버와의 연결에 성공했습니다.");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("파이어베이스 서버와의 연결에 실패했습니다.", e);
         }
     }
-
 }
