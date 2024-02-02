@@ -62,7 +62,8 @@ dependencies {
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
 	// firebase sdk
-	implementation 'com.google.firebase:firebase-admin:9.1.1'
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+	implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 
 	// swagger
 	annotationProcessor 'com.github.therapi:therapi-runtime-javadoc-scribe:0.15.0'
