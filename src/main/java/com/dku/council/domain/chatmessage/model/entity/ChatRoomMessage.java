@@ -58,4 +58,13 @@ public class ChatRoomMessage {
 
     @DynamoDBAttribute
     private String content;
+
+    @DynamoDBAttribute
+    private String fileName;
+
+    @DynamoDBAttribute
+    private String fileUrl;
+
+    @DynamoDBAttribute
+    private String fileType;
 }

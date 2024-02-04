@@ -163,16 +163,14 @@
             })
         }
 
-        // 채팅방 삭제
-        // function delRoom(){
-        //     location.href = "/chatRoom/delete/"+roomId;
-        // }
-
         function delRoom(){
             $.ajax({
                 type : "DELETE",
-                url : "/chatRoom/delete/"+roomId,
+                url : "/chatRoom",
                 async : false,
+                data: {
+                    "roomId": roomId
+                },
                 success : function(result){
 
                     if (result) {

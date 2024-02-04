@@ -14,4 +14,6 @@ public interface ChatRoomMessageRepository extends CrudRepository<ChatRoomMessag
     List<ChatRoomMessage> findAllByRoomIdOrderByCreatedAtAsc(String roomId);
 
     void deleteAllByRoomId(String roomId);
+
+    List<ChatRoomMessage> findAllByRoomIdAndFileType(String roomId, String fileType);
 }

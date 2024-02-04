@@ -1,6 +1,7 @@
 package com.dku.council.domain.chat.controller;
 
 import com.dku.council.domain.chat.model.dto.response.ResponseChatRoomDto;
+import com.dku.council.domain.chat.service.ChatFileService;
 import com.dku.council.domain.chat.service.ChatService;
 import com.dku.council.domain.chatmessage.service.ChatRoomMessageService;
 import com.dku.council.domain.user.model.dto.response.ResponseUserInfoForChattingDto;
@@ -10,7 +11,6 @@ import com.dku.council.global.auth.role.UserAuth;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +22,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 @Slf4j
 public class ChatRoomController {
-    private final ChatService chatService;
 
     private final UserService userService;
+    private final ChatService chatService;
     private final ChatRoomMessageService chatRoomMessageService;
+    private final ChatFileService chatFileService;
 
     /**
      * 채팅방 리스트 화면
@@ -109,10 +110,14 @@ public class ChatRoomController {
      *
      * @param roomId        채팅방 id
      */
-    @DeleteMapping("/delete/{roomId}")
+    @DeleteMapping
     @UserAuth
-    public String delChatRoom(@PathVariable String roomId, AppAuthentication auth){
+    public String delChatRoom(@RequestParam String roomId, AppAuthentication auth){
 
+        // 해당 채팅방에 존재하는 파일들 삭제
+        chatFileService.deleteAllFilesInChatRoom(roomId);
+        
+        // 해당 채팅방에 존재하는 채팅 메시지들 삭제
         chatRoomMessageService.deleteChatRoomMessages(roomId);
 
         // roomId(UUID 값) 기준으로 채팅방 삭제
