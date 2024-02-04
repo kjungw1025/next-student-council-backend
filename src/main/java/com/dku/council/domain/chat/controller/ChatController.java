@@ -1,5 +1,6 @@
 package com.dku.council.domain.chat.controller;
 
+import com.dku.council.domain.chat.model.FileType;
 import com.dku.council.domain.chat.model.MessageType;
 import com.dku.council.domain.chat.model.dto.Message;
 import com.dku.council.domain.chat.model.dto.request.RequestChatDto;
@@ -87,7 +88,7 @@ public class ChatController {
             LocalDateTime messageTime = LocalDateTime.now();
 
             // 입장 메시지 저장
-            chatRoomMessageService.create(chat.getRoomId(), chat.getType().toString(), chat.getUserId(), chat.getSender(), enterMessage, messageTime);
+            chatRoomMessageService.create(chat.getRoomId(), chat.getType().toString(), chat.getUserId(), chat.getSender(), enterMessage, messageTime, "", "", chat.getFileType().toString());
 
             Message message = Message.builder()
                     .type(chat.getType())
@@ -95,6 +96,7 @@ public class ChatController {
                     .sender(chat.getSender())
                     .message(enterMessage)
                     .messageTime(messageTime)
+                    .fileType(chat.getFileType())
                     .build();
 
             sender.send(topic, message);
@@ -110,7 +112,7 @@ public class ChatController {
     public void sendMessage(@Payload RequestChatDto chat) {
         LocalDateTime messageTime = LocalDateTime.now();
 
-        chatRoomMessageService.create(chat.getRoomId(), chat.getType().toString(), chat.getUserId(), chat.getSender(), chat.getMessage(), messageTime);
+        chatRoomMessageService.create(chat.getRoomId(), chat.getType().toString(), chat.getUserId(), chat.getSender(), chat.getMessage(), messageTime, chat.getFileName(), chat.getFileUrl(), chat.getFileType().toString());
 
         Message message = Message.builder()
                 .type(chat.getType())
@@ -118,6 +120,9 @@ public class ChatController {
                 .sender(chat.getSender())
                 .message(chat.getMessage())
                 .messageTime(messageTime)
+                .fileName(chat.getFileName())
+                .fileUrl(chat.getFileUrl())
+                .fileType(chat.getFileType())
                 .build();
 
         sender.send(topic, message);
@@ -182,7 +187,11 @@ public class ChatController {
         return chatService.getUserList(roomId);
     }
 
-
+    /**
+     * 채팅방 별, 이전에 나눈 채팅 메시지 리스트 반환
+     *
+     * @param roomId    채팅방 id
+     */
     @GetMapping("/chat/message/list")
     @UserAuth
     @ResponseBody
