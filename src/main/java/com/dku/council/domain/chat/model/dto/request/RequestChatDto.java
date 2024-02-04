@@ -1,5 +1,6 @@
 package com.dku.council.domain.chat.model.dto.request;
 
+import com.dku.council.domain.chat.model.FileType;
 import com.dku.council.domain.chat.model.MessageType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,7 @@ public class RequestChatDto {
 
     private final String message;
 
-//    private String time;
-//
-//    /* 파일 업로드 관련 변수 (일단 보류) */
-//    private String s3DataUrl; // 파일 업로드 url
-//    private String fileName; // 파일이름
-//    private String fileDir; // s3 파일 경로
+    private final String fileName; // 파일이름
+    private final String fileUrl; // s3에 업로드 된 위치
+    private final FileType fileType; // 이미지인지 파일인지
 }
