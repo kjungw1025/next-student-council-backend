@@ -94,12 +94,6 @@ public class ChatService {
                 .build();
         chatRoomRepository.save(chatRoom);
 
-        ChatRoomUser chatRoomUser = ChatRoomUser.builder()
-                .chatRoom(chatRoom)
-                .user(user)
-                .build();
-        chatRoomUserRepository.save(chatRoomUser);
-
         return new ResponseChatRoomDto(chatRoom.getRoomId(),
                 chatRoom.getRoomName(),
                 chatRoom.getUserCount(),
@@ -154,6 +148,14 @@ public class ChatService {
     }
 
     /**
+     * 특정 채팅방에 참여중인 유저인지 확인
+     */
+    public boolean alreadyInRoom(String roomId, Long userId) {
+        long chatRoomId = chatRoomRepository.findChatRoomByRoomId(roomId).orElseThrow(ChatRoomNotFoundException::new).getId();
+        return chatRoomUserRepository.existsUserByRoomIdAndUserId(chatRoomId, userId).isPresent();
+    }
+
+    /**
      * 채팅방 유저 리스트 삭제
      */
     @Transactional
@@ -203,10 +205,5 @@ public class ChatService {
             throw new NotGrantedException();
         }
         log.info("삭제 완료 roomId : {}", roomId);
-    }
-
-    public boolean alreadyInRoom(String roomId, Long userId) {
-        long chatRoomId = chatRoomRepository.findChatRoomByRoomId(roomId).orElseThrow(ChatRoomNotFoundException::new).getId();
-        return chatRoomUserRepository.existsUserByRoomIdAndUserId(chatRoomId, userId).isPresent();
     }
 }
