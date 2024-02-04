@@ -23,6 +23,11 @@ public class ObjectUploadContext {
     @Value("${app.post.thumbnail.default}")
     private final String defaultThumbnailId;
 
+    @Value("${nhn.os.api-chat-image-path}")
+    private final String apiChatImagePath;
+
+    @Value("${nhn.os.api-chat-file-path}")
+    private final String apiChatFilePath;
 
     public String getThumbnailUrl(String thumbnailId) {
         if (thumbnailId == null || thumbnailId.isBlank()) {
@@ -43,6 +48,9 @@ public class ObjectUploadContext {
     public String getFileUrl(String objectName) {
         return String.format(apiFilePath, objectName);
     }
+
+    public String getChatImageUrl(String roomId, String objectName) { return String.format(apiChatImagePath, roomId, objectName); }
+    public String getChatFileUrl(String roomId, String objectName) { return String.format(apiChatFilePath, roomId, objectName); }
 
     public String makeObjectId(String prefix, String extension) {
         return makeObjName(prefix, UUID.randomUUID() + "." + extension);

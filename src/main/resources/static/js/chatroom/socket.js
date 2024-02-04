@@ -60,7 +60,8 @@ function onConnected() {
             "roomId": roomId,
             "userId": userId,
             sender: username,
-            type: 'ENTER'
+            type: 'ENTER',
+            fileType: 'NONE'
         })
     )
 
@@ -107,7 +108,10 @@ function getPreviousMessageList() {
                     sender: data[i]["userNickname"],
                     message: data[i]["content"],
                     type: data[i]["messageType"],
-                    messageTime: data[i]["createdAt"]
+                    messageTime: data[i]["createdAt"],
+                    "fileName": data[i]["fileName"],
+                    fileUrl: data[i]["fileUrl"],
+                    fileType: data[i]["fileType"]
                 };
                 console.log(previousChatMessage);
                 previousMessageReceived(JSON.stringify(previousChatMessage));
@@ -132,7 +136,8 @@ function sendMessage(event) {
             "userId": userId,
             sender: username,
             message: messageInput.value,
-            type: 'TALK'
+            type: 'TALK',
+            fileType: 'NONE'
         };
 
         stompClient.send("/pub/chat/sendMessage", {}, JSON.stringify(chatMessage));
@@ -189,9 +194,9 @@ function addMessageToTheChatRoom(chat, messageElement) {
 
     // 만약 s3DataUrl 의 값이 null 이 아니라면 => chat 내용이 파일 업로드와 관련된 내용이라면
     // img 를 채팅에 보여주는 작업
-    if(chat.s3DataUrl != null){
+    if(chat.fileUrl !== "" && chat.fileType === 'IMAGE'){
         let imgElement = document.createElement('img');
-        imgElement.setAttribute("src", chat.s3DataUrl);
+        imgElement.setAttribute("src", chat.fileUrl);
         imgElement.setAttribute("width", "300");
         imgElement.setAttribute("height", "300");
 
@@ -199,8 +204,7 @@ function addMessageToTheChatRoom(chat, messageElement) {
         downBtnElement.setAttribute("class", "btn fa fa-download");
         downBtnElement.setAttribute("id", "downBtn");
         downBtnElement.setAttribute("name", chat.fileName);
-        downBtnElement.setAttribute("onclick", `downloadFile('${chat.fileName}', '${chat.fileDir}')`);
-
+        downBtnElement.setAttribute("onclick", `downloadFile('${chat.roomId}', '${chat.fileName}', '${chat.fileUrl}')`);
 
         contentElement.appendChild(imgElement);
         contentElement.appendChild(downBtnElement);
@@ -255,75 +259,72 @@ document.addEventListener('DOMContentLoaded', function () {
 messageForm.addEventListener('submit', sendMessage, true)
 
 
-// TODO: 아래 파일 관련 내용들은 일단 보류
-
 /// 파일 업로드 부분 ////
 function uploadFile(){
-    // var file = $("#file")[0].files[0];
-    // var formData = new FormData();
-    // formData.append("file",file);
-    // formData.append("roomId", roomId);
-    //
-    // // ajax 로 multipart/form-data 를 넘겨줄 때는
-    // //         processData: false,
-    // //         contentType: false
-    // // 처럼 설정해주어야 한다.
-    //
-    // // 동작 순서
-    // // post 로 rest 요청한다.
-    // // 1. 먼저 upload 로 파일 업로드를 요청한다.
-    // // 2. upload 가 성공적으로 완료되면 data 에 upload 객체를 받고,
-    // // 이를 이용해 chatMessage 를 작성한다.
-    // $.ajax({
-    //     type : 'POST',
-    //     url : '/s3/upload',
-    //     data : formData,
-    //     processData: false,
-    //     contentType: false
-    // }).done(function (data){
-    //     // console.log("업로드 성공")
-    //
-    //     var chatMessage = {
-    //         "roomId": roomId,
-    //         sender: username,
-    //         message: username+"님의 파일 업로드",
-    //         type: 'TALK',
-    //         s3DataUrl : data.s3DataUrl, // Dataurl
-    //         "fileName": file.name, // 원본 파일 이름
-    //         "fileDir": data.fileDir // 업로드 된 위치
-    //     };
-    //
-    //     // 해당 내용을 발신한다.
-    //     stompClient.send("/pub/chat/sendMessage", {}, JSON.stringify(chatMessage));
-    // }).fail(function (error){
-    //     alert(error);
-    // })
+    var files = $("#file")[0].files;
+    var formData = new FormData();
+
+    for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+    }
+    formData.append("roomId", roomId);
+
+    // ajax 로 multipart/form-data 를 넘겨줄 때는
+    //         processData: false,
+    //         contentType: false
+    // 처럼 설정해주어야 한다.
+
+    // 동작 순서
+    // post 로 rest 요청한다.
+    // 1. 먼저 upload 로 파일 업로드를 요청한다.
+    // 2. upload 가 성공적으로 완료되면 data 에 upload 객체를 받고,
+    // 이를 이용해 chatMessage 를 작성한다.
+    $.ajax({
+        type : 'POST',
+        url : '/chat/image/upload',
+        data : formData,
+        processData: false,
+        contentType: false
+    }).done(function (data){
+        for (let i = 0; data.length; i++) {
+            var chatMessage = {
+                "roomId": roomId,
+                "userId": data[i]["userId"],
+                sender: username,
+                type: 'TALK',
+                "fileName": data[i]["fileName"], // 원본 파일 이름
+                fileUrl: data[i]["fileUrl"], // 저장된 파일 경로
+                fileType: data[i]["fileType"]
+            };
+
+            // 해당 내용을 발신한다.
+            stompClient.send("/pub/chat/sendMessage", {}, JSON.stringify(chatMessage));
+        }
+    }).fail(function (error){
+        alert(error);
+    })
 }
 
 // 파일 다운로드 부분 //
 // 버튼을 누르면 downloadFile 메서드가 실행됨
-// 다운로드 url 은 /s3/download+원본파일이름
-function downloadFile(name, dir){
-    // // console.log("파일 이름 : "+name);
-    // // console.log("파일 경로 : " + dir);
-    // let url = "/s3/download/"+name;
-    //
-    // // get 으로 rest 요청한다.
-    // $.ajax({
-    //     url: "/s3/download/"+name, // 요청 url 은 download/{name}
-    //     data: {
-    //         "fileDir" : dir // 파일의 경로를 파라미터로 넣는다.
-    //     },
-    //     dataType: 'binary', // 파일 다운로드를 위해서는 binary 타입으로 받아야한다.
-    //     xhrFields: {
-    //         'responseType': 'blob' // 여기도 마찬가지
-    //     },
-    //     success: function(data) {
-    //
-    //         var link = document.createElement('a');
-    //         link.href = URL.createObjectURL(data);
-    //         link.download = name;
-    //         link.click();
-    //     }
-    // });
+// 다운로드 url 은 /chat/download+원본파일이름
+function downloadFile(roomId, fileName, url){
+    // get 으로 rest 요청한다.
+    $.ajax({
+        url: "/chat/download/"+fileName, // 요청 url 은 download/{name}
+        data: {
+            "roomId": roomId,
+            "fileUrl" : url
+        },
+        dataType: 'binary', // 파일 다운로드를 위해서는 binary 타입으로 받아야한다.
+        xhrFields: {
+            'responseType': 'blob' // 여기도 마찬가지
+        },
+        success: function(data) {
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(data);
+            link.download = fileName;
+            link.click();
+        }
+    });
 }

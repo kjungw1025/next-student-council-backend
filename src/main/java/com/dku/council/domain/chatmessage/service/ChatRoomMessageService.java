@@ -24,7 +24,10 @@ public class ChatRoomMessageService {
                        Long userId,
                        String userNickname,
                        String content,
-                       LocalDateTime messageTime) {
+                       LocalDateTime messageTime,
+                       String fileName,
+                       String fileUrl,
+                       String fileType) {
 
         ChatRoomMessage chatRoomMessage = new ChatRoomMessage();
         chatRoomMessage.setRoomId(roomId);
@@ -33,6 +36,9 @@ public class ChatRoomMessageService {
         chatRoomMessage.setUserNickname(userNickname);
         chatRoomMessage.setContent(content);
         chatRoomMessage.setCreatedAt(messageTime.atZone(seoulZoneId).toLocalDateTime());
+        chatRoomMessage.setFileName(fileName);
+        chatRoomMessage.setFileUrl(fileUrl);
+        chatRoomMessage.setFileType(fileType);
 
         chatRoomMessageRepository.save(chatRoomMessage);
     }
