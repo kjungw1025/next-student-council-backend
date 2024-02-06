@@ -61,8 +61,6 @@ public class ChatImageUploadService {
                 s3service.uploadChatImage(token, roomId, objectName, image.getInputStream(), image.getContentType());
                 String chatImageUrl = uploadContext.getChatImageUrl(roomId, objectName);
 
-                // TODO : 여기다가 ChatFile에 담는 서비스 로직 추가해주면될듯?
-
                 return new ChatUploadedImage(roomId, userId, chatImageUrl, image);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
