@@ -6,8 +6,11 @@ import com.dku.council.domain.chat.service.ChatService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
 import com.dku.council.global.auth.role.UserAuth;
 import com.dku.council.infra.nhn.global.service.service.NHNAuthService;
+import com.dku.council.infra.nhn.s3.model.ChatUploadedFile;
 import com.dku.council.infra.nhn.s3.model.ChatUploadedImage;
+import com.dku.council.infra.nhn.s3.model.FileRequest;
 import com.dku.council.infra.nhn.s3.model.ImageRequest;
+import com.dku.council.infra.nhn.s3.service.ChatFileUploadService;
 import com.dku.council.infra.nhn.s3.service.ChatImageUploadService;
 import com.dku.council.infra.nhn.s3.service.ObjectDownloadService;
 import com.dku.council.infra.nhn.s3.service.ObjectStorageService;
@@ -29,12 +32,28 @@ public class ChatFileController {
 
     private final ChatService chatService;
     private final ChatImageUploadService chatImageUploadService;
+    private final ChatFileUploadService chatFileUploadService;
     private final ObjectDownloadService objectDownloadService;
 
-    private final NHNAuthService nhnAuthService;
-    private final ObjectStorageService objectStorageService;
-
-//    @PostMapping("/file/upload")
+    /**
+     * 파일 업로드 기능
+     *
+     * @param request   roomId와 전송할 파일에 대한 dto
+     */
+    @PostMapping(value = "/file/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @UserAuth
+    public List<ChatUploadedFile> uploadFile(AppAuthentication auth,
+                                             @Valid @ModelAttribute RequestChatFileDto request) {
+        // 채팅방에 현재 참여중인 유저가 아니면, 해당 채팅방에 이미지 업로드를 할 수 없게
+        if (chatService.alreadyInRoom(request.getRoomId(), auth.getUserId())) {
+            return chatFileUploadService.newContext().uploadChatFiles(
+                    FileRequest.ofList(request.getFiles()),
+                    request.getRoomId(),
+                    auth.getUserId());
+        } else {
+            throw new InvalidChatRoomUserException();
+        }
+    }
 
     /**
      * 이미지 업로드 기능
@@ -56,6 +75,13 @@ public class ChatFileController {
         }
     }
 
+    /**
+     * 채팅방에 올린 파일 다운로드 기능
+     *
+     * @param fileName      다운로드 하고자하는 파일의 원본 이름
+     * @param roomId        채팅방 id
+     * @param fileUrl       파일 url
+     */
     @GetMapping("/download/{fileName}")
     @UserAuth
     public ResponseEntity<byte[]> download(AppAuthentication auth,
