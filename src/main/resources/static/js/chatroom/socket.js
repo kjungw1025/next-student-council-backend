@@ -192,7 +192,7 @@ function addMessageToTheChatRoom(chat, messageElement) {
 
     let contentElement = document.createElement('p');
 
-    // 만약 s3DataUrl 의 값이 null 이 아니라면 => chat 내용이 파일 업로드와 관련된 내용이라면
+    // 만약 fileUrl 의 값이 null 이 아니라면 => chat 내용이 파일 업로드와 관련된 내용이라면
     // img 를 채팅에 보여주는 작업
     if(chat.fileUrl !== "" && chat.fileType === 'IMAGE'){
         let imgElement = document.createElement('img');
@@ -209,8 +209,22 @@ function addMessageToTheChatRoom(chat, messageElement) {
         contentElement.appendChild(imgElement);
         contentElement.appendChild(downBtnElement);
 
-    }else{
-        // 만약 s3DataUrl 의 값이 null 이라면
+    } else if (chat.fileUrl !== "" && chat.fileType === 'FILE') {
+        let fileElement = document.createElement('span');
+        fileElement.innerText = chat.fileName;
+        fileElement.style.fontWeight = 'light';
+
+        let downBtnElement = document.createElement('button');
+        downBtnElement.setAttribute("class", "btn fa fa-download");
+        downBtnElement.setAttribute("id", "downBtn");
+        downBtnElement.setAttribute("name", chat.fileName);
+        downBtnElement.setAttribute("onclick", `downloadFile('${chat.roomId}', '${chat.fileName}', '${chat.fileUrl}')`);
+
+        contentElement.appendChild(fileElement);
+        contentElement.appendChild(downBtnElement);
+
+    } else{
+        // 만약 fileUrl 의 값이 null 이라면
         // 이전에 넘어온 채팅 내용 보여주기
         let messageText = document.createTextNode(chat.message);
         contentElement.appendChild(messageText);
@@ -259,13 +273,13 @@ document.addEventListener('DOMContentLoaded', function () {
 messageForm.addEventListener('submit', sendMessage, true)
 
 
-/// 파일 업로드 부분 ////
-function uploadFile(){
-    var files = $("#file")[0].files;
+/// 이미지 업로드 부분 ////
+function uploadImage(){
+    var images = $("#image")[0].files;
     var formData = new FormData();
 
-    for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
+    for (let i = 0; i < images.length; i++) {
+        formData.append("files", images[i]);
     }
     formData.append("roomId", roomId);
 
@@ -305,7 +319,43 @@ function uploadFile(){
     })
 }
 
-// 파일 다운로드 부분 //
+/// 파일 업로드 부분 ////
+function uploadFile(){
+    var files = $("#file")[0].files;
+    var formData = new FormData();
+
+    for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+    }
+    formData.append("roomId", roomId);
+
+    $.ajax({
+        type : 'POST',
+        url : '/chat/file/upload',
+        data : formData,
+        processData: false,
+        contentType: false
+    }).done(function (data){
+        for (let i = 0; data.length; i++) {
+            var chatMessage = {
+                "roomId": roomId,
+                "userId": data[i]["userId"],
+                sender: username,
+                type: 'TALK',
+                "fileName": data[i]["fileName"], // 원본 파일 이름
+                fileUrl: data[i]["fileUrl"], // 저장된 파일 경로
+                fileType: data[i]["fileType"]
+            };
+
+            // 해당 내용을 발신한다.
+            stompClient.send("/pub/chat/sendMessage", {}, JSON.stringify(chatMessage));
+        }
+    }).fail(function (error){
+        alert(error);
+    })
+}
+
+// 이미지,파일 다운로드 부분 //
 // 버튼을 누르면 downloadFile 메서드가 실행됨
 // 다운로드 url 은 /chat/download+원본파일이름
 function downloadFile(roomId, fileName, url){
