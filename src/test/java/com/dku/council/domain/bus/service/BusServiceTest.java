@@ -55,12 +55,12 @@ class BusServiceTest {
         when(memoryRepository.cacheArrivals(eq(station.name()), any(), any())).thenReturn(cached);
 
         // when
-        ResponseBusArrivalDto dto = service.listBusArrival(BusStation.DKU_GATE);
+        ResponseBusArrivalDto dto = service.listBusArrival();
 
         // then
         verify(openApiBusService).retrieveBusArrival(station);
         assertThat(dto.getCapturedAt().getEpochSecond()).isEqualTo(now.getEpochSecond());
-        assertThat(dto.getBusArrivalList().size()).isEqualTo(5);
+        assertThat(dto.getBusArrivalEntranceList().size()).isEqualTo(5);
     }
 
     @Test
@@ -74,11 +74,11 @@ class BusServiceTest {
         when(memoryRepository.getArrivals(station.name(), now)).thenReturn(Optional.of(cached));
 
         // when
-        ResponseBusArrivalDto dto = service.listBusArrival(BusStation.DKU_GATE);
+        ResponseBusArrivalDto dto = service.listBusArrival();
 
         // then
         assertThat(dto.getCapturedAt().getEpochSecond()).isEqualTo(now.getEpochSecond());
-        assertThat(dto.getBusArrivalList().size()).isEqualTo(5);
+        assertThat(dto.getBusArrivalEntranceList().size()).isEqualTo(5);
     }
 
     @Test
@@ -95,14 +95,14 @@ class BusServiceTest {
         when(memoryRepository.getArrivals(station.name(), now)).thenReturn(Optional.of(cached));
 
         // when
-        ResponseBusArrivalDto dto = service.listBusArrival(BusStation.DKU_GATE);
+        ResponseBusArrivalDto dto = service.listBusArrival();
 
         // then
         assertThat(dto.getCapturedAt().getEpochSecond()).isEqualTo(now.getEpochSecond() - 10);
-        assertThat(dto.getBusArrivalList().size()).isEqualTo(2);
-        assertThat(dto.getBusArrivalList().get(0).getPredictTime1()).isEqualTo(arrivals.get(0).getPredictTimeSec1() - 10);
-        assertThat(dto.getBusArrivalList().get(0).getPredictTime2()).isEqualTo(arrivals.get(0).getPredictTimeSec2() - 10);
-        assertThat(dto.getBusArrivalList().get(1).getPredictTime1()).isEqualTo(0);
-        assertThat(dto.getBusArrivalList().get(1).getPredictTime2()).isEqualTo(0);
+        assertThat(dto.getBusArrivalEntranceList().size()).isEqualTo(2);
+        assertThat(dto.getBusArrivalEntranceList().get(0).getPredictTime1()).isEqualTo(arrivals.get(0).getPredictTimeSec1() - 10);
+        assertThat(dto.getBusArrivalEntranceList().get(0).getPredictTime2()).isEqualTo(arrivals.get(0).getPredictTimeSec2() - 10);
+        assertThat(dto.getBusArrivalEntranceList().get(1).getPredictTime1()).isEqualTo(0);
+        assertThat(dto.getBusArrivalEntranceList().get(1).getPredictTime2()).isEqualTo(0);
     }
 }
