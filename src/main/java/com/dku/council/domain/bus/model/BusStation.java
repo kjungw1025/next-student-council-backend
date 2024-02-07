@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -35,5 +36,9 @@ public enum BusStation {
             }
         }
         return null;
+    }
+
+    public static List<BusStation> getBusStations() {
+        return List.of(BusStation.values());
     }
 }
