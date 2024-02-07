@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,23 +25,39 @@ public class BusService {
     private final OpenApiBusService openApiBusService;
     private final BusArrivalRepository memoryRepository;
 
-    public ResponseBusArrivalDto listBusArrival(BusStation station) {
+    public ResponseBusArrivalDto listBusArrival() {
         Instant now = Instant.now(clock);
-        String stationName = station.name();
+        Instant capturedAt = Instant.now();
+        List<BusArrivalDto> busArrivalEntranceList = new ArrayList<>();
+        List<BusArrivalDto> busArrivalPlazaList = new ArrayList<>();
 
-        CachedBusArrivals cached = memoryRepository.getArrivals(stationName, now)
-                .orElseGet(() -> {
-                    List<BusArrival> arrivals = openApiBusService.retrieveBusArrival(station);
-                    return memoryRepository.cacheArrivals(stationName, arrivals, now);
-                });
+        List<BusStation> busStations = BusStation.getBusStations();
 
-        Duration diff = Duration.between(cached.getCapturedAt(), now);
+        for (BusStation busStation : busStations) {
+            CachedBusArrivals cached = memoryRepository.getArrivals(busStation.name(), now)
+                    .orElseGet(() -> {
+                        List<BusArrival> arrivals = openApiBusService.retrieveBusArrival(busStation);
+                        return memoryRepository.cacheArrivals(busStation.name(), arrivals, now);
+                    });
 
-        List<BusArrivalDto> busArrivalDtos = cached.getArrivals().stream()
-                .map(arrival -> interpolation(arrival, diff))
-                .map(BusArrivalDto::new)
-                .collect(Collectors.toList());
-        return new ResponseBusArrivalDto(cached.getCapturedAt(), busArrivalDtos);
+            if (cached != null) {
+                capturedAt = cached.getCapturedAt();
+                Duration diff = Duration.between(cached.getCapturedAt(), now);
+
+                if (busStation.equals(BusStation.DKU_GATE)) {
+                    busArrivalEntranceList = cached.getArrivals().stream()
+                            .map(arrival -> interpolation(arrival, diff))
+                            .map(BusArrivalDto::new)
+                            .collect(Collectors.toList());
+                } else{
+                    busArrivalPlazaList = cached.getArrivals().stream()
+                            .map(arrival -> interpolation(arrival, diff))
+                            .map(BusArrivalDto::new)
+                            .collect(Collectors.toList());
+                }
+            }
+        }
+        return new ResponseBusArrivalDto(capturedAt, busArrivalEntranceList, busArrivalPlazaList);
     }
 
     private static BusArrival interpolation(BusArrival arrival, Duration diff) {

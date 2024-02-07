@@ -17,5 +17,6 @@ public class ResponseBusArrivalDto {
     @Schema(description = "도착 시간이 계산된 시각", example = "2022-03-01 11:31:11")
     @JsonFormat(pattern = DATE_TIME_FORMAT_PATTERN, timezone = "Asia/Seoul")
     private final Instant capturedAt;
-    private final List<BusArrivalDto> busArrivalList;
+    private final List<BusArrivalDto> busArrivalEntranceList;
+    private final List<BusArrivalDto> busArrivalPlazaList;
 }
