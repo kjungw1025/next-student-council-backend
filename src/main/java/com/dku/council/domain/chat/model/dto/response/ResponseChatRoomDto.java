@@ -10,6 +10,4 @@ public class ResponseChatRoomDto {
     private final String roomName;
     private final int userCount;
     private final int maxUserCount;
-    private final String roomPwd; // 채팅방 삭제시 필요한 pwd
-    private final boolean secretCheck; // 채팅방 잠금 여부
 }

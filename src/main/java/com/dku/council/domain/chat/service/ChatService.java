@@ -42,9 +42,7 @@ public class ChatService {
                 ResponseChatRoomDto responseChatRoomDto = new ResponseChatRoomDto(chatRoom.getRoomId(),
                         chatRoom.getRoomName(),
                         chatRoom.getUserCount(),
-                        chatRoom.getMaxUserCount(),
-                        chatRoom.getRoomPwd(),
-                        chatRoom.isSecretCheck());
+                        chatRoom.getMaxUserCount());
                 responseChatRoomDtos.add(responseChatRoomDto);
             }
         }
@@ -63,22 +61,18 @@ public class ChatService {
         return new ResponseChatRoomDto(chatRoom.getRoomId(),
                 chatRoom.getRoomName(),
                 chatRoom.getUserCount(),
-                chatRoom.getMaxUserCount(),
-                chatRoom.getRoomPwd(),
-                chatRoom.isSecretCheck());
+                chatRoom.getMaxUserCount());
     }
 
     /**
      * 채팅방 생성
      *
      * @param roomName          생성할 채팅방의 이름
-     * @param roomPwd           생성항 채팅방의 비밀번호
-     * @param secretCheck       생성할 채팅방의 채팅방 잠금 여부
      * @param maxUserCount      생성할 채팅방의 최대 인원수 제한
      * @param userId            채팅방을 생성하고자 하는 사용자 id
      * @return                  채팅방 정보
      */
-    public ResponseChatRoomDto createChatRoom(String roomName, String roomPwd, boolean secretCheck, int maxUserCount, Long userId){
+    public ResponseChatRoomDto createChatRoom(String roomName, int maxUserCount, Long userId){
         // roomName 와 roomPwd 로 chatRoom 빌드 후 return
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
@@ -89,17 +83,13 @@ public class ChatService {
                 .roomManager(user) // 채팅방 방장
                 .userCount(0) // 채팅방 참여 인원수
                 .maxUserCount(maxUserCount) // 최대 인원수 제한
-                .roomPwd(roomPwd)  // 채팅방 패스워드
-                .secretCheck(secretCheck) // 채팅방 잠금 여부
                 .build();
         chatRoomRepository.save(chatRoom);
 
         return new ResponseChatRoomDto(chatRoom.getRoomId(),
                 chatRoom.getRoomName(),
                 chatRoom.getUserCount(),
-                chatRoom.getMaxUserCount(),
-                chatRoom.getRoomPwd(),
-                chatRoom.isSecretCheck());
+                chatRoom.getMaxUserCount());
     }
 
     /**
@@ -175,15 +165,15 @@ public class ChatService {
     }
 
     /**
-     * 채팅방 비밀번호 확인
+     * 채팅방 방장 확인
      *
-     * @param roomId    비밀번호 확인할 채팅방 id
-     * @param roomPwd   사용자가 입력한 해당 채팅방의 비밀번호
+     * @param roomId    채팅방 id
+     * @param userId    사용자 id
      *
      * @return          확인이 완료되면 true, 아니면 false
      */
-    public boolean confirmPwd(String roomId, String roomPwd) {
-        return chatRoomRepository.checkChatRoomByRoomPwd(roomId, roomPwd).isPresent();
+    public boolean confirmRoomManager(String roomId, Long userId) {
+        return chatRoomRepository.checkChatRoomManagerByUserId(roomId, userId).isPresent();
     }
 
     /**
