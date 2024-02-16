@@ -42,11 +42,6 @@ public class ChatRoom extends BaseEntity {
     @NotNull
     private int maxUserCount;
 
-    @NotNull
-    private String roomPwd;
-
-    private boolean secretCheck;
-
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatRoomUser> users = new ArrayList<>();
 
@@ -58,15 +53,11 @@ public class ChatRoom extends BaseEntity {
                      @NotNull String roomName,
                      @NotNull int userCount,
                      @NotNull int maxUserCount,
-                     @NotNull String roomPwd,
-                     boolean secretCheck,
                      User roomManager) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.userCount = userCount;
         this.maxUserCount = maxUserCount;
-        this.roomPwd = roomPwd;
-        this.secretCheck = secretCheck;
         this.roomManager = roomManager;
         this.chatRoomStatus = ChatRoomStatus.ACTIVE;
     }

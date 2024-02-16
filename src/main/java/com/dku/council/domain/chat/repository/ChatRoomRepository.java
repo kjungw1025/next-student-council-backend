@@ -21,7 +21,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     Optional<ChatRoom> findChatRoomByRoomId(@Param("roomId") String roomId);
 
     @Query("select c from ChatRoom c " +
-            "where c.roomId = :roomId and c.roomPwd = :roomPwd ")
-    Optional<ChatRoom> checkChatRoomByRoomPwd(@Param("roomId") String roomId,
-                                  @Param("roomPwd") String roomPwd);
+            "where c.roomId = :roomId and c.roomManager.id = :userId ")
+    Optional<ChatRoom> checkChatRoomManagerByUserId(@Param("roomId") String roomId,
+                                                    @Param("userId") Long userId);
 }
