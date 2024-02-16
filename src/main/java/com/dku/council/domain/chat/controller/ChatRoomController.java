@@ -48,22 +48,16 @@ public class ChatRoomController {
      * 채팅방 생성
      *
      * @param name              채팅방 이름
-     * @param roomPwd           채팅방 비밀번호
-     * @param secretCheck       채팅방 잠금 설정 여부
      * @param maxUserCount      채팅방 최대 인원 수 설정 (default = 10)
      */
     @PostMapping("/create")
     @UserAuth
     public String createRoom(@RequestParam("roomName") String name,
-                             @RequestParam("roomPwd") String roomPwd,
-                             @RequestParam("secretChk") String secretCheck,
                              @RequestParam(value = "maxUserCount", defaultValue = "10") String maxUserCount,
                              AppAuthentication auth,
                              RedirectAttributes rttr) {
 
         ResponseChatRoomDto room = chatService.createChatRoom(name,
-                roomPwd,
-                Boolean.parseBoolean(secretCheck),
                 Integer.parseInt(maxUserCount),
                 auth.getUserId());
 
@@ -90,19 +84,18 @@ public class ChatRoomController {
     }
 
     /**
-     * 채팅방 비밀번호 확인
+     * 채팅방 방장 확인
      *
      * @param roomId    채팅방 id
-     * @param roomPwd   사용자가 입력한 비밀번호
-     * @return          사용자가 입력한 비밀번호가 일치하면 true, 아니면 false
+     * @return          현재 사용자가 해당 채팅방의 방장이라면 true, 아니면 false
      */
-    @PostMapping("/confirmPwd/{roomId}")
+    @GetMapping("/confirm/manager/{roomId}")
     @UserAuth
     @ResponseBody
-    public boolean confirmPwd(@PathVariable String roomId,
-                              @RequestParam String roomPwd){
+    public boolean confirmPwd(AppAuthentication auth,
+                              @PathVariable String roomId){
 
-        return chatService.confirmPwd(roomId, roomPwd);
+        return chatService.confirmRoomManager(roomId, auth.getUserId());
     }
 
     /**
