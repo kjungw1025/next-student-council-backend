@@ -22,21 +22,15 @@ public class OauthService {
     private final OauthClientRepository oauthClientRepository;
     private final OauthRedisRepository oauthRedisRepository;
 
-    @Transactional
-    public String authorize(OauthRequest authRequest) {
-        String clientId = authRequest.getClientId();
-        String redirectUri = authRequest.getRedirectUri();
-        checkResponseType(authRequest.getResponseType());
-        OauthClient oauthClient = oauthClientRepository.findByClientId(clientId)
-                .orElseThrow(OauthClientNotFoundException::new);
+    public String authorize(OauthRequest oauthRequest) {
+        String clientId = oauthRequest.getClientId();
+        String redirectUri = oauthRequest.getRedirectUri();
+        checkResponseType(oauthRequest.getResponseType());
+        OauthClient oauthClient = getOauthClient(clientId);
         oauthClient.checkClientId(clientId);
         oauthClient.checkRedirectUri(redirectUri);
-        String authCode = UUID.randomUUID().toString();
-        OauthCachePayload cachePayload = authRequest.toCachePayload(authCode);
-        oauthRedisRepository.cacheOauth(clientId, cachePayload);
         return UriComponentsBuilder
                 .fromUriString(oauthClient.getRedirectUri())
-                .queryParam("code", authCode)
                 .toUriString();
     }
 
