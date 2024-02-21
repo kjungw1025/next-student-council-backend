@@ -41,8 +41,4 @@ public class OauthRequest {
                                   String redirectUri, String responseType, String scope) {
         return new OauthRequest(codeChallenge, clientId, redirectUri, responseType, scope);
     }
-
-    public OauthCachePayload toCachePayload(String authCode) {
-        return OauthCachePayload.of(authCode, codeChallenge, codeChallengeMethod, scope);
-    }
 }
