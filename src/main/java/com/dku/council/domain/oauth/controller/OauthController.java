@@ -1,8 +1,11 @@
 package com.dku.council.domain.oauth.controller;
 
+import com.dku.council.domain.oauth.model.dto.request.OauthLoginRequest;
 import com.dku.council.domain.oauth.model.dto.request.OauthRequest;
+import com.dku.council.domain.oauth.model.dto.response.OauthLoginResponse;
 import com.dku.council.domain.oauth.service.OauthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,4 +31,9 @@ public class OauthController {
         response.sendRedirect(uri);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<OauthLoginResponse> login(@RequestBody OauthLoginRequest request) throws IOException {
+        OauthLoginResponse response = oauthService.login(request.toLoginInfo(), request.toOauthInfo());
+        return ResponseEntity.ok(response);
+    }
 }
