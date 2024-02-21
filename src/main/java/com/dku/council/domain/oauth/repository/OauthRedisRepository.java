@@ -16,7 +16,8 @@ public class OauthRedisRepository extends AbstractKeyValueCacheRepository {
         super(redisTemplate, objectMapper, RedisKeys.OAUTH_CODE_KEY);
     }
 
-    public void cacheOauth(String clientId, OauthCachePayload cachePayload) {
-        set(clientId, cachePayload, Instant.now(), Duration.ofMinutes(10));
+    public void cacheOauth(String authCode, OauthCachePayload cachePayload) {
+        set(authCode, cachePayload, Instant.now(), Duration.ofMinutes(10));
+    }
     }
 }
