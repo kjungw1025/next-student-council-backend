@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 
 @Repository
 public class OauthRedisRepository extends AbstractKeyValueCacheRepository {
@@ -19,5 +20,12 @@ public class OauthRedisRepository extends AbstractKeyValueCacheRepository {
     public void cacheOauth(String authCode, OauthCachePayload cachePayload) {
         set(authCode, cachePayload, Instant.now(), Duration.ofMinutes(10));
     }
+
+    public Optional<OauthCachePayload> getOauth(String authCode) {
+        return get(authCode, OauthCachePayload.class, Instant.now());
+    }
+
+    public void deleteOauth(String authCode) {
+        remove(authCode);
     }
 }
