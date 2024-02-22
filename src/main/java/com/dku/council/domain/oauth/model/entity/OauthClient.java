@@ -2,6 +2,7 @@ package com.dku.council.domain.oauth.model.entity;
 
 import com.dku.council.domain.oauth.exception.InvalidOauthClientIdException;
 import com.dku.council.domain.oauth.exception.InvalidOauthRedirectUriException;
+import com.dku.council.domain.oauth.exception.InvalidClientSecretException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,7 +46,7 @@ public class OauthClient {
 
     public void checkClientSecret(String clientSecret) {
         if (!this.clientSecret.equals(clientSecret)) {
-            throw new IllegalArgumentException("Invalid client secret");
+            throw new InvalidClientSecretException(clientSecret);
         }
     }
 
