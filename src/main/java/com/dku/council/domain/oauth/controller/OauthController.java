@@ -2,7 +2,9 @@ package com.dku.council.domain.oauth.controller;
 
 import com.dku.council.domain.oauth.model.dto.request.OauthLoginRequest;
 import com.dku.council.domain.oauth.model.dto.request.OauthRequest;
+import com.dku.council.domain.oauth.model.dto.request.TokenExchangeRequest;
 import com.dku.council.domain.oauth.model.dto.response.OauthLoginResponse;
+import com.dku.council.domain.oauth.model.dto.response.TokenExchangeResponse;
 import com.dku.council.domain.oauth.service.OauthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,4 +38,19 @@ public class OauthController {
         OauthLoginResponse response = oauthService.login(request.toLoginInfo(), request.toOauthInfo());
         return ResponseEntity.ok(response);
     }
+
+
+    @PostMapping("/token")
+    public ResponseEntity<TokenExchangeResponse> exchangeToken(@RequestParam String grantType,
+                                                               @RequestParam String clientId,
+                                                               @RequestParam String redirectUri,
+                                                               @RequestParam String clientSecret,
+                                                               @RequestParam String code,
+                                                               @RequestParam String codeVerifier) {
+        TokenExchangeRequest request = TokenExchangeRequest.of(grantType, clientId, redirectUri,
+                clientSecret, code, codeVerifier);
+        TokenExchangeResponse response = oauthService.exchangeToken(request.toClientInfo(), request.toAuthTarget());
+        return ResponseEntity.ok(response);
+    }
+
 }
