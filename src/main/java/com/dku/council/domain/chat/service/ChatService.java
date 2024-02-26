@@ -8,6 +8,7 @@ import com.dku.council.domain.chat.repository.ChatRoomRepository;
 import com.dku.council.domain.chat.repository.ChatRoomUserRepository;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.UserRepository;
+import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import com.dku.council.global.error.exception.NotGrantedException;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +73,31 @@ public class ChatService {
      * @param userId            채팅방을 생성하고자 하는 사용자 id
      * @return                  채팅방 정보
      */
-    public ResponseChatRoomDto createChatRoom(String roomName, int maxUserCount, Long userId){
+    public void createChatRoom(WithDankook withDankook, String roomName, int maxUserCount, Long userId){
+        // roomName 와 roomPwd 로 chatRoom 빌드 후 return
+
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        ChatRoom chatRoom = ChatRoom.builder()
+                .withDankook(withDankook)
+                .roomId(UUID.randomUUID().toString())
+                .roomName(roomName)
+                .roomManager(user) // 채팅방 방장
+                .userCount(0) // 채팅방 참여 인원수
+                .maxUserCount(maxUserCount) // 최대 인원수 제한
+                .build();
+        chatRoomRepository.save(chatRoom);
+    }
+
+    /**
+     * 채팅방 생성 (프론트 화면 확인용. with-Dankook이랑 연결 안되어있음)
+     *
+     * @param roomName          생성할 채팅방의 이름
+     * @param maxUserCount      생성할 채팅방의 최대 인원수 제한
+     * @param userId            채팅방을 생성하고자 하는 사용자 id
+     * @return                  채팅방 정보
+     */
+    public ResponseChatRoomDto createChatRoomForTest(String roomName, int maxUserCount, Long userId){
         // roomName 와 roomPwd 로 chatRoom 빌드 후 return
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);

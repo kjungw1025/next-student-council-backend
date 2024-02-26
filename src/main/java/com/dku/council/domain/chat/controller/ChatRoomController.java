@@ -57,7 +57,7 @@ public class ChatRoomController {
                              AppAuthentication auth,
                              RedirectAttributes rttr) {
 
-        ResponseChatRoomDto room = chatService.createChatRoom(name,
+        ResponseChatRoomDto room = chatService.createChatRoomForTest(name,
                 Integer.parseInt(maxUserCount),
                 auth.getUserId());
 

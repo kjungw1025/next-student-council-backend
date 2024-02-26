@@ -2,7 +2,9 @@ package com.dku.council.domain.with_dankook.model.dto.request;
 
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.with_dankook.model.entity.type.Study;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -21,12 +23,12 @@ public class RequestCreateStudyDto extends RequestCreateWithDankookDto<Study> {
     private final int minStudentId;
 
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Schema(description = "스터디 시작 시간", example = "2023-12-25 17:30")
     private final LocalDateTime startTime;
 
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @Schema(description = "스터디 끝나는 시간", example = "2023-12-25 18:30")
     private final LocalDateTime endTime;
 
@@ -37,12 +39,13 @@ public class RequestCreateStudyDto extends RequestCreateWithDankookDto<Study> {
     @Schema(description = "본문", example = "내용")
     private final String content;
 
-    public RequestCreateStudyDto (@NotBlank String title,
-                                  @NotBlank int minStudentId,
-                                  @NotBlank LocalDateTime startTime,
-                                  @NotBlank LocalDateTime endTime,
-                                  String tag,
-                                  @NotBlank String content) {
+    @JsonCreator
+    public RequestCreateStudyDto (@JsonProperty("title") @NotBlank String title,
+                                  @JsonProperty("minStudentId") @NotBlank int minStudentId,
+                                  @JsonProperty("startTime") @NotBlank LocalDateTime startTime,
+                                  @JsonProperty("endTime") @NotBlank LocalDateTime endTime,
+                                  @JsonProperty("tag") String tag,
+                                  @JsonProperty("content") @NotBlank String content) {
         this.title = title;
         this.minStudentId = minStudentId;
         this.startTime = startTime;

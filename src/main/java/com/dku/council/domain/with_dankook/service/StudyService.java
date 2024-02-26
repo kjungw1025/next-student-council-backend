@@ -1,5 +1,10 @@
 package com.dku.council.domain.with_dankook.service;
 
+import com.dku.council.domain.chat.exception.ChatRoomNotFoundException;
+import com.dku.council.domain.chat.model.dto.response.ResponseChatRoomDto;
+import com.dku.council.domain.chat.model.entity.ChatRoom;
+import com.dku.council.domain.chat.repository.ChatRoomRepository;
+import com.dku.council.domain.chat.service.ChatService;
 import com.dku.council.domain.studytag.model.entity.StudyTag;
 import com.dku.council.domain.studytag.repository.StudyTagRepository;
 import com.dku.council.domain.user.model.entity.User;
@@ -51,9 +56,11 @@ public class StudyService {
     private final UserRepository userRepository;
     private final StudyTagRepository studyTagRepository;
     private final WithDankookUserRepository withDankookUserRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     private final WithDankookService<Study> withDankookService;
     private final WithDankookUserService withDankookUserService;
+    private final ChatService chatService;
 
     private final Clock clock;
 
@@ -68,6 +75,7 @@ public class StudyService {
             throw new StudyCooltimeException("study");
         }
 
+        // 게시글에 작성한 태그 등록
         StudyTag studyTag = retrieveStudyTag(dto.getTag());
 
         Study study = Study.builder()
@@ -87,6 +95,9 @@ public class StudyService {
                 .withDankook(study)
                 .build();
         withDankookUserRepository.save(withDankookUser);
+
+        // 해당 게시글에 대한 채팅방 생성
+        chatService.createChatRoom(study, dto.getTitle(), 4, userId);
 
         withDankookMemoryRepository.put(STUDY_KEY, userId, writeCooltime, now);
         return result;
