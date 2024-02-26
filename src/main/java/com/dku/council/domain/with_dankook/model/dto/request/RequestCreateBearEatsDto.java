@@ -5,12 +5,14 @@ import com.dku.council.domain.with_dankook.model.entity.type.BearEats;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
+@RequiredArgsConstructor
 public class RequestCreateBearEatsDto extends RequestCreateWithDankookDto<BearEats>{
 
     @NotNull
@@ -22,23 +24,13 @@ public class RequestCreateBearEatsDto extends RequestCreateWithDankookDto<BearEa
     private final String deliveryPlace;
 
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
-    @Schema(description = "배달 시간", example = "2023-12-25 17:30")
+    @Schema(description = "배달 시간", example = "2023-12-25 17:30", type = "string")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private final LocalDateTime deliveryTime;
 
     @NotBlank
     @Schema(description = "본문", example = "내용")
     private final String content;
-
-    public RequestCreateBearEatsDto(@NotNull String restaurant,
-                                    @NotNull String deliveryPlace,
-                                    @NotNull LocalDateTime deliveryTime,
-                                    @NotBlank String content) {
-        this.restaurant = restaurant;
-        this.deliveryPlace = deliveryPlace;
-        this.deliveryTime = deliveryTime;
-        this.content = content;
-    }
 
     @Override
     public BearEats toEntity(User user) {

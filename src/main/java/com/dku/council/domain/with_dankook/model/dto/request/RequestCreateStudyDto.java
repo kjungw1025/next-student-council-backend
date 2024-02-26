@@ -23,13 +23,13 @@ public class RequestCreateStudyDto extends RequestCreateWithDankookDto<Study> {
     private final int minStudentId;
 
     @NotNull
+    @Schema(description = "스터디 시작 시간", example = "2023-12-25 17:30", type = "string")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    @Schema(description = "스터디 시작 시간", example = "2023-12-25 17:30")
     private final LocalDateTime startTime;
 
     @NotNull
+    @Schema(description = "스터디 끝나는 시간", example = "2023-12-25 18:30", type = "string")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    @Schema(description = "스터디 끝나는 시간", example = "2023-12-25 18:30")
     private final LocalDateTime endTime;
 
     @Schema(description = "해시태그", example = "자격증")
