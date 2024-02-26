@@ -2,6 +2,7 @@ package com.dku.council.domain.chat.model.entity;
 
 import com.dku.council.domain.chat.model.ChatRoomStatus;
 import com.dku.council.domain.user.model.entity.User;
+import com.dku.council.domain.with_dankook.model.entity.WithDankook;
 import com.dku.council.global.base.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,6 +43,10 @@ public class ChatRoom extends BaseEntity {
     @NotNull
     private int maxUserCount;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "with_dankook_id")
+    private WithDankook withDankook;
+
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatRoomUser> users = new ArrayList<>();
 
@@ -49,11 +54,13 @@ public class ChatRoom extends BaseEntity {
     private ChatRoomStatus chatRoomStatus;
 
     @Builder
-    private ChatRoom(@NotNull String roomId,
+    private ChatRoom(WithDankook withDankook,
+                     @NotNull String roomId,
                      @NotNull String roomName,
                      @NotNull int userCount,
                      @NotNull int maxUserCount,
                      User roomManager) {
+        this.withDankook = withDankook;
         this.roomId = roomId;
         this.roomName = roomName;
         this.userCount = userCount;
