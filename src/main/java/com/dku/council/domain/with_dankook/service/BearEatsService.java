@@ -1,5 +1,6 @@
 package com.dku.council.domain.with_dankook.service;
 
+import com.dku.council.domain.chat.service.ChatService;
 import com.dku.council.domain.post.exception.PostCooltimeException;
 import com.dku.council.domain.post.repository.PostTimeMemoryRepository;
 import com.dku.council.domain.user.model.entity.User;
@@ -42,6 +43,7 @@ public class BearEatsService {
 
     private final WithDankookService<BearEats> withDankookService;
     private final WithDankookUserService withDankookuserSerivce;
+    private final ChatService chatService;
 
     private final BearEatsRepository bearEatsRepository;
     private final WithDankookUserRepository withDankookUserRepository;
@@ -68,6 +70,11 @@ public class BearEatsService {
                         .withDankook(bearEatsRepository.findById(result).orElseThrow(WithDankookNotFoundException::new))
                         .build();
         withDankookUserRepository.save(withDankookuser);
+
+        BearEats bearEats = bearEatsRepository.findById(result).orElseThrow(WithDankookNotFoundException::new);
+
+        // 해당 게시글에 대한 채팅방 생성
+        chatService.createChatRoom(bearEats, dto.getRestaurant(), 4, userId);
 
         postTimeMemoryRepository.put(BEAR_EATS_KEY, userId, writeCooltime, now);
         return result;
