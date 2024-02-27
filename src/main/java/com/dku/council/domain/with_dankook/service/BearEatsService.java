@@ -1,5 +1,8 @@
 package com.dku.council.domain.with_dankook.service;
 
+import com.dku.council.domain.chat.exception.ChatRoomNotFoundException;
+import com.dku.council.domain.chat.model.dto.response.ResponseChatRoomIdDto;
+import com.dku.council.domain.chat.repository.ChatRoomRepository;
 import com.dku.council.domain.chat.service.ChatService;
 import com.dku.council.domain.post.exception.PostCooltimeException;
 import com.dku.council.domain.post.repository.PostTimeMemoryRepository;
@@ -49,6 +52,7 @@ public class BearEatsService {
     private final WithDankookUserRepository withDankookUserRepository;
     private final UserRepository userRepository;
     private final PostTimeMemoryRepository postTimeMemoryRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     private final Clock clock;
 
@@ -125,8 +129,11 @@ public class BearEatsService {
     }
 
     @Transactional
-    public void enter(Long id, Long userId, UserRole userRole) {
+    public ResponseChatRoomIdDto enter(Long id, Long userId, UserRole userRole) {
+        String roomId = chatRoomRepository.findChatRoomByWithDankookId(id).orElseThrow(ChatRoomNotFoundException::new).getRoomId();
         withDankookService.enter(bearEatsRepository, id, userId, userRole);
+
+        return new ResponseChatRoomIdDto(roomId);
     }
 
     @Transactional
