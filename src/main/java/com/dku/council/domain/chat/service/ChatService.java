@@ -14,8 +14,8 @@ import com.dku.council.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +23,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
@@ -73,6 +74,7 @@ public class ChatService {
      * @param userId            채팅방을 생성하고자 하는 사용자 id
      * @return                  채팅방 정보
      */
+    @Transactional
     public void createChatRoom(WithDankook withDankook, String roomName, int maxUserCount, Long userId){
         // roomName 와 roomPwd 로 chatRoom 빌드 후 return
 
@@ -97,6 +99,7 @@ public class ChatService {
      * @param userId            채팅방을 생성하고자 하는 사용자 id
      * @return                  채팅방 정보
      */
+    @Transactional
     public ResponseChatRoomDto createChatRoomForTest(String roomName, int maxUserCount, Long userId){
         // roomName 와 roomPwd 로 chatRoom 빌드 후 return
 
