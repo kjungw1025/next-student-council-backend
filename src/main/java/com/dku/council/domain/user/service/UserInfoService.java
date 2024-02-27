@@ -12,11 +12,17 @@ import com.dku.council.domain.user.repository.UserInfoMemoryRepository;
 import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +68,34 @@ public class UserInfoService {
                     memoryRepository.setUserInfo(userId, userInfo, now);
                     return userInfo;
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getScopedUserInfo(Long userId, String scope) {
+        String[] scopes = scope.split(" ");
+        UserInfo userInfo = getUserInfo(userId);
+
+        Map<String, Object> scopedInfo = getScopedInfo(scopes, userInfo);
+        scopedInfo.put("userId", userId);
+        return scopedInfo;
+    }
+
+    @NotNull
+    private static Map<String, Object> getScopedInfo(String[] scopes, UserInfo userInfo) {
+        return Arrays.stream(scopes)
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        s -> {
+                            try {
+                                String methodName = "get" + s.substring(0, 1).toUpperCase() + s.substring(1);
+                                Method method = UserInfo.class.getMethod(methodName);
+                                return method.invoke(userInfo);
+                            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+                ));
     }
 
     public void invalidateUserInfo(Long userId) {
