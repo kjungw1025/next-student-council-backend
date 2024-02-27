@@ -2,6 +2,7 @@ package com.dku.council.domain.with_dankook.service;
 
 import com.dku.council.domain.chat.exception.ChatRoomNotFoundException;
 import com.dku.council.domain.chat.model.dto.response.ResponseChatRoomDto;
+import com.dku.council.domain.chat.model.dto.response.ResponseChatRoomIdDto;
 import com.dku.council.domain.chat.model.entity.ChatRoom;
 import com.dku.council.domain.chat.repository.ChatRoomRepository;
 import com.dku.council.domain.chat.service.ChatService;
@@ -48,7 +49,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional(readOnly = true)
 public class StudyService {
-
     public static final String STUDY_KEY = "study";
 
     private final StudyRepository studyRepository;
@@ -180,14 +180,17 @@ public class StudyService {
     }
 
     @Transactional
-    public void enter(Long id, Long userId, UserRole userRole) {
+    public ResponseChatRoomIdDto enter(Long id, Long userId, UserRole userRole) {
         Study study = findStudy(studyRepository, id, userRole);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        String roomId = chatRoomRepository.findChatRoomByWithDankookId(id).orElseThrow(ChatRoomNotFoundException::new).getRoomId();
 
         if (study.getMinStudentId() < Integer.parseInt(String.valueOf(user.getYearOfAdmission()).substring(2))) {
             throw new InvalidMinStudentIdException();
         } else {
             withDankookService.enter(studyRepository, id, userId, userRole);
+
+            return new ResponseChatRoomIdDto(roomId);
         }
     }
 
