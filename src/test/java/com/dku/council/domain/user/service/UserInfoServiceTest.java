@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.dku.council.domain.like.model.LikeTarget.POST;
@@ -89,6 +90,27 @@ class UserInfoServiceTest {
         assertThat(info.getWritePostCount()).isEqualTo(1);
         assertThat(info.getCommentedPostCount()).isEqualTo(2);
         assertThat(info.getLikedPostCount()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("Scoped 사용자 정보 가져오기")
+    void getScopedUserInfo() {
+        // given
+        Long userId = 1L;
+        String scope = "name age";
+        User user = UserMock.createDummyMajor();
+        UserInfo userInfo = new UserInfo(user);
+
+        when(memoryRepository.getUserInfo(eq(userId), any()))
+                .thenReturn(Optional.of(userInfo));
+
+        // when
+        Map<String, Object> result = service.getScopedUserInfo(userId, scope);
+
+        // then
+        assertThat(result.get("name")).isEqualTo(user.getName());
+        assertThat(result.get("age")).isEqualTo(user.getAge());
+        assertThat(result.get("userId")).isEqualTo(userId);
     }
 
     @Test
