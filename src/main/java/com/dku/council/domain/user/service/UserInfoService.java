@@ -68,9 +68,8 @@ public class UserInfoService {
 
     @Transactional(readOnly = true)
     public ResponseScopedUserInfoDto getScopedUserInfo(Long userId, String scope) {
-        Set<String> scopeSet = getScopeSet(scope);
         UserInfo userInfo = getUserInfo(userId);
-        return userInfo.getScopedInfo(userId, scopeSet);
+        return userInfo.getScopedInfo(userId, getScopeSet(scope));
     }
 
     private Set<String> getScopeSet(String scope) {
