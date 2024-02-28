@@ -4,6 +4,7 @@ import com.dku.council.domain.comment.repository.CommentRepository;
 import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.repository.post.PostRepository;
 import com.dku.council.domain.user.model.UserInfo;
+import com.dku.council.domain.user.model.dto.response.ResponseScopedUserInfoDto;
 import com.dku.council.domain.user.model.dto.response.ResponseUserInfoDto;
 import com.dku.council.domain.user.model.entity.Major;
 import com.dku.council.domain.user.model.entity.User;
@@ -105,12 +106,12 @@ class UserInfoServiceTest {
                 .thenReturn(Optional.of(userInfo));
 
         // when
-        Map<String, Object> result = service.getScopedUserInfo(userId, scope);
+        ResponseScopedUserInfoDto result = service.getScopedUserInfo(userId, scope);
 
         // then
-        assertThat(result.get("name")).isEqualTo(user.getName());
-        assertThat(result.get("age")).isEqualTo(user.getAge());
-        assertThat(result.get("userId")).isEqualTo(userId);
+        assertThat(result.getUsername()).isEqualTo(user.getName());
+        assertThat(result.getAge()).isEqualTo(user.getAge());
+        assertThat(result.getUserId()).isEqualTo(userId);
     }
 
     @Test

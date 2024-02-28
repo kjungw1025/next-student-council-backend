@@ -55,9 +55,9 @@ public class UserController {
      */
     @GetMapping("/scoped-info")
     @UserAuth
-    public ResponseEntity<Map<String, Object>> getScopedInfo(AppAuthentication auth, @RequestParam String scope) {
-        Map<String, Object> scopedUserInfo = userInfoService.getScopedUserInfo(auth.getUserId(), scope);
-        return ResponseEntity.ok(scopedUserInfo);
+    public ResponseEntity<ResponseScopedUserInfoDto> getScopedInfo(AppAuthentication auth, @RequestParam String scope) {
+        ResponseScopedUserInfoDto response = userInfoService.getScopedUserInfo(auth.getUserId(), scope);
+        return ResponseEntity.ok(response);
     }
 
     /**
