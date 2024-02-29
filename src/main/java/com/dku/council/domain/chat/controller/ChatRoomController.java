@@ -57,7 +57,7 @@ public class ChatRoomController {
                              AppAuthentication auth,
                              RedirectAttributes rttr) {
 
-        ResponseChatRoomDto room = chatService.createChatRoom(name,
+        ResponseChatRoomDto room = chatService.createChatRoomForTest(name,
                 Integer.parseInt(maxUserCount),
                 auth.getUserId());
 
@@ -104,8 +104,9 @@ public class ChatRoomController {
      * @param roomId        채팅방 id
      */
     @DeleteMapping
+    @ResponseBody
     @UserAuth
-    public String delChatRoom(@RequestParam String roomId, AppAuthentication auth){
+    public boolean delChatRoom(@RequestParam String roomId, AppAuthentication auth){
 
         // 해당 채팅방에 존재하는 파일들 삭제
         chatFileService.deleteAllFilesInChatRoom(roomId);
@@ -116,7 +117,7 @@ public class ChatRoomController {
         // roomId(UUID 값) 기준으로 채팅방 삭제
         chatService.delChatRoom(auth.getUserId(), roomId, auth.isAdmin());
 
-        return "redirect:/chatRoom";
+        return true;
     }
 
     /**

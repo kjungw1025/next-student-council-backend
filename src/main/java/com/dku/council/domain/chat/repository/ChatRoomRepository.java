@@ -24,4 +24,11 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "where c.roomId = :roomId and c.roomManager.id = :userId ")
     Optional<ChatRoom> checkChatRoomManagerByUserId(@Param("roomId") String roomId,
                                                     @Param("userId") Long userId);
+
+    /**
+     * 게시글과 채팅방이 1 : 1로 생성 되는 단터디, 베어이츠, 단혼밥에서 사용하는 메소드
+     */
+    @Query("select c from ChatRoom c " +
+            "where c.withDankook.id = :withDankookId and c.chatRoomStatus = 'ACTIVE' ")
+    Optional<ChatRoom> findChatRoomByWithDankookId(@Param("withDankookId") Long withDankookId);
 }

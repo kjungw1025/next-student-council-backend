@@ -2,6 +2,7 @@ package com.dku.council.domain.oauth.model.dto.request;
 
 import lombok.Getter;
 
+
 @Getter
 public class OAuthTarget {
     private final String grantType;

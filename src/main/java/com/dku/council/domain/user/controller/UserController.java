@@ -14,11 +14,13 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "사용자", description = "사용자 인증 및 정보 관련 api")
 @RestController
@@ -43,6 +45,19 @@ public class UserController {
     @UserAuth
     public ResponseUserInfoDto getMyInfo(AppAuthentication auth) {
         return userInfoService.getFullUserInfo(auth.getUserId());
+    }
+
+    /**
+     * 사용자 특정 정보 조회
+     *
+     * @param scope 빈칸으로 구분(예: "studentId name")
+     * @return 사용자 특정 정보
+     */
+    @GetMapping("/scoped-info")
+    @UserAuth
+    public ResponseEntity<ResponseScopedUserInfoDto> getScopedInfo(AppAuthentication auth, @RequestParam String scope) {
+        ResponseScopedUserInfoDto response = userInfoService.getScopedUserInfo(auth.getUserId(), scope);
+        return ResponseEntity.ok(response);
     }
 
     /**

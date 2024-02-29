@@ -4,6 +4,7 @@ import com.dku.council.domain.comment.repository.CommentRepository;
 import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.repository.post.PostRepository;
 import com.dku.council.domain.user.model.UserInfo;
+import com.dku.council.domain.user.model.dto.response.ResponseScopedUserInfoDto;
 import com.dku.council.domain.user.model.dto.response.ResponseUserInfoDto;
 import com.dku.council.domain.user.model.entity.Major;
 import com.dku.council.domain.user.model.entity.User;
@@ -22,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.dku.council.domain.like.model.LikeTarget.POST;
@@ -89,6 +91,27 @@ class UserInfoServiceTest {
         assertThat(info.getWritePostCount()).isEqualTo(1);
         assertThat(info.getCommentedPostCount()).isEqualTo(2);
         assertThat(info.getLikedPostCount()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("Scoped 사용자 정보 가져오기")
+    void getScopedUserInfo() {
+        // given
+        Long userId = 1L;
+        String scope = "name age";
+        User user = UserMock.createDummyMajor();
+        UserInfo userInfo = new UserInfo(user);
+
+        when(memoryRepository.getUserInfo(eq(userId), any()))
+                .thenReturn(Optional.of(userInfo));
+
+        // when
+        ResponseScopedUserInfoDto result = service.getScopedUserInfo(userId, scope);
+
+        // then
+        assertThat(result.getUsername()).isEqualTo(user.getName());
+        assertThat(result.getAge()).isEqualTo(user.getAge());
+        assertThat(result.getUserId()).isEqualTo(userId);
     }
 
     @Test

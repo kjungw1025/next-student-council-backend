@@ -1,5 +1,6 @@
 package com.dku.council.domain.with_dankook.controller;
 
+import com.dku.council.domain.chat.model.dto.response.ResponseChatRoomIdDto;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.user.service.UserService;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedStudyDto;
@@ -100,14 +101,20 @@ public class StudyController {
 
     /**
      * 단터디 게시글 신청
+     * <p>
+     *     프론트에서 성공적으로 roomId를 받는다면, </br>
+     *     사용자를 게시글에 해당하는 채팅방에 입장시켜야 하므로 </br>
+     *     바로 /pub/chat/enterUser에 roomId를 포함한 request 양식에 맞춰 요청을 보내줘야합니다. </br>
+     * </p>
      *
-     * @param id   게시글 id
+     * @param id        게시글 id
+     * @return roomId   해당 게시글에 대한 채팅방 roomId
      */
     @PostMapping("/{id}/enter")
     @UserAuth
-    public void enter(AppAuthentication auth, @PathVariable @Valid Long id) {
+    public ResponseChatRoomIdDto enter(AppAuthentication auth, @PathVariable @Valid Long id) {
         userService.isDkuChecked(auth.getUserId());
-        studyService.enter(id, auth.getUserId(), auth.getUserRole());
+        return studyService.enter(id, auth.getUserId(), auth.getUserRole());
     }
 
     /**
