@@ -1,6 +1,8 @@
 package com.dku.council.domain.oauth.repository;
 
 import com.dku.council.domain.oauth.model.dto.request.OauthCachePayload;
+import com.dku.council.util.base.AbstractContainerRedisTest;
+import com.dku.council.util.test.FullIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class OauthRedisRepositoryTest {
+@FullIntegrationTest
+class OauthRedisRepositoryTest extends AbstractContainerRedisTest {
 
     @Autowired
     private OauthRedisRepository oauthRedisRepository;
