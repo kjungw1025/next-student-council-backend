@@ -21,19 +21,22 @@ public interface WithDankookUserRepository extends JpaRepository<WithDankookUser
             "where u.withDankook.id = :withDankookId and " +
                     "u.participant.id = :userId and " +
                     "u.participantStatus = 'VALID' ")
-    Optional<WithDankookUser> isExistsByWithDankookIdAndUserId(Long withDankookId, Long userId);
+    Optional<WithDankookUser> isExistsByWithDankookIdAndUserId(@Param("withDankookId") Long withDankookId,
+                                                               @Param("userId") Long userId);
 
     @Query("select u from WithDankookUser u " +
             "where u.withDankook.id = :withDankookId and " +
                     "u.reviewStatus = false and " +
                     "u.participant.id = :userId and " +
                     "u.participantStatus = 'VALID' ")
-    Optional<WithDankookUser> checkReviewStatus(Long withDankookId, Long userId);
+    Optional<WithDankookUser> checkReviewStatus(@Param("withDankookId") Long withDankookId,
+                                                @Param("userId") Long userId);
 
     @Query("select u from WithDankookUser u " +
             "where u.withDankook.id = :withDankookId " +
             "and u.participant.id = :userId ")
-    Optional<WithDankookUser> findByUserIdAndWithDankookId(@Param("userId") Long userId, @Param("withDankookId") Long withDankookId);
+    Optional<WithDankookUser> findByUserIdAndWithDankookId(@Param("userId") Long userId,
+                                                           @Param("withDankookId") Long withDankookId);
 
     @Query("select u from WithDankookUser u " +
             "where u.withDankook.id = :withDankookId and " +

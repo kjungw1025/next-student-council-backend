@@ -42,13 +42,6 @@ public class ChatController {
     @Value("${spring.kafka.consumer.topic}")
     private String topic;
 
-    /**
-     * 아래에서 사용되는 convertAndSend 를 사용하기 위한 선언
-     *  convertAndSend 는 객체를 인자로 넘겨주면 자동으로 Message 객체로 변환 후 도착지로 전송한다.
-     */
-    private final SimpMessageSendingOperations template;
-
-    private final UserService userService;
     private final ChatService chatService;
     private final ChatRoomMessageService chatRoomMessageService;
     private final MessageSender sender;
@@ -64,25 +57,14 @@ public class ChatController {
      * 처리가 완료되면 /sub/chatRoom/enter/roomId 로 메시지가 전송된다.
      */
     @MessageMapping("/chat/enterUser")
-    public void enterUser(@Payload RequestChatDto chat,
-                          SimpMessageHeaderAccessor headerAccessor) {
+    public void enterUser(@Payload RequestChatDto chat) {
 
-        if(chatService.alreadyInRoom(chat.getRoomId(), chat.getUserId())) {
-            // 반환 결과를 socket session 에 userUUID 로 저장
-            headerAccessor.getSessionAttributes().put("username", chat.getSender());
-            headerAccessor.getSessionAttributes().put("userId", chat.getUserId());
-            headerAccessor.getSessionAttributes().put("roomId", chat.getRoomId());
-        } else {
+        if(!chatService.alreadyInRoom(chat.getRoomId(), chat.getUserId())) {
             // 채팅방 유저+1
             chatService.plusUserCnt(chat.getRoomId());
 
-            // 채팅방에 유저 추가 및 UserUUID 반환
+            // 채팅방에 유저 추가
             String username = chatService.addUser(chat.getRoomId(), chat.getSender());
-
-            // 반환 결과를 socket session 에 userUUID 로 저장
-            headerAccessor.getSessionAttributes().put("username", username);
-            headerAccessor.getSessionAttributes().put("userId", chat.getUserId());
-            headerAccessor.getSessionAttributes().put("roomId", chat.getRoomId());
 
             String enterMessage = chat.getSender() + " 님 입장!!";
             LocalDateTime messageTime = LocalDateTime.now();

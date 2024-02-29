@@ -4,10 +4,12 @@ import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.with_dankook.model.entity.type.EatingAlone;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
+@RequiredArgsConstructor
 public class RequestCreateEatingAloneDto extends RequestCreateWithDankookDto<EatingAlone> {
 
     @NotBlank
@@ -17,12 +19,6 @@ public class RequestCreateEatingAloneDto extends RequestCreateWithDankookDto<Eat
     @NotBlank
     @Schema(description = "본문", example = "내용")
     private final String content;
-
-    public RequestCreateEatingAloneDto(@NotBlank String title,
-                                       @NotBlank String content) {
-        this.title = title;
-        this.content = content;
-    }
 
     @Override
     public EatingAlone toEntity(User user) {

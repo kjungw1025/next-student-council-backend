@@ -1,5 +1,6 @@
 package com.dku.council.domain.with_dankook.controller;
 
+import com.dku.council.domain.chat.model.dto.response.ResponseChatRoomIdDto;
 import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.user.service.UserService;
 import com.dku.council.domain.with_dankook.model.dto.list.SummarizedEatingAloneDto;
@@ -89,10 +90,10 @@ public class EatingAloneController {
      */
     @PostMapping("/{id}/enter")
     @UserAuth
-    public void enter(AppAuthentication auth,
-                       @PathVariable @Valid Long id) {
+    public ResponseChatRoomIdDto enter(AppAuthentication auth,
+                                       @PathVariable @Valid Long id) {
         userService.isDkuChecked(auth.getUserId());
-        eatingAloneService.enter(id, auth.getUserId(), auth.getUserRole());
+        return eatingAloneService.enter(id, auth.getUserId(), auth.getUserRole());
     }
 
     /**
