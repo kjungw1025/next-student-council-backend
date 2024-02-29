@@ -22,24 +22,24 @@ import java.io.InputStream;
 @Slf4j
 public class FCMConfig {
 
-    @Value("${fcm.key.path}")
-    private String SERVICE_ACCOUNT_JSON;
-
-    @PostConstruct
-    public void init() {
-        try {
-            ClassPathResource resource = new ClassPathResource(SERVICE_ACCOUNT_JSON);
-            InputStream inputStream = resource.getInputStream();
-
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(inputStream))
-                    .setProjectId("next-dku-push-server")
-                    .build();
-
-            FirebaseApp.initializeApp(options);
-            log.info("파이어베이스 서버와의 연결에 성공했습니다.");
-        } catch (IOException e) {
-            log.error("파이어베이스 서버와의 연결에 실패했습니다.", e);
-        }
-    }
+//    @Value("${fcm.key.path}")
+//    private String SERVICE_ACCOUNT_JSON;
+//
+//    @PostConstruct
+//    public void init() {
+//        try {
+//            ClassPathResource resource = new ClassPathResource(SERVICE_ACCOUNT_JSON);
+//            InputStream inputStream = resource.getInputStream();
+//
+//            FirebaseOptions options = FirebaseOptions.builder()
+//                    .setCredentials(GoogleCredentials.fromStream(inputStream))
+//                    .setProjectId("next-dku-push-server")
+//                    .build();
+//
+//            FirebaseApp.initializeApp(options);
+//            log.info("파이어베이스 서버와의 연결에 성공했습니다.");
+//        } catch (IOException e) {
+//            log.error("파이어베이스 서버와의 연결에 실패했습니다.", e);
+//        }
+//    }
 }
