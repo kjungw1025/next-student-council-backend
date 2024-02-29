@@ -2,13 +2,21 @@ package com.dku.council.domain.oauth.model.dto.request;
 
 import lombok.Getter;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 public class TokenExchangeRequest {
+    @NotBlank(message = "grantType을 입력해주세요.")
     String grantType;
+    @NotBlank(message = "clientId를 입력해주세요.")
     String clientId;
+    @NotBlank(message = "redirectUri를 입력해주세요.")
     String redirectUri;
+    @NotBlank(message = "clientSecret을 입력해주세요.")
     String clientSecret;
+    @NotBlank(message = "code를 입력해주세요.")
     String code;
+    @NotBlank(message = "codeVerifier를 입력해주세요.")
     String codeVerifier;
 
     private TokenExchangeRequest(String grantType, String clientId, String redirectUri,

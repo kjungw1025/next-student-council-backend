@@ -2,6 +2,7 @@ package com.dku.council.domain.oauth.service;
 
 import com.dku.council.domain.oauth.exception.InvalidGrantTypeException;
 import com.dku.council.domain.oauth.exception.InvalidOauthResponseTypeException;
+import com.dku.council.domain.oauth.exception.OauthCacheNotFoundException;
 import com.dku.council.domain.oauth.exception.OauthClientNotFoundException;
 import com.dku.council.domain.oauth.model.dto.request.*;
 import com.dku.council.domain.oauth.model.dto.response.OauthLoginResponse;
@@ -102,7 +103,7 @@ public class OauthService {
 
     private OauthCachePayload getPayload(OAuthTarget target) {
         return oauthRedisRepository.getOauth(target.getCode())
-                .orElseThrow(OauthClientNotFoundException::new);
+                .orElseThrow(OauthCacheNotFoundException::new);
     }
 
     private OauthClient getOauthClient(String clientId) {

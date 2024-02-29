@@ -1,86 +1,72 @@
 package com.dku.council.domain.oauth.model.entity;
 
+import com.dku.council.domain.oauth.exception.InvalidClientSecretException;
 import com.dku.council.domain.oauth.exception.InvalidOauthClientIdException;
 import com.dku.council.domain.oauth.exception.InvalidOauthRedirectUriException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class OauthClientTest {
+    private static String clientId;
+    private static String applicationName;
+    private static String clientSecret;
+    private static String redirectUri;
 
-    @Test
-    void testGetClientId() {
-        String clientId = "id";
-        String applicationName = "tm";
-        String clientSecret = "cs";
-        String redirectUri = "url";
-        OauthClient oauthClient = OauthClient.of(clientId, applicationName, clientSecret, redirectUri);
-        assertEquals("id", oauthClient.getClientId());
+    @BeforeAll
+    static void setUp() {
+        clientId = "clientId";
+        applicationName = "appName";
+        clientSecret = "clientSecret";
+        redirectUri = "https://redirecturi.com";
     }
 
     @Test
-    void testGetClientSecret() {
-        String clientId = "id";
-        String applicationName = "tm";
-        String clientSecret = "cs";
-        String redirectUri = "url";
+    void createOauthClientWithGivenParameters() {
         OauthClient oauthClient = OauthClient.of(clientId, applicationName, clientSecret, redirectUri);
-        assertEquals("cs", oauthClient.getClientSecret());
+        assertEquals(clientId, oauthClient.getClientId());
+        assertEquals(applicationName, oauthClient.getApplicationName());
+        assertEquals(clientSecret, oauthClient.getClientSecret());
+        assertEquals(redirectUri, oauthClient.getRedirectUri());
     }
 
     @Test
-    void testGetRedirectUri() {
-        String clientId = "id";
-        String applicationName = "tm";
-        String clientSecret = "cs";
-        String redirectUri = "url";
+    void throwExceptionWhenClientIdDoesNotMatch() {
         OauthClient oauthClient = OauthClient.of(clientId, applicationName, clientSecret, redirectUri);
-        assertEquals("url", oauthClient.getRedirectUri());
+        assertThrows(InvalidOauthClientIdException.class, () -> oauthClient.checkClientId("invalidId"),
+                "invalid.oauth-client-id: invalidId");
     }
 
     @Test
-    void testStaticOf() {
-        String clientId = "id";
-        String applicationName = "tm";
-        String clientSecret = "cs";
-        String redirectUri = "url";
+    void doesNotThrowExceptionWhenClientIdMatches() {
         OauthClient oauthClient = OauthClient.of(clientId, applicationName, clientSecret, redirectUri);
-        assertEquals("id", oauthClient.getClientId());
-        assertEquals("tm", oauthClient.getApplicationName());
-        assertEquals("cs", oauthClient.getClientSecret());
-        assertEquals("url", oauthClient.getRedirectUri());
+        assertDoesNotThrow(() -> oauthClient.checkClientId(clientId));
     }
 
     @Test
-    void testCheckClientId() {
-        String clientId = "id";
-        String applicationName = "tm";
-        String clientSecret = "cs";
-        String redirectUri = "url";
+    void throwExceptionWhenRedirectUriDoesNotMatch() {
         OauthClient oauthClient = OauthClient.of(clientId, applicationName, clientSecret, redirectUri);
-        assertThrows(InvalidOauthClientIdException.class,
-                () -> oauthClient.checkClientId("invalidId"), "invalid.oauth-client-id: invalidId");
+        assertThrows(InvalidOauthRedirectUriException.class, () -> oauthClient.checkRedirectUri("invalidUri"),
+                "invalid.oauth-redirect-uri: invalidUri");
     }
 
     @Test
-    void testCheckClientSecret() {
-        String clientId = "id";
-        String applicationName = "tm";
-        String clientSecret = "cs";
-        String redirectUri = "url";
+    void doesNotThrowExceptionWhenRedirectUriMatches() {
         OauthClient oauthClient = OauthClient.of(clientId, applicationName, clientSecret, redirectUri);
-        assertThrows(IllegalArgumentException.class,
-                () -> oauthClient.checkClientSecret("invalidCs"), "Invalid client secret");
+        assertDoesNotThrow(() -> oauthClient.checkRedirectUri(redirectUri));
     }
 
     @Test
-    void testCheckRedirectUri() {
-        String clientId = "id";
-        String applicationName = "tm";
-        String clientSecret = "cs";
-        String redirectUri = "url";
+    void throwExceptionWhenClientSecretDoesNotMatch() {
         OauthClient oauthClient = OauthClient.of(clientId, applicationName, clientSecret, redirectUri);
-        assertThrows(InvalidOauthRedirectUriException.class,
-                () -> oauthClient.checkRedirectUri("invalidUrl"), "invalid.oauth-redirect-uri: invalidUrl");
+        assertThrows(InvalidClientSecretException.class, () -> oauthClient.checkClientSecret("invalidSecret"),
+                "invalid.client-secret: invalidSecret");
+    }
+
+    @Test
+    void doesNotThrowExceptionWhenClientSecretMatches() {
+        OauthClient oauthClient = OauthClient.of(clientId, applicationName, clientSecret, redirectUri);
+        assertDoesNotThrow(() -> oauthClient.checkClientSecret(clientSecret));
     }
 }

@@ -2,13 +2,20 @@ package com.dku.council.domain.oauth.model.dto.request;
 
 import lombok.Getter;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 public class OauthRequest {
+    @NotBlank(message = "codeChallenge를 입력해주세요.")
     private final String codeChallenge;
     private String codeChallengeMethod = "S256";
+    @NotBlank(message = "clientId를 입력해주세요.")
     private final String clientId;
+    @NotBlank(message = "redirectUri를 입력해주세요.")
     private final String redirectUri;
+    @NotBlank(message = "responseType을 입력해주세요.")
     private final String responseType;
+    @NotBlank(message = "scope를 입력해주세요.")
     private final String scope;
 
     private OauthRequest(String codeChallenge, String codeChallengeMethod, String clientId,
