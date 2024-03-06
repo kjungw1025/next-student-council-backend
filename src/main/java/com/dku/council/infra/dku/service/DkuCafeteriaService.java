@@ -11,6 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @EnableScheduling
 public class DkuCafeteriaService {
+
+    @Value("${dku.cafeteria.api-path}")
+    private String url;
 
     private final CafeteriaRepository cafeteriaRepository;
     private final CafeteriaInfoRepository cafeteriaInfoRepository;
@@ -47,7 +51,6 @@ public class DkuCafeteriaService {
 
     @Transactional
     public void crawlCafeteria() {
-        String url = "${dku.cafeteria.api-path}";
 
         try {
             LocalDate today = LocalDate.now();
@@ -113,6 +116,19 @@ public class DkuCafeteriaService {
 
                     // [A코스] 있는지 탐색
                     Boolean breakfastAFlag = parseCourseA(breakfast, "BRE", breakfastAcourseList, breakfastBcourseList);
+                    if (!breakfastAFlag) {
+
+                        // 하나의 식단만 존재할 때, [A코스]라고 명시하지 않는 경우가 존재함
+                        StringBuilder sb = new StringBuilder();
+                        for (int k = 0; k < breakfast.length(); k++) {
+                            char c = breakfast.charAt(k);
+                            if (c == '\\') {
+                                sb.append('\n');
+                            }
+                            sb.append(c);
+                        }
+                        breakfastResult = String.valueOf(sb);
+                    }
 
                     // [B코스] 있는지 탐색
                     Boolean breakfastBFlag = parseCourseB(breakfast, "BRE", breakfastBcourseList, breakfastCcourseList, breakfastAFlag);
@@ -230,7 +246,6 @@ public class DkuCafeteriaService {
             }
         }
         else { // [A코스]가 없는 경우
-            addMealResult(mealType, notOperated.get(mealType));
             flag = false;
         }
         return flag;
