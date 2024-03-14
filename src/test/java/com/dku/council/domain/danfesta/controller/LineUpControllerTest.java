@@ -3,10 +3,8 @@ package com.dku.council.domain.danfesta.controller;
 import com.dku.council.domain.danfesta.model.FestivalDate;
 import com.dku.council.domain.danfesta.model.entity.LineUp;
 import com.dku.council.domain.danfesta.repository.LineUpRepository;
-import com.dku.council.domain.user.repository.MajorRepository;
-import com.dku.council.domain.user.repository.UserRepository;
 import com.dku.council.mock.LineUpMock;
-import com.dku.council.util.base.AbstractAuthControllerTest;
+import com.dku.council.util.base.AbstractContainerRedisTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class LineUpControllerTest extends AbstractAuthControllerTest{
+class LineUpControllerTest extends AbstractContainerRedisTest {
 
     @Autowired
     private MockMvc mvc;
