@@ -26,6 +26,8 @@ public class LineUpController {
     /**
      * 라인업 목록 조회
      *
+     * <p>라인업 조회는 누구나 가능한 기능이며, FestivalDate는 축제 진행 일차(1일차)를 의미합니다.</p>
+     *
      * @param festivalDate   축제 일차
      */
     @GetMapping
@@ -36,10 +38,11 @@ public class LineUpController {
     /**
      * 라인업 등록
      *
+     * <p>라인업 등록은 관리자만 가능하며 festivalDate는 축제 진행 일차, performanceTime은 날짜를 의미합니다. </p>
+     *
      * @param auth   사용자 정보
      * @param dto    라인업 등록 정보
      * @return       라인업 id
-     * <p>performanceDate의 시간은 상관 없이 넣으셔도 됩니다.</p>
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @AdminAuth
@@ -51,6 +54,8 @@ public class LineUpController {
 
     /**
      * 라인업 공개 상태로 변경
+     *
+     * <p>공개 상태 변경은 boolean타입의 isOpened 값을 false 에서 true로 바꿔줍니다.</p>
      */
     @PatchMapping
     @AdminAuth
