@@ -53,13 +53,13 @@ public class LineUpController {
     }
 
     /**
-     * 라인업 공개 상태로 변경
+     * 일차별 라인업 공개 상태로 변경
      *
      * <p>공개 상태 변경은 boolean타입의 isOpened 값을 false 에서 true로 바꿔줍니다.</p>
      */
     @PatchMapping
     @AdminAuth
-    public void changeToTrue(AppAuthentication auth) {
-        lineUpService.changeToTrue(auth.getUserId());
+    public void changeToTrue(AppAuthentication auth, @RequestParam FestivalDate festivalDate) {
+        lineUpService.changeToTrue(auth.getUserId(), festivalDate);
     }
 }

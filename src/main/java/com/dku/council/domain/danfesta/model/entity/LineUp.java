@@ -33,6 +33,7 @@ public class LineUp extends BaseEntity {
 
     private LocalDate performanceTime;
 
+    @Enumerated(EnumType.STRING)
     private FestivalDate festivalDate;
 
     private boolean isOpened;
