@@ -106,14 +106,14 @@ public class LineUpService {
     }
 
     @Transactional
-    public void changeToTrue(Long userId) {
+    public void changeToTrue(Long userId, FestivalDate festivalDate) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         if (!user.getId().equals(userId) || !user.getUserRole().isAdmin()) {
             throw new NotGrantedException();
         }
 
-        List<LineUp> list = lineUpRepository.findAll();
+        List<LineUp> list = lineUpRepository.findAllByFestivalDate(festivalDate);
         for(LineUp lineUp : list) {
             lineUp.changeIsOpened();
             lineUpRepository.save(lineUp);
