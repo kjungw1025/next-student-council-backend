@@ -1,11 +1,11 @@
 package com.dku.council.domain.danfesta.model.dto.response;
 
-import com.dku.council.domain.danfesta.model.entity.SpecialGuest;
+import com.dku.council.domain.danfesta.model.entity.Stamp;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
-public class ResponseSpecialMissionForAdminDto {
+public class ResponseStampForAdminDto {
 
     @Schema(description = "학번", example = "20180000")
     private final String studentId;
@@ -34,15 +34,15 @@ public class ResponseSpecialMissionForAdminDto {
     @Schema(description = "미션7", example = "false")
     private final boolean mission7;
 
-    public ResponseSpecialMissionForAdminDto(SpecialGuest sg) {
-        this.studentId = sg.getUser().getStudentId();
-        this.studentName = sg.getUser().getName();
-        this.mission1 = sg.isMission1();
-        this.mission2 = sg.isMission2();
-        this.mission3 = sg.isMission3();
-        this.mission4 = sg.isMission4();
-        this.mission5 = sg.isMission5();
-        this.mission6 = sg.isMission6();
-        this.mission7 = sg.isMission7();
+    public ResponseStampForAdminDto(Stamp s) {
+        this.studentId = s.getUser().getStudentId();
+        this.studentName = s.getUser().getName();
+        this.mission1 = s.isMission1();
+        this.mission2 = s.isMission2();
+        this.mission3 = s.isMission3();
+        this.mission4 = s.isMission4();
+        this.mission5 = s.isMission5();
+        this.mission6 = s.isMission6();
+        this.mission7 = s.isMission7();
     }
 }
