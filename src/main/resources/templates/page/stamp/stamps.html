@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragment/layout :: layout('관리자 페이지 :: 스탬프', ~{::section})}">
+
+<style>
+    #boothNum {
+        width: 150px;
+    }
+</style>
+
+<body>
+<section>
+    <div class="py-5 text-center">
+        <h2>스탬프 목록</h2>
+        <div class="d-flex gap-2 justify-content-center py-5">
+            <p class="btn btn-secondary rounded-pill px-3" type="button">
+                <a th:href="@{|/manage|}" style="color: white">홈으로</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+        <div>
+            ※ 스탬프가 false일 때 찍으면 true로 변경됩니다.<br>
+            ※ 스탬프가 true일 때 찍혀있는 상태입니다. false인지 다시 한번 확인해주세요.<br>
+            ※ 잘못 찍은 경우에는 해당 부스를 선택 후 다시 찍으면 false 상태로 변경됩니다.
+        </div>
+    </div>
+    <hr class="my-4">
+    <div>
+        <nav aria-label="Page navigation example">
+            <form method="get" th:action="@{/manage/stamps}">
+                <div class="input-group flex-nowrap mb-2">
+                    <input type="text" name="studentId" class="form-control" placeholder="학번">
+                    <button class="btn btn-outline-secondary float-end" type="submit" id="button-addon2">조회</button>
+                </div>
+            </form>
+
+            <ul class="pagination"
+                th:with="start=${(stamps.number/maxPage)*maxPage + 1}, end = ${(stamps.totalPages == 0) ? 1 : ((start + (maxPage - 1) < stamps.totalPages) ? (start + (maxPage - 1)) : stamps.totalPages)}">
+                <li class="page-item" th:if="${start > 1}">
+                    <a class="page-link" th:if="${studentId != null}"
+                       th:href="@{|/manage/stamps?page=0&studentId=${studentId}|}" th:text="'<<'"></a>
+                    <a class="page-link" th:if="${studentId == null}"
+                       th:href="@{|/manage/stamps?page=0|}" th:text="'<<'"></a>
+                </li>
+                <li class="page-item" th:if="${start > 1}">
+                    <a class="page-link" th:if="${studentId != null}"
+                       th:href="@{|/manage/stamps?page=${start - maxPage - 1}&studentId=${studentId}|}" th:text="'<'"></a>
+                    <a class="page-link" th:if="${studentId == null}"
+                       th:href="@{|/manage/stamps?page=${start - maxPage - 1}|}" th:text="'<'"></a>
+                </li>
+
+                <li class="page-item" th:each="page : ${#numbers.sequence(start, end)}">
+                    <a class="page-link" th:if="${studentId != null}"
+                       th:href="@{|/manage/stamps?page=${page - 1}&studentId=${studentId}|}" th:text="${page}"></a>
+                    <a class="page-link" th:if="${studentId == null}"
+                       th:href="@{|/manage/stamps?page=${page - 1}|}" th:text="${page}"></a>
+                </li>
+
+                <li class="page-item" th:if="${end < stamps.totalPages}">
+                    <a class="page-link" th:if="${studentId != null}"
+                       th:href="@{|/manage/stamps?page=${start + maxPage - 1}&studentId=${studentId}|}" th:text="'>'"></a>
+                    <a class="page-link" th:if="${studentId == null}"
+                       th:href="@{|/manage/stamps?page=${start + maxPage - 1}|}" th:text="'>'"></a>
+                </li>
+                <li class="page-item" th:if="${end < stamps.totalPages}">
+                    <a class="page-link" th:if="${studentId != null}"
+                       th:href="@{|/manage/stamps?page=${stamps.totalPages - 1}&studentId=${studentId}|}"
+                       th:text="'>>'"></a>
+                    <a class="page-link" th:if="${studentId == null}"
+                       th:href="@{|/manage/stamps?page=${stamps.totalPages - 1}|}" th:text="'>>'"></a>
+                </li>
+            </ul>
+        </nav>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">학번</th>
+                <th scope="col">이름</th>
+                <th scope="col">스탬프1</th>
+                <th scope="col">스탬프2</th>
+                <th scope="col">스탬프3</th>
+                <th scope="col">스탬프4</th>
+                <th scope="col">스탬프5</th>
+                <th scope="col">스탬프6</th>
+                <th scope="col">스탬프7</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="stamp : ${stamps}">
+                <td th:text="${stamp.studentId}"></td>
+                <td th:text="${stamp.name}"></td>
+                <td th:text="${stamp.mission1}"></td>
+                <td th:text="${stamp.mission2}"></td>
+                <td th:text="${stamp.mission3}"></td>
+                <td th:text="${stamp.mission4}"></td>
+                <td th:text="${stamp.mission5}"></td>
+                <td th:text="${stamp.mission6}"></td>
+                <td th:text="${stamp.mission7}"></td>
+                <td id="booth-td1">
+                    <form id="form1" method="post" onsubmit="return confirmWithBoothNumber();" th:action="@{|/manage/stamps/${stamp.studentId}/stampToMission|}">
+                        <select class="form-control" id="boothNum" name="boothNumber">
+                            <option>==부스 선택==</option>
+                            <option value="1">1번 부스</option>
+                            <option value="2">2번 부스</option>
+                            <option value="3">3번 부스</option>
+                            <option value="4">4번 부스</option>
+                            <option value="5">5번 부스</option>
+                            <option value="6">6번 부스</option>
+                            <option value="7">7번 부스</option>
+                        </select>
+                        <button class="btn btn-outline-secondary" type="submit" id="button-addon3">스탬프 찍기</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div id="log">
+
+        </div>
+        <script>
+            var td = document.getElementsByTagName('td');
+            for (var i = 2; i < td.length; i++) {
+                if (td[i].textContent === 'true') {
+                    td[i].style.backgroundColor = 'lightgreen';
+                    td[i].style.width = '70px';
+                    td[i].style.height = '50px';
+                    td[i].style.textAlign = 'center';
+                } else if (td[i].textContent === 'false') {
+                    td[i].style.backgroundColor = 'lightcoral';
+                    td[i].style.width = '70px';
+                    td[i].style.height = '50px';
+                    td[i].style.textAlign = 'center';
+                }
+            }
+
+            let boothNum = document.getElementById('boothNum');
+            boothNum.style.width = '150px';
+            boothNum.style.alignContent = 'center';
+
+            function confirmWithBoothNumber() {
+                let boothNumber = document.getElementById('boothNum').value;
+
+                if (boothNumber === '==부스 선택==') {
+                    alert('부스를 선택해주세요.');
+                    return false;
+                }
+                return confirm('[ ' + boothNumber + ' ] ' + '번 부스에 스탬프를 찍으시겠습니까?' +
+                    '\n스탬프가 false인지 다시 한번 확인해주세요.');
+            }
+
+        </script>
+    </div>
+</section>
+
+</body>
+</html>
