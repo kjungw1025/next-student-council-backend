@@ -62,5 +62,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "join PetitionStatistic as ps on p.id = ps.petition.id " +
             "where ps.user.id=:userId and " +
             "p.status='ACTIVE' ")
-    Long countAllAgreedPetitionByUserId(Long userId);
+    Long countAllAgreedPetitionByUserId(@Param("userId") Long userId);
 }
