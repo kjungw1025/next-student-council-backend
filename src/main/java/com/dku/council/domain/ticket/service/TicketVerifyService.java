@@ -4,7 +4,9 @@ import com.dku.council.domain.ticket.exception.NoTicketException;
 import com.dku.council.domain.ticket.model.TicketStatus;
 import com.dku.council.domain.ticket.model.dto.response.ResponseManagerTicketDto;
 import com.dku.council.domain.ticket.model.dto.response.ResponseTicketDto;
+import com.dku.council.domain.ticket.model.dto.response.ResponseTicketEventDto;
 import com.dku.council.domain.ticket.model.entity.Ticket;
+import com.dku.council.domain.ticket.model.entity.TicketEvent;
 import com.dku.council.domain.ticket.repository.TicketRepository;
 import com.dku.council.domain.user.model.UserInfo;
 import com.dku.council.domain.user.service.UserInfoService;
@@ -17,7 +19,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * 티켓 검증 서비스.
@@ -52,6 +56,19 @@ public class TicketVerifyService {
     }
 
     @Transactional(readOnly = true)
+    public List<ResponseTicketDto> myTicketList(Long userId) {
+        List<Ticket> list = persistenceRepository.findAllByUserId(userId);
+
+        return list.stream().map(ticket -> {
+            if(ticket.getStatus().hasNoTicket()) {
+                throw new NoTicketException();
+            }
+            UserInfo userInfo = userInfoService.getUserInfo(userId);
+            return makeTicketDto(userInfo, ticket);
+        }).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public ResponseManagerTicketDto getTicketInfo(Long ticketId) {
         Ticket ticket = findTicket(ticketId);
 
@@ -75,9 +92,10 @@ public class TicketVerifyService {
     private ResponseTicketDto makeTicketDto(UserInfo userInfo, Ticket ticket) {
         boolean issued = ticket.getStatus() == TicketStatus.ISSUED;
         String majorName = userInfo.getMajor().getName();
+        TicketEvent event = ticket.getEvent();
 
         return new ResponseTicketDto(ticket.getId(), userInfo.getName(),
-                majorName, userInfo.getStudentId(), issued, ticket.getTurn());
+                majorName, userInfo.getStudentId(), issued, ticket.getTurn(), new ResponseTicketEventDto(event));
     }
 
     private String sendSms(String phoneNumber) {

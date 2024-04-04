@@ -24,13 +24,17 @@ public class ResponseTicketDto {
     @Schema(description = "예매 순서", example = "5")
     private final int turn;
 
+    @Schema(description = "티켓 이벤트 정보")
+    private final ResponseTicketEventDto event;
+
     public ResponseTicketDto(Long id, String name, String major,
-                             String studentId, boolean issued, int turn) {
+                             String studentId, boolean issued, int turn, ResponseTicketEventDto event) {
         this.id = id;
         this.name = name;
         this.major = major;
         this.studentId = studentId;
         this.issued = issued;
         this.turn = turn;
+        this.event = event;
     }
 }
