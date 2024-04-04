@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "티켓 검증", description = "티켓 검증 관련 API")
 @RestController
 @RequestMapping("/ticket")
@@ -32,6 +34,18 @@ public class TicketVerifyController {
     public ResponseTicketDto myTicket(AppAuthentication auth, @PathVariable Long eventId) {
         userService.isDkuChecked(auth.getUserId());
         return ticketVerifyService.myTicket(auth.getUserId(), eventId);
+    }
+
+    /**
+     * 내 티켓 전체 조회하기
+     * <p>실제로 발급받은 내 티켓을 전체 조회합니다. 내 티켓 조회와 마찬가지로 대상자로 선정되지 않은 경우에는 목록에 포함되지 않습니다.</p>
+     * @return   내 티켓 목록
+     */
+    @GetMapping("/event/my")
+    @UserAuth
+    public List<ResponseTicketDto> myTicketList(AppAuthentication auth) {
+        userService.isDkuChecked(auth.getUserId());
+        return ticketVerifyService.myTicketList(auth.getUserId());
     }
 
     /**
