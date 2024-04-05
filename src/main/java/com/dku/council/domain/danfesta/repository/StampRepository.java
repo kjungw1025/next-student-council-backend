@@ -21,4 +21,6 @@ public interface StampRepository extends JpaRepository<Stamp, Long>, JpaSpecific
             "join fetch u.major " +
             "where u.studentId=:studentId")
     Optional<Stamp> findByStudentId(@Param("studentId") String studentId);
+
+    boolean existsByUserId(@Param("userId") Long userId);
 }
