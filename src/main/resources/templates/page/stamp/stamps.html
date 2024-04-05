@@ -101,19 +101,21 @@
                 <td th:text="${stamp.mission6}"></td>
                 <td th:text="${stamp.mission7}"></td>
                 <td id="booth-td1">
-                    <form id="form1" method="post" onsubmit="return confirmWithBoothNumber();" th:action="@{|/manage/stamps/${stamp.studentId}/stampToMission|}">
-                        <select class="form-control" id="boothNum" name="boothNumber">
-                            <option>==부스 선택==</option>
-                            <option value="1">1번 부스</option>
-                            <option value="2">2번 부스</option>
-                            <option value="3">3번 부스</option>
-                            <option value="4">4번 부스</option>
-                            <option value="5">5번 부스</option>
-                            <option value="6">6번 부스</option>
-                            <option value="7">7번 부스</option>
-                        </select>
-                        <button class="btn btn-outline-secondary" type="submit" id="button-addon3">스탬프 찍기</button>
-                    </form>
+                    <div>
+                        <form id="form1" method="post" onsubmit="return confirm('해당 부스에 정말 스탬프를 찍겠습니까?');" th:action="@{|/manage/stamps/${stamp.studentId}/stampToMission|}">
+                            <select class="form-control" id="boothNum" name="boothNumber">
+                                <option>==부스 선택==</option>
+                                <option value="1">1번 부스</option>
+                                <option value="2">2번 부스</option>
+                                <option value="3">3번 부스</option>
+                                <option value="4">4번 부스</option>
+                                <option value="5">5번 부스</option>
+                                <option value="6">6번 부스</option>
+                                <option value="7">7번 부스</option>
+                            </select>
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon3">스탬프 찍기</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>
@@ -136,21 +138,6 @@
                     td[i].style.height = '50px';
                     td[i].style.textAlign = 'center';
                 }
-            }
-
-            let boothNum = document.getElementById('boothNum');
-            boothNum.style.width = '150px';
-            boothNum.style.alignContent = 'center';
-
-            function confirmWithBoothNumber() {
-                let boothNumber = document.getElementById('boothNum').value;
-
-                if (boothNumber === '==부스 선택==') {
-                    alert('부스를 선택해주세요.');
-                    return false;
-                }
-                return confirm('[ ' + boothNumber + ' ] ' + '번 부스에 스탬프를 찍으시겠습니까?' +
-                    '\n스탬프가 false인지 다시 한번 확인해주세요.');
             }
 
         </script>
