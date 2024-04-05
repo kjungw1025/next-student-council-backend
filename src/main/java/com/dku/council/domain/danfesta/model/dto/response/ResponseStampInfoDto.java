@@ -1,11 +1,11 @@
 package com.dku.council.domain.danfesta.model.dto.response;
 
-import com.dku.council.domain.danfesta.model.entity.SpecialGuest;
+import com.dku.council.domain.danfesta.model.entity.Stamp;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
-public class ResponseSpecialMissionInfoDto {
+public class ResponseStampInfoDto {
 
     @Schema(description = "첫 번째 부스 미션", example = "false")
     private final boolean mission1;
@@ -28,13 +28,13 @@ public class ResponseSpecialMissionInfoDto {
     @Schema(description = "일곱 번째 부스 미션", example = "false")
     private final boolean mission7;
 
-    public ResponseSpecialMissionInfoDto(SpecialGuest specialGuest) {
-        this.mission1 = specialGuest.isMission1();
-        this.mission2 = specialGuest.isMission2();
-        this.mission3 = specialGuest.isMission3();
-        this.mission4 = specialGuest.isMission4();
-        this.mission5 = specialGuest.isMission5();
-        this.mission6 = specialGuest.isMission6();
-        this.mission7 = specialGuest.isMission7();
+    public ResponseStampInfoDto(Stamp stamp) {
+        this.mission1 = stamp.isMission1();
+        this.mission2 = stamp.isMission2();
+        this.mission3 = stamp.isMission3();
+        this.mission4 = stamp.isMission4();
+        this.mission5 = stamp.isMission5();
+        this.mission6 = stamp.isMission6();
+        this.mission7 = stamp.isMission7();
     }
 }

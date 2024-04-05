@@ -12,12 +12,12 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "special_guest")
-public class SpecialGuest extends BaseEntity {
+@Table(name = "stamp")
+public class Stamp extends BaseEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "special_guest_id")
+    @Column(name = "stamp_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,7 +39,7 @@ public class SpecialGuest extends BaseEntity {
     private boolean mission7;
 
     @Builder
-    private SpecialGuest(User user) {
+    private Stamp(User user) {
         this.user = user;
         this.mission1 = false;
         this.mission2 = false;
@@ -50,7 +50,7 @@ public class SpecialGuest extends BaseEntity {
         this.mission7 = false;
     }
 
-    public void changeMissionStatus(String booth) {
+    public void stampToMission(String booth) {
         switch (booth) {
             case "mission1":
                 this.mission1 = !this.mission1;
