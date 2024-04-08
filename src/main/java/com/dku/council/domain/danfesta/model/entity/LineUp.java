@@ -31,7 +31,7 @@ public class LineUp extends BaseEntity {
     @Lob
     private String description;
 
-    private LocalDate performanceTime;
+    private LocalDateTime performanceTime;
 
     @Enumerated(EnumType.STRING)
     private FestivalDate festivalDate;
@@ -39,7 +39,7 @@ public class LineUp extends BaseEntity {
     private boolean isOpened;
 
     @Builder
-    private LineUp(String singer, String description, LocalDate performanceTime, FestivalDate festivalDate, boolean isOpened) {
+    private LineUp(String singer, String description, LocalDateTime performanceTime, FestivalDate festivalDate, boolean isOpened) {
         this.singer = singer;
         this.description = description;
         this.performanceTime = performanceTime;

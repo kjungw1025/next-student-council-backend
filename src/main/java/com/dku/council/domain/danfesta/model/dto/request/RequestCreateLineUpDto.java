@@ -23,7 +23,7 @@ public class RequestCreateLineUpDto {
     @Schema(description = "설명", example = "아이유의 공연입니다.")
     private final String description;
 
-    @Schema(description = "공연 날짜", example = "2024-05-20")
+    @Schema(description = "공연 날짜", example = "2024-05-20 18:00")
     private final String performanceDate;
 
     @Schema(description = "축제 일자", example = "FIRST_DAY")

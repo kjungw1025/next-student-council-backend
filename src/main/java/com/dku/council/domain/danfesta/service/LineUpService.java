@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +49,7 @@ public class LineUpService {
         LineUp lineUp = LineUp.builder()
                 .singer(dto.getSinger())
                 .description(dto.getDescription())
-                .performanceTime(convertToLocalDate(dto.getPerformanceDate()))
+                .performanceTime(convertToLocalDateTime(dto.getPerformanceDate()))
                 .festivalDate(dto.getFestivalDate())
                 .isOpened(false)
                 .build();
@@ -55,6 +57,11 @@ public class LineUpService {
 
         LineUp result = lineUpRepository.save(lineUp);
         return result.getId();
+    }
+
+    private LocalDateTime convertToLocalDateTime(String performanceDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return LocalDateTime.parse(performanceDate, formatter);
     }
 
     private void addLineUpImages(LineUp lineUp, List<MultipartFile> dtoImages) {
@@ -76,11 +83,6 @@ public class LineUpService {
         for (LineUpImage image : lineUpImages) {
             image.changeLineUp(lineUp);
         }
-    }
-
-    private LocalDate convertToLocalDate(String performanceDate) {
-        String[] split = performanceDate.split("-");
-        return LocalDate.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
     }
 
     @Transactional(readOnly = true)
