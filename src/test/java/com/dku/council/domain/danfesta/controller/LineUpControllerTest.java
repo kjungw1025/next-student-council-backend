@@ -42,8 +42,8 @@ class LineUpControllerTest extends AbstractContainerRedisTest {
     void setup() {
         lineUpRepository.deleteAll();
 
-        notOpenedList = LineUpMock.createList("singer", 3, 2024, 5, 20, FestivalDate.FIRST_DAY, false);
-        openedList = LineUpMock.createList("singer", 3, 2024, 5, 21, FestivalDate.SECOND_DAY, true);
+        notOpenedList = LineUpMock.createList("singer", 3, 2024, 5, 20, 18,0, FestivalDate.FIRST_DAY, false);
+        openedList = LineUpMock.createList("singer", 3, 2024, 5, 21, 18, 0, FestivalDate.SECOND_DAY, true);
         lineUpRepository.saveAll(notOpenedList);
         lineUpRepository.saveAll(openedList);
     }
