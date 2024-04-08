@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -23,7 +24,7 @@ public class ResponseLineUpDto {
 
     private final String description;
 
-    private final LocalDate performanceTime;
+    private final LocalDateTime performanceTime;
 
     private final FestivalDate festivalDate;
 
