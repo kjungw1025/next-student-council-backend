@@ -25,6 +25,11 @@ public class RedisKeys {
     public static final String USER_INFO_CACHE_KEY = "userInfo";
     public static final String OAUTH_CODE_KEY = "oauthCode";
 
+    public static final String BANNER_KEY = "banner";
+    public static final String BANNER_COUNT_KEY = "bannerCount";
+    public static final String BANNER_DISTINCT_KEY = "bannerDistinct";
+    public static final String BANNER_CLICK_KEY = "bannerClick";
+
     public static String combine(Object key1, Object key2) {
         return key1 + KEY_DELIMITER + key2;
     }

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragment/layout :: layout('관리자 페이지 :: 배너', ~{::section})}">
+<body>
+<section>
+    <div class="py-5 text-center">
+        <h2>배너</h2>
+        <div class="d-flex gap-2 justify-content-center py-5">
+            <p class="btn btn-secondary rounded-pill px-3" type="button">
+                <a th:href="@{|/manage|}" style="color: white">홈으로</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+        <div>
+            총 조회수 : 광고 기간동안의 총 조회수 (중복 포함, 3분 쿨타임)<br>
+            일별 IP 조회수 : 일별 IP 조회수 (중복 제외, BannerCount 따로 저장)<br>
+            총 클릭수 : 광고 기간동안의 총 클릭수 (중복 포함, 1분 쿨타임)
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+    <div style="margin-bottom: 20px">
+        <form method="post" th:object="${object}" th:action="@{|/manage/ad-banner/create|}" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="banner-image" class="form-label">배너 이미지</label>
+                <input id="banner-image" class="form-control" type="file" th:field="*{image}">
+            </div>
+            <div class="mb-3">
+                <label for="banner-url" class="form-label">Redirect URL</label>
+                <input id="banner-url" type="text" class="form-control" th:field="*{bannerUrl}"
+                       placeholder="Redirect Url">
+            </div>
+            <div class="mb-3">
+                <label for="banner-startDate" class="form-label">시작일</label>
+                <input id="banner-startDate" type="datetime-local" class="form-control" th:field="*{startDate}">
+            </div>
+            <div class="mb-3">
+                <label for="banner-endDate" class="form-label">종료일</label>
+                <input id="banner-endDate" type="datetime-local" class="form-control" th:field="*{endDate}">
+            </div>
+            <button class="btn btn-primary float-end" type="submit">추가</button>
+        </form>
+
+        <div>
+            <ul style="list-style: none">
+                <li th:each="banner : ${banners}" style="float: left">
+                    <div class="card">
+                        <img th:src="${banner.bannerUrl}" class="card-img-top">
+                        <div class="card-body">
+                            <h5>Redirect URL</h5>
+                            <p class="card-text" th:text="${banner.redirectUrl}"></p>
+                        </div>
+                        <table>
+                            <tbody>
+                                <tr style="text-align: center">
+                                    <td>
+                                        <div>
+                                            <h4>총 조회수</h4>
+                                            <p th:text="${banner.viewCount}"></p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <h4>일별 IP 조회수</h4>
+                                            <p th:text="${banner.distinctViewCount}"></p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <h4>총 클릭수</h4>
+                                            <p th:text="${banner.clickCount}"></p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+</body>
+</html>
