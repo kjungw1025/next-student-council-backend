@@ -1,5 +1,6 @@
 package com.dku.council.domain.post.service.post;
 
+import com.dku.council.domain.post.model.dto.response.ResponsePage;
 import com.dku.council.domain.post.model.dto.response.ResponseSingleSearchPost;
 import com.dku.council.domain.post.model.entity.posttype.*;
 import com.dku.council.domain.post.repository.post.*;
@@ -35,11 +36,11 @@ public class PostSearchService {
         Page<Conference> conferences = getConferencesLists(keyword, pageable);
         Page<Rule> rules = getRulesLists(keyword, pageable);
         return new SummarizedPostSearchDto(
-                notices.stream().map(ResponseSingleSearchPost::new).collect(Collectors.toList()),
-                coalitions.stream().map(ResponseSingleSearchPost::new).collect(Collectors.toList()),
-                petitions.stream().map(ResponseSingleSearchPost::new).collect(Collectors.toList()),
-                conferences.stream().map(ResponseSingleSearchPost::new).collect(Collectors.toList()),
-                rules.stream().map(ResponseSingleSearchPost::new).collect(Collectors.toList())
+                new ResponsePage<>(notices.map(ResponseSingleSearchPost::new)),
+                new ResponsePage<>(coalitions.map(ResponseSingleSearchPost::new)),
+                new ResponsePage<>(petitions.map(ResponseSingleSearchPost::new)),
+                new ResponsePage<>(conferences.map(ResponseSingleSearchPost::new)),
+                new ResponsePage<>(rules.map(ResponseSingleSearchPost::new))
         );
     }
 
