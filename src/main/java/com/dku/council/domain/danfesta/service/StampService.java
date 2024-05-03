@@ -21,22 +21,19 @@ public class StampService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createDefaultStampInfo(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-
-        Stamp s = Stamp.builder()
-                .user(user)
-                .build();
-        stampRepository.save(s);
-    }
-
     public ResponseStampInfoDto getStampInfo(Long userId) {
-        Stamp s = stampRepository.findByUserId(userId).orElseThrow(StampNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        Stamp s;
+
+        if(stampRepository.findByUserId(userId).isEmpty()) {
+            s = Stamp.builder()
+                    .user(user)
+                    .build();
+            s = stampRepository.save(s);
+        } else {
+            s = stampRepository.findByUserId(userId).orElseThrow(StampNotFoundException::new);
+        }
 
         return new ResponseStampInfoDto(s);
-    }
-
-    public boolean checkDefaultStampInfo(Long userId) {
-        return stampRepository.existsByUserId(userId);
     }
 }
