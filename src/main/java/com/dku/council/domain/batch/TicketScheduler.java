@@ -29,8 +29,10 @@ public class TicketScheduler {
         for (TicketDto dto : tickets) {
             User user = userRepository.getReferenceById(dto.getUserId());
             TicketEvent event = ticketEventRepository.getReferenceById(dto.getEventId());
-            Ticket ticket = new Ticket(user, event, dto.getTurn());
-            persistenceRepository.save(ticket);
+            if(persistenceRepository.findByUserIdAndEventId(user.getId(), event.getId()).isEmpty()) {
+                Ticket ticket = new Ticket(user, event, dto.getTurn());
+                persistenceRepository.save(ticket);
+            }
         }
     }
 }
