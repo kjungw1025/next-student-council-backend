@@ -38,6 +38,6 @@ public class Coalition extends Post {
     @Override
     @Transient
     public String getDisplayingUsername() {
-        return null;
+        return getUser().getNickname();
     }
 }
