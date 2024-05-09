@@ -14,12 +14,15 @@ public class ResponseSingleSearchPost {
 
     private final String body;
 
+    private final String author;
+
     private final LocalDateTime createdAt;
 
     public ResponseSingleSearchPost(Post post, int bodySize) {
         this.id = post.getId();
         this.title = sliceTitle(post.getTitle());
         this.body = sliceBody(post.getBody(), bodySize);
+        this.author = post.getDisplayingUsername();
         this.createdAt = post.getCreatedAt();
     }
 
