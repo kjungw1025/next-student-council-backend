@@ -8,9 +8,7 @@ import com.dku.council.domain.user.model.UserStatus;
 import com.dku.council.domain.user.model.dto.request.RequestExistPasswordChangeDto;
 import com.dku.council.domain.user.model.dto.request.RequestLoginDto;
 import com.dku.council.domain.user.model.dto.request.RequestNickNameChangeDto;
-import com.dku.council.domain.user.model.dto.response.ResponseLoginDto;
-import com.dku.council.domain.user.model.dto.response.ResponseMajorDto;
-import com.dku.council.domain.user.model.dto.response.ResponseRefreshTokenDto;
+import com.dku.council.domain.user.model.dto.response.*;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.user.repository.MajorRepository;
 import com.dku.council.domain.user.repository.UserRepository;
@@ -118,5 +116,10 @@ public class UserService {
         if (!user.isDkuChecked()) {
             throw new RequiredDkuUpdateException();
         }
+    }
+
+    public ResponseUserInfoForChattingDto getUserInfoForChatting(Long memberId) {
+        User user = userRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
+        return new ResponseUserInfoForChattingDto(user.getId(), user.getNickname(), user.getUserRole().isAdmin());
     }
 }

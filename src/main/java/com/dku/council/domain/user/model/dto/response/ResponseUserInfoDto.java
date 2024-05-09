@@ -16,10 +16,12 @@ public class ResponseUserInfoDto {
     private final String major;
     private final String department;
     private final String phoneNumber;
+    private final String profileImage;
     private final Long writePostCount;
     private final Long commentedPostCount;
     private final Long likedPostCount;
     private final Long petitionCount;
     private final Long agreedPetitionCount;
+    private final boolean isDkuChecked;
     private final boolean admin;
 }

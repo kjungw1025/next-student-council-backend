@@ -1,5 +1,9 @@
 package com.dku.council.domain.with_dankook.service;
 
+import com.dku.council.domain.chat.exception.ChatRoomNotFoundException;
+import com.dku.council.domain.chat.model.dto.response.ResponseChatRoomIdDto;
+import com.dku.council.domain.chat.repository.ChatRoomRepository;
+import com.dku.council.domain.chat.service.ChatService;
 import com.dku.council.domain.post.exception.PostCooltimeException;
 import com.dku.council.domain.post.repository.PostTimeMemoryRepository;
 import com.dku.council.domain.user.model.entity.User;
@@ -42,11 +46,13 @@ public class BearEatsService {
 
     private final WithDankookService<BearEats> withDankookService;
     private final WithDankookUserService withDankookuserSerivce;
+    private final ChatService chatService;
 
     private final BearEatsRepository bearEatsRepository;
     private final WithDankookUserRepository withDankookUserRepository;
     private final UserRepository userRepository;
     private final PostTimeMemoryRepository postTimeMemoryRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     private final Clock clock;
 
@@ -68,6 +74,11 @@ public class BearEatsService {
                         .withDankook(bearEatsRepository.findById(result).orElseThrow(WithDankookNotFoundException::new))
                         .build();
         withDankookUserRepository.save(withDankookuser);
+
+        BearEats bearEats = bearEatsRepository.findById(result).orElseThrow(WithDankookNotFoundException::new);
+
+        // 해당 게시글에 대한 채팅방 생성
+        chatService.createChatRoom(bearEats, dto.getRestaurant(), 4, userId);
 
         postTimeMemoryRepository.put(BEAR_EATS_KEY, userId, writeCooltime, now);
         return result;
@@ -118,8 +129,11 @@ public class BearEatsService {
     }
 
     @Transactional
-    public void enter(Long id, Long userId, UserRole userRole) {
+    public ResponseChatRoomIdDto enter(Long id, Long userId, UserRole userRole) {
+        String roomId = chatRoomRepository.findChatRoomByWithDankookId(id).orElseThrow(ChatRoomNotFoundException::new).getRoomId();
         withDankookService.enter(bearEatsRepository, id, userId, userRole);
+
+        return new ResponseChatRoomIdDto(roomId);
     }
 
     @Transactional

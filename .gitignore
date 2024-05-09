@@ -1,5 +1,6 @@
 HELP.md
 .gradle
+.gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
@@ -43,3 +44,6 @@ api.pdf
 /pinpoint-agent/
 /logs/.DS_Store
 .DS_Store
+
+### Firebase ###
+**/src/main/resources/**/**.json

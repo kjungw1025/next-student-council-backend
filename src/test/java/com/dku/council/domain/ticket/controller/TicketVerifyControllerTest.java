@@ -3,6 +3,7 @@ package com.dku.council.domain.ticket.controller;
 import com.dku.council.domain.ticket.controller.TicketVerifyController;
 import com.dku.council.domain.ticket.model.dto.response.ResponseManagerTicketDto;
 import com.dku.council.domain.ticket.model.dto.response.ResponseTicketDto;
+import com.dku.council.domain.ticket.model.dto.response.ResponseTicketEventDto;
 import com.dku.council.domain.ticket.service.TicketVerifyService;
 import com.dku.council.domain.user.service.UserService;
 import com.dku.council.mock.user.UserAuth;
@@ -43,7 +44,7 @@ class TicketVerifyControllerTest extends AbstractAuthControllerTest {
         // given
         UserAuth.withUser(7L);
         ResponseTicketDto ticket = new ResponseTicketDto(5L, "name",
-                "major", "studentId", false, 4);
+                "major", "studentId", false, 4, null);
 
         when(ticketVerifyService.myTicket(7L, 5L)).thenReturn(ticket);
 
@@ -65,7 +66,7 @@ class TicketVerifyControllerTest extends AbstractAuthControllerTest {
     void getTicketInfo() throws Exception {
         // given
         ResponseTicketDto ticket = new ResponseTicketDto(5L, "name",
-                "major", "studentId", false, 4);
+                "major", "studentId", false, 4, null);
         ResponseManagerTicketDto response = new ResponseManagerTicketDto(ticket, "123456", 1111L);
 
         when(ticketVerifyService.getTicketInfo(5L)).thenReturn(response);

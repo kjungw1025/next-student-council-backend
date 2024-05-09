@@ -31,7 +31,7 @@ public class DkuAuthBatchService {
      */
     @Transactional
     public void resetDkuAuth() {
-        List<User> listUser = userRepository.findAllWithDkuChecked();
+        List<User> listUser = userRepository.findAllWithDkuCheckedExceptAdmin();
         for (User user : listUser) {
             user.changeIsDkuChecked();
         }
@@ -46,7 +46,7 @@ public class DkuAuthBatchService {
         if (info.getStudentState().equals("재학")) {
             User user = userRepository.findByStudentId(dto.getDkuStudentId())
                     .orElseThrow(UserNotFoundException::new);
-            user.updateDkuInfo(info.getAge(), info.getGender());
+            user.updateDkuInfo(info.getAge(), info.getGender(), info.getProfileImageUrl());
         }
         else {
             throw new FailedAuthRefreshException();

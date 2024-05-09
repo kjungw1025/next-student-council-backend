@@ -1,5 +1,6 @@
 package com.dku.council.domain.with_dankook.model.entity;
 
+import com.dku.council.domain.chat.model.entity.ChatRoom;
 import com.dku.council.domain.user.model.entity.User;
 import com.dku.council.domain.with_dankook.model.WithDankookStatus;
 import com.dku.council.global.base.BaseEntity;
@@ -35,6 +36,9 @@ public abstract class WithDankook extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "master_user_id")
     private User masterUser;
+
+    @OneToMany(mappedBy = "withDankook", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatRoom> chatRooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "withDankook", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WithDankookUser> users = new ArrayList<>();

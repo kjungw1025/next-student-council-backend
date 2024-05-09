@@ -72,6 +72,43 @@ public class ObjectStorageService {
         return true;
     }
 
+    /**
+     * ~/chatroom/roomId/image/objectName 경로에 파일이 있는지 확인합니다.
+     */
+    public boolean isInChatImagePath(String roomId, String objectName) {
+        try {
+            webClient.get()
+                    .uri(uploadContext.getChatImageUrl(roomId, objectName))
+                    .retrieve()
+                    .bodyToMono(byte[].class)
+                    .block();
+        } catch (WebClientResponseException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * ~/chatroom/roomId/file/objectName 경로에 파일이 있는지 확인합니다.
+     */
+    public boolean isInChatFilePath(String roomId, String objectName) {
+        try {
+            webClient.get()
+                    .uri(uploadContext.getChatFileUrl(roomId, objectName))
+                    .retrieve()
+                    .bodyToMono(byte[].class)
+                    .block();
+        } catch (WebClientResponseException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     //TODO 기존 코드 삭제 예정
     public void uploadObject(String tokenId, String objectName, final InputStream inputStream, @Nullable MediaType contentType) {
         try {
@@ -136,6 +173,50 @@ public class ObjectStorageService {
         }
     }
 
+    /**
+     * ~/chatroom/roomId/image/objectName 경로에 파일을 업로드합니다.
+     */
+    public void uploadChatImage(String tokenId, String roomId, String objectName, final InputStream inputStream, @Nullable MediaType contentType) {
+        try {
+            WebClient.RequestBodySpec spec = webClient.put()
+                    .uri(uploadContext.getChatImageUrl(roomId, objectName))
+                    .header("X-Auth-Token", tokenId);
+
+            if (contentType != null) {
+                spec = spec.header("Content-Type", contentType.toString());
+            }
+
+            spec.body(BodyInserters.fromResource(new InputStreamResource(inputStream)))
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (Throwable e) {
+            throw new InvalidAccessObjectStorageException(e);
+        }
+    }
+
+    /**
+     * ~/chatroom/roomId/file/objectName 경로에 파일을 업로드합니다.
+     */
+    public void uploadChatFile(String tokenId, String roomId, String objectName, final InputStream inputStream, @Nullable MediaType contentType) {
+        try {
+            WebClient.RequestBodySpec spec = webClient.put()
+                    .uri(uploadContext.getChatFileUrl(roomId, objectName))
+                    .header("X-Auth-Token", tokenId);
+
+            if (contentType != null) {
+                spec = spec.header("Content-Type", contentType.toString());
+            }
+
+            spec.body(BodyInserters.fromResource(new InputStreamResource(inputStream)))
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (Throwable e) {
+            throw new InvalidAccessObjectStorageException(e);
+        }
+    }
+
     //TODO 기존 코드 삭제 예정
     public void deleteObject(String tokenId, String objectName) {
         try {
@@ -182,4 +263,19 @@ public class ObjectStorageService {
         }
     }
 
+    /**
+     * 특정 채팅방에 존재하는 특정 파일을 삭제합니다.
+     */
+    public void deleteChatFileByDirectUrl(String tokenId, String fileUrl) {
+        try {
+            webClient.delete()
+                    .uri(fileUrl)
+                    .header("X-Auth-Token", tokenId)
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+        } catch (Throwable e) {
+            throw new InvalidAccessObjectStorageException(e);
+        }
+    }
 }

@@ -5,6 +5,7 @@ import com.dku.council.domain.like.model.LikeTarget;
 import com.dku.council.domain.like.service.LikeService;
 import com.dku.council.domain.post.repository.post.PostRepository;
 import com.dku.council.domain.user.model.UserInfo;
+import com.dku.council.domain.user.model.dto.response.ResponseScopedUserInfoDto;
 import com.dku.council.domain.user.model.dto.response.ResponseUserInfoDto;
 import com.dku.council.domain.user.model.entity.Major;
 import com.dku.council.domain.user.model.entity.User;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -46,9 +48,9 @@ public class UserInfoService {
 
         return new ResponseUserInfoDto(user.getStudentId(), user.getName(),
                 user.getNickname(), user.getAge(), user.getGender(), year,
-                major.getName(), major.getDepartment(), phoneNumber,
+                major.getName(), major.getDepartment(), phoneNumber, user.getProfileImage(),
                 writePostCount, commentedPostCount, likedPostCount,
-                petitionCount, agreedPetitionCount, user.getUserRole().isAdmin());
+                petitionCount, agreedPetitionCount, user.isDkuChecked(), user.getUserRole().isAdmin());
     }
 
     @Transactional(readOnly = true)
@@ -62,6 +64,16 @@ public class UserInfoService {
                     memoryRepository.setUserInfo(userId, userInfo, now);
                     return userInfo;
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseScopedUserInfoDto getScopedUserInfo(Long userId, String scope) {
+        UserInfo userInfo = getUserInfo(userId);
+        return userInfo.getScopedInfo(userId, getScopeSet(scope));
+    }
+
+    private Set<String> getScopeSet(String scope) {
+        return new HashSet<>(Arrays.asList(scope.split(" ")));
     }
 
     public void invalidateUserInfo(Long userId) {

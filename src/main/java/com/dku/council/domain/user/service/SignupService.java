@@ -54,7 +54,7 @@ public class SignupService {
             user.changePassword(encryptedPassword);
             user.changeIsDkuChecked();
             user.changeGenericInfo(studentInfo.getStudentId(), studentInfo.getStudentName(), major,
-                    studentInfo.getYearOfAdmission(), studentInfo.getStudentState(), studentInfo.getAge(), studentInfo.getGender());
+                    studentInfo.getYearOfAdmission(), studentInfo.getStudentState(), studentInfo.getAge(), studentInfo.getGender(), studentInfo.getProfileImageUrl());
             userInfoService.invalidateUserInfo(user.getId());
         } else {
             User user = User.builder()
@@ -66,6 +66,7 @@ public class SignupService {
                     .major(major)
                     .age(studentInfo.getAge())
                     .gender(studentInfo.getGender())
+                    .profileImage(studentInfo.getProfileImageUrl())
                     .yearOfAdmission(studentInfo.getYearOfAdmission())
                     .academicStatus(studentInfo.getStudentState())
                     .status(UserStatus.ACTIVE)
