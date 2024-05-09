@@ -16,10 +16,10 @@ public class ResponseSingleSearchPost {
 
     private final LocalDateTime createdAt;
 
-    public ResponseSingleSearchPost(Post post) {
+    public ResponseSingleSearchPost(Post post, int bodySize) {
         this.id = post.getId();
         this.title = sliceTitle(post.getTitle());
-        this.body = sliceBody(post.getBody());
+        this.body = sliceBody(post.getBody(), bodySize);
         this.createdAt = post.getCreatedAt();
     }
 
@@ -30,9 +30,9 @@ public class ResponseSingleSearchPost {
         return title;
     }
 
-    private String sliceBody(String body) {
-        if (body.length() > 100) {
-            return body.substring(0, 100);
+    private String sliceBody(String body, int bodySize) {
+        if (body.length() > bodySize) {
+            return body.substring(0, bodySize);
         }
         return body;
     }
