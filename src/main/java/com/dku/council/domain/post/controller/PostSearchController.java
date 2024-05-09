@@ -26,7 +26,8 @@ public class PostSearchController {
      **/
     @GetMapping
     public SummarizedPostSearchDto searchPost(@RequestParam(required = false) String keyword,
-                                              @ParameterObject Pageable pageable) {
-        return postSearchService.searchPost(keyword, pageable);
+                                              @ParameterObject Pageable pageable,
+                                              int bodySize) {
+        return postSearchService.searchPost(keyword, pageable, bodySize);
     }
 }

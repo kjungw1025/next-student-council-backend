@@ -29,18 +29,14 @@ public class PostSearchService {
     /**
      * 모든 게시글 검색
      */
-    public SummarizedPostSearchDto searchPost(String keyword, Pageable pageable) {
+    public SummarizedPostSearchDto searchPost(String keyword, Pageable pageable, int bodySize) {
         Page<Notice> notices = getNoticeLists(keyword, pageable);
         Page<Coalition> coalitions = getCoalitionLists(keyword, pageable);
         Page<Petition> petitions = getPetitionLists(keyword, pageable);
-        Page<Conference> conferences = getConferencesLists(keyword, pageable);
-        Page<Rule> rules = getRulesLists(keyword, pageable);
         return new SummarizedPostSearchDto(
-                new ResponsePage<>(notices.map(ResponseSingleSearchPost::new)),
-                new ResponsePage<>(coalitions.map(ResponseSingleSearchPost::new)),
-                new ResponsePage<>(petitions.map(ResponseSingleSearchPost::new)),
-                new ResponsePage<>(conferences.map(ResponseSingleSearchPost::new)),
-                new ResponsePage<>(rules.map(ResponseSingleSearchPost::new))
+                new ResponsePage<>(notices.map(notice -> new ResponseSingleSearchPost(notice, bodySize))),
+                new ResponsePage<>(coalitions.map(coalition -> new ResponseSingleSearchPost(coalition, bodySize))),
+                new ResponsePage<>(petitions.map(petition -> new ResponseSingleSearchPost(petition, bodySize)))
         );
     }
 
@@ -60,17 +56,5 @@ public class PostSearchService {
         Specification<Petition> spec = PostSpec.withTitleOrBody(keyword);
         spec = spec.and(PostSpec.withActive());
         return petitionRepository.findAll(spec,pageable);
-    }
-
-    private Page<Conference> getConferencesLists(String keyword, Pageable pageable) {
-        Specification<Conference> spec = PostSpec.withTitleOrBody(keyword);
-        spec = spec.and(PostSpec.withActive());
-        return conferenceRepository.findAll(spec,pageable);
-    }
-
-    private Page<Rule> getRulesLists(String keyword, Pageable pageable) {
-        Specification<Rule> spec = PostSpec.withTitleOrBody(keyword);
-        spec = spec.and(PostSpec.withActive());
-        return ruleRepository.findAll(spec,pageable);
     }
 }
