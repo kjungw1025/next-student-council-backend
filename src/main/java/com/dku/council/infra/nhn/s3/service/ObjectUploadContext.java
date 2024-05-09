@@ -31,9 +31,9 @@ public class ObjectUploadContext {
 
     public String getThumbnailUrl(String thumbnailId) {
         if (thumbnailId == null || thumbnailId.isBlank()) {
-            return getObjectUrl(defaultThumbnailId);
+            return getImageUrl(defaultThumbnailId);
         } else {
-            return getObjectUrl(thumbnailId);
+            return getImageUrl(thumbnailId);
         }
     }
 
