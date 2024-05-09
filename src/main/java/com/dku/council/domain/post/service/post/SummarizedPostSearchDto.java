@@ -17,8 +17,4 @@ public class SummarizedPostSearchDto {
 
     private final ResponsePage<ResponseSingleSearchPost> petitions;
 
-    private final ResponsePage<ResponseSingleSearchPost> conferences;
-
-    private final ResponsePage<ResponseSingleSearchPost> rules;
-
 }

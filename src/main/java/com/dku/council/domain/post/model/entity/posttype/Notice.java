@@ -31,7 +31,7 @@ public class Notice extends Post {
     @Override
     @Transient
     public String getDisplayingUsername() {
-        return User.ANONYMITY;
+        return getUser().getNickname();
     }
 
 }
