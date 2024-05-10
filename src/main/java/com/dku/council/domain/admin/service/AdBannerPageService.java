@@ -57,8 +57,6 @@ public class AdBannerPageService {
                 .getImageId();
 
         Banner banner = Banner.builder()
-                .startDate(LocalDateTime.parse(dto.getStartDate()))
-                .endDate(LocalDateTime.parse(dto.getEndDate()))
                 .bannerUrl(redirectUrl)
                 .build();
 

@@ -85,7 +85,6 @@ public class User extends BaseEntity {
                  @NonNull String academicStatus,
                  @NonNull String age,
                  @NonNull String gender,
-                 String profileImage,
                  Integer yearOfAdmission,
                  UserStatus status,
                  UserRole role) {
@@ -98,7 +97,6 @@ public class User extends BaseEntity {
         this.academicStatus = academicStatus;
         this.age = age;
         this.gender = gender;
-        this.profileImage = profileImage;
         this.yearOfAdmission = yearOfAdmission;
         this.status = status;
         this.userRole = role;
@@ -178,7 +176,7 @@ public class User extends BaseEntity {
      * @param yearOfAdmission 입학년도
      * @param studentState    학적상태
      */
-    public void changeGenericInfo(String studentId, String studentName, Major major, int yearOfAdmission, String studentState, String age, String gender, String profileImage) {
+    public void changeGenericInfo(String studentId, String studentName, Major major, int yearOfAdmission, String studentState, String age, String gender) {
         this.studentId = studentId;
         this.name = studentName;
         this.major = major;
@@ -186,7 +184,6 @@ public class User extends BaseEntity {
         this.academicStatus = studentState;
         this.age = age;
         this.gender = gender;
-        this.profileImage = profileImage;
     }
 
     /**
@@ -201,7 +198,6 @@ public class User extends BaseEntity {
         this.age = "";
         this.gender = "";
         this.password = "";
-        this.profileImage = "";
     }
 
     /**
@@ -217,11 +213,10 @@ public class User extends BaseEntity {
      * @param age      나이
      * @param gender   성별
      */
-    public void updateDkuInfo(String age, String gender, String profileImage) {
+    public void updateDkuInfo(String age, String gender) {
         this.isDkuChecked = true;
         this.age = age;
         this.gender = gender;
-        this.profileImage = profileImage;
     }
 
     /**

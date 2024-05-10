@@ -74,7 +74,7 @@ class DKUAuthServiceTest {
     @DisplayName("studentInfo를 잘 가져오는지")
     void getStudentInfo() {
         // given
-        DkuUserInfo info = new DkuUserInfo("name", "1212","20", "남자", 0, "state","", "", "");
+        DkuUserInfo info = new DkuUserInfo("name", "1212","20", "남자", 0, "state","", "");
         when(dkuAuthRepository.getAuthPayload(any(),
                 eq(DKU_AUTH_NAME), eq(DkuUserInfo.class), any()))
                 .thenReturn(Optional.of(info));
@@ -122,7 +122,7 @@ class DKUAuthServiceTest {
         String pwd = "pwd";
         DkuAuth auth = new DkuAuth(new LinkedMultiValueMap<>());
         StudentInfo info = new StudentInfo("name", "1212", "20", "남자",0, "state", "",
-                "", "");
+                "");
         RequestDkuStudentDto dto = new RequestDkuStudentDto(id, pwd);
 
         when(authenticationService.loginWebInfo(id, pwd)).thenReturn(auth);
@@ -162,7 +162,7 @@ class DKUAuthServiceTest {
         String pwd = "pwd";
         DkuAuth auth = new DkuAuth(new LinkedMultiValueMap<>());
         User user = UserMock.createDummyMajor();
-        StudentInfo info = new StudentInfo("name", "1212", "20", "남자",0, "state", "",
+        StudentInfo info = new StudentInfo("name", "1212", "20", "남자",0, "state",
                 "major", "department");
         RequestDkuStudentDto dto = new RequestDkuStudentDto(id, pwd);
 
