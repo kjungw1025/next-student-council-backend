@@ -22,10 +22,6 @@ public class Banner extends BaseEntity {
     @Column(name = "banner_id")
     private Long id;
 
-    private LocalDateTime startDate;
-
-    private LocalDateTime endDate;
-
     private String bannerUrl;
 
     @OneToMany(mappedBy = "banner", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -41,9 +37,7 @@ public class Banner extends BaseEntity {
     private int clickCount;
 
     @Builder
-    private Banner(LocalDateTime startDate, LocalDateTime endDate, String bannerUrl) {
-        this.startDate = startDate;
-        this.endDate = endDate;
+    private Banner(String bannerUrl) {
         this.bannerUrl = bannerUrl;
         this.viewCount = 0;
         this.distinctViewCount = 0;
