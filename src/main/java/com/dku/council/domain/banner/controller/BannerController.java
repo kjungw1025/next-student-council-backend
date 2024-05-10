@@ -22,7 +22,7 @@ public class BannerController {
     /**
      * 전체 배너 조회
      */
-    @PostMapping
+    @GetMapping
     public List<ResponseBannerDto> getBannerList(HttpServletRequest request) {
         return bannerService.getBannerList(RemoteAddressUtil.getProxyableAddr(request));
     }
