@@ -28,16 +28,12 @@ public class DkuStudentService extends DkuScrapper {
     private final String studentInfoApiPath;
     private final String feeInfoApiPath;
 
-    private final String defaultProfileImage;
-
     public DkuStudentService(@ChromeAgentWebClient WebClient webClient,
                              @Value("${dku.student-info.info-api-path}") String studentInfoApiPath,
-                             @Value("${dku.student-info.fee-api-path}") String feeInfoApiPath,
-                             @Value("${dku.student-info.default-profile-image}") String defaultProfileImage) {
+                             @Value("${dku.student-info.fee-api-path}") String feeInfoApiPath) {
         super(webClient);
         this.studentInfoApiPath = studentInfoApiPath;
         this.feeInfoApiPath = feeInfoApiPath;
-        this.defaultProfileImage = defaultProfileImage;
     }
 
 
@@ -123,8 +119,6 @@ public class DkuStudentService extends DkuScrapper {
         String gender = getElementValueOrThrow(doc, "sexNm");
         String age = getAgeOrThrow(doc, "bday");
 
-        String profileImage = "";
-
         String major, department = "";
         int yearOfAdmission;
 
@@ -142,20 +136,11 @@ public class DkuStudentService extends DkuScrapper {
             String etrsYy = getElementValueOrThrow(doc, "etrsYy");
             yearOfAdmission = Integer.parseInt(etrsYy);
 
-            // 단국대학교 학생 프로필 이미지 크롤링
-            String src = getSrcFromElement(doc, "#stuInfotop .section_tbl .section_tbl.section_profile .group_photo .photo img");
-
-            profileImage = defaultProfileImage + src;
         } catch (Throwable t) {
             throw new DkuFailedCrawlingException(t);
         }
 
-        return new StudentInfo(studentName, studentId, age, gender, yearOfAdmission, studentState, profileImage, major, department);
-    }
-
-    private String getSrcFromElement(Element baseElement, String selector) {
-        Element element = baseElement.selectFirst(selector);
-        return (element != null) ? element.attr("src") : null;
+        return new StudentInfo(studentName, studentId, age, gender, yearOfAdmission, studentState, major, department);
     }
 
     private String getAgeOrThrow(Document doc, String id) {
