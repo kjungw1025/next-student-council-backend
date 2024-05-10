@@ -26,7 +26,7 @@ class DkuStudentServiceTest extends AbstractMockServerTest {
     void beforeEach() {
         WebClient webClient = WebClient.create();
         String path = "http://localhost:" + mockServer.getPort();
-        this.service = new DkuStudentService(webClient, path, path, path);
+        this.service = new DkuStudentService(webClient, path, path);
     }
 
     @Test
