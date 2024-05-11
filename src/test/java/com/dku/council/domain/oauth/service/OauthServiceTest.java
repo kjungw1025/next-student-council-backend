@@ -130,7 +130,7 @@ class OauthServiceTest {
         when(passwordEncoder.matches(any(), any())).thenReturn(true);
 
         // when
-        String response = oauthService.login(loginInfo, oauthInfo);
+        OauthLoginResponse response = oauthService.login(loginInfo, oauthInfo);
 
         // then
         assertNotNull(response);
