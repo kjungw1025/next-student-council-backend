@@ -38,6 +38,7 @@ public class OauthService {
     private final PasswordEncoder passwordEncoder;
     private final CodeChallengeConverter codeChallengeConverter;
     private final JwtProvider jwtProvider;
+    private static final String LOGIN_URL = "https://danvery.com/login";
 
     public String authorize(OauthRequest oauthRequest) {
         String clientId = oauthRequest.getClientId();
@@ -47,7 +48,7 @@ public class OauthService {
         oauthClient.checkClientId(clientId);
         oauthClient.checkRedirectUri(redirectUri);
         return UriComponentsBuilder
-                .fromUriString(oauthClient.getRedirectUri())
+                .fromUriString(LOGIN_URL)
                 .toUriString();
     }
 
