@@ -58,14 +58,16 @@ public class OauthService {
         User user = userRepository.findByStudentId(loginInfo.getStudentId())
                 .orElseThrow(UserNotFoundException::new);
 
-        if (!passwordEncoder.matches(loginInfo.getPassword(), user.getPassword())) {
-            throw new WrongPasswordException();
-        }
+        checkPassword(loginInfo.getPassword(), user.getPassword());
         String authCode = CodeGenerator.generateUUIDCode();
         Long userId = user.getId();
         OauthCachePayload cachePayload = oauthInfo.toCachePayload(userId);
         oauthRedisRepository.cacheOauth(authCode, cachePayload);
         return OauthLoginResponse.from(authCode);
+    private void checkPassword(String inputPassword, String userPassword) {
+        if (!passwordEncoder.matches(inputPassword, userPassword)) {
+            throw new WrongPasswordException();
+        }
     }
 
     public TokenExchangeResponse exchangeToken(ClientInfo clientInfo, OAuthTarget target) {
