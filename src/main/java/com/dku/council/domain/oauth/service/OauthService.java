@@ -5,7 +5,6 @@ import com.dku.council.domain.oauth.exception.InvalidOauthResponseTypeException;
 import com.dku.council.domain.oauth.exception.OauthCacheNotFoundException;
 import com.dku.council.domain.oauth.exception.OauthClientNotFoundException;
 import com.dku.council.domain.oauth.model.dto.request.*;
-import com.dku.council.domain.oauth.model.dto.response.OauthLoginResponse;
 import com.dku.council.domain.oauth.model.dto.response.TokenExchangeResponse;
 import com.dku.council.domain.oauth.model.entity.HashAlgorithm;
 import com.dku.council.domain.oauth.model.entity.OauthClient;
@@ -53,7 +52,7 @@ public class OauthService {
     }
 
     @Transactional
-    public OauthLoginResponse login(RequestLoginDto loginInfo, OauthInfo oauthInfo) {
+    public String login(RequestLoginDto loginInfo, OauthInfo oauthInfo) {
         checkResponseType(oauthInfo.getResponseType());
         User user = userRepository.findByStudentId(loginInfo.getStudentId())
                 .orElseThrow(UserNotFoundException::new);
@@ -63,7 +62,12 @@ public class OauthService {
         Long userId = user.getId();
         OauthCachePayload cachePayload = oauthInfo.toCachePayload(userId);
         oauthRedisRepository.cacheOauth(authCode, cachePayload);
-        return OauthLoginResponse.from(authCode);
+        return UriComponentsBuilder
+                .fromUriString(oauthInfo.getRedirectUri())
+                .queryParam("code", authCode)
+                .toUriString();
+    }
+
     private void checkPassword(String inputPassword, String userPassword) {
         if (!passwordEncoder.matches(inputPassword, userPassword)) {
             throw new WrongPasswordException();
