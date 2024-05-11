@@ -5,6 +5,7 @@ import com.dku.council.domain.oauth.exception.InvalidOauthResponseTypeException;
 import com.dku.council.domain.oauth.exception.OauthCacheNotFoundException;
 import com.dku.council.domain.oauth.exception.OauthClientNotFoundException;
 import com.dku.council.domain.oauth.model.dto.request.*;
+import com.dku.council.domain.oauth.model.dto.response.OauthLoginResponse;
 import com.dku.council.domain.oauth.model.dto.response.TokenExchangeResponse;
 import com.dku.council.domain.oauth.model.entity.HashAlgorithm;
 import com.dku.council.domain.oauth.model.entity.OauthClient;
@@ -38,7 +39,6 @@ public class OauthService {
     private final PasswordEncoder passwordEncoder;
     private final CodeChallengeConverter codeChallengeConverter;
     private final JwtProvider jwtProvider;
-    private static final String LOGIN_URL = "https://danvery.com/login";
 
     public String authorize(OauthRequest oauthRequest) {
         String clientId = oauthRequest.getClientId();
@@ -48,31 +48,24 @@ public class OauthService {
         oauthClient.checkClientId(clientId);
         oauthClient.checkRedirectUri(redirectUri);
         return UriComponentsBuilder
-                .fromUriString(LOGIN_URL)
+                .fromUriString(oauthClient.getRedirectUri())
                 .toUriString();
     }
 
     @Transactional
-    public String login(RequestLoginDto loginInfo, OauthInfo oauthInfo) {
+    public OauthLoginResponse login(RequestLoginDto loginInfo, OauthInfo oauthInfo) {
         checkResponseType(oauthInfo.getResponseType());
         User user = userRepository.findByStudentId(loginInfo.getStudentId())
                 .orElseThrow(UserNotFoundException::new);
 
-        checkPassword(loginInfo.getPassword(), user.getPassword());
+        if (!passwordEncoder.matches(loginInfo.getPassword(), user.getPassword())) {
+            throw new WrongPasswordException();
+        }
         String authCode = CodeGenerator.generateUUIDCode();
         Long userId = user.getId();
         OauthCachePayload cachePayload = oauthInfo.toCachePayload(userId);
         oauthRedisRepository.cacheOauth(authCode, cachePayload);
-        return UriComponentsBuilder
-                .fromUriString(oauthInfo.getRedirectUri())
-                .queryParam("code", authCode)
-                .toUriString();
-    }
-
-    private void checkPassword(String inputPassword, String userPassword) {
-        if (!passwordEncoder.matches(inputPassword, userPassword)) {
-            throw new WrongPasswordException();
-        }
+        return OauthLoginResponse.from(authCode);
     }
 
     public TokenExchangeResponse exchangeToken(ClientInfo clientInfo, OAuthTarget target) {
