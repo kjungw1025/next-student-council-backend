@@ -132,11 +132,14 @@ public class LineUpService {
             if (result.isEmpty()) {
                 result.add(lineUp);
             } else {
+                boolean flag = false;
                 for(LineUp resultLineUp : result) {
-                    if(!resultLineUp.getFestivalDate().equals(lineUp.getFestivalDate())) {
-                        result.add(lineUp);
-                        break;
+                    if(resultLineUp.getFestivalDate().equals(lineUp.getFestivalDate())) {
+                        flag = true;
                     }
+                }
+                if (!flag) {
+                    result.add(lineUp);
                 }
             }
         }
