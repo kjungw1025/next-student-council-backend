@@ -73,7 +73,7 @@ public class CoalitionController {
      * @param id 조회할 게시글 id
      * @return 제휴사업 게시글 정보
      */
-    @PostMapping("{id}")
+    @GetMapping("/{id}")
     @UserAuth
     public ResponseSingleGenericPostDto findOne(AppAuthentication auth,
                                                 @PathVariable Long id,

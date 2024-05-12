@@ -13,7 +13,6 @@ public class DkuUserInfo {
     private final String gender;
     private final int yearOfAdmission;
     private final String studentState;
-    private final String profileImageUrl;
 
     private final String majorName;
     private final String departmentName;
@@ -25,7 +24,6 @@ public class DkuUserInfo {
         this.gender = info.getGender();
         this.yearOfAdmission = info.getYearOfAdmission();
         this.studentState = info.getStudentState();
-        this.profileImageUrl = info.getProfileImageUrl();
         this.majorName = info.getMajorName();
         this.departmentName = info.getDepartmentName();
     }

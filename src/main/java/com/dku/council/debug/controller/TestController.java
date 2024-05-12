@@ -148,7 +148,6 @@ public class TestController {
                 .academicStatus("재학")
                 .age("20")
                 .gender("남자")
-                .profileImage(null)
                 .yearOfAdmission(2020)
                 .status(UserStatus.ACTIVE)
                 .role(UserRole.USER)
