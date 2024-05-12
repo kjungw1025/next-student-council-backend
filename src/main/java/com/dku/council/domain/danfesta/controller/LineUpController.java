@@ -66,6 +66,7 @@ public class LineUpController {
 
     /**
      * 라인업 날짜 조회
+     * <p>라인업 날짜는 중복되지 않게 조회됩니다.</p>
      */
     @GetMapping("/date")
     public List<ResponseFestivalDateDto> listFestivalDate() {
