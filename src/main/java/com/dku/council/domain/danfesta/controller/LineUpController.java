@@ -2,6 +2,7 @@ package com.dku.council.domain.danfesta.controller;
 
 import com.dku.council.domain.danfesta.model.FestivalDate;
 import com.dku.council.domain.danfesta.model.dto.request.RequestCreateLineUpDto;
+import com.dku.council.domain.danfesta.model.dto.response.ResponseFestivalDateDto;
 import com.dku.council.domain.danfesta.model.dto.response.ResponseLineUpDto;
 import com.dku.council.domain.danfesta.service.LineUpService;
 import com.dku.council.global.auth.jwt.AppAuthentication;
@@ -61,5 +62,13 @@ public class LineUpController {
     @AdminAuth
     public void changeToTrue(AppAuthentication auth, @RequestParam FestivalDate festivalDate) {
         lineUpService.changeToTrue(auth.getUserId(), festivalDate);
+    }
+
+    /**
+     * 라인업 날짜 조회
+     */
+    @GetMapping("/date")
+    public List<ResponseFestivalDateDto> listFestivalDate() {
+        return lineUpService.listFestivalDate();
     }
 }
