@@ -2,6 +2,7 @@ package com.dku.council.domain.danfesta.service;
 
 import com.dku.council.domain.danfesta.model.FestivalDate;
 import com.dku.council.domain.danfesta.model.dto.request.RequestCreateLineUpDto;
+import com.dku.council.domain.danfesta.model.dto.response.ResponseFestivalDateDto;
 import com.dku.council.domain.danfesta.model.dto.response.ResponseLineUpDto;
 import com.dku.council.domain.danfesta.model.entity.LineUp;
 import com.dku.council.domain.danfesta.model.entity.LineUpImage;
@@ -120,5 +121,26 @@ public class LineUpService {
             lineUp.changeIsOpened();
             lineUpRepository.save(lineUp);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<ResponseFestivalDateDto> listFestivalDate() {
+        List<LineUp> list = lineUpRepository.findAll();
+        List<LineUp> result = new ArrayList<>();
+
+        for(LineUp lineUp : list) {
+            if (result.isEmpty()) {
+                result.add(lineUp);
+            } else {
+                for(LineUp resultLineUp : result) {
+                    if(!resultLineUp.getFestivalDate().equals(lineUp.getFestivalDate())) {
+                        result.add(lineUp);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result.stream().map(ResponseFestivalDateDto::new).collect(Collectors.toList());
     }
 }
