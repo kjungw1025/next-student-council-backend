@@ -28,11 +28,15 @@ public class LineUpImage extends BaseEntity {
 
     private String fileName;
 
+    @Lob
+    private String blurData;
+
     @Builder
-    private LineUpImage(String fileId, String mimeType, String fileName) {
+    private LineUpImage(String fileId, String mimeType, String fileName, String blurData) {
         this.fileId = fileId;
         this.mimeType = mimeType;
         this.fileName = fileName;
+        this.blurData = blurData;
     }
 
     public void changeLineUp(LineUp lineUp) {

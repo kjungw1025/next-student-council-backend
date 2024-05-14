@@ -23,12 +23,16 @@ public class LineUpImageDto {
     @Schema(description = "이미지 파일 타입", example = "image/jpeg")
     private final String mimeType;
 
+    @Schema(description = "blur 데이터")
+    private final String blurData;
+
     public LineUpImageDto(ObjectUploadContext context, LineUpImage image) {
         this.url = context.getImageUrl(image.getFileId());
         this.originalName = image.getFileName();
 
         String imageMimeType = image.getMimeType();
         this.mimeType = Objects.requireNonNullElse(imageMimeType, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        this.blurData = image.getBlurData();
     }
 
     public static List<LineUpImageDto> listOf(ObjectUploadContext context, List<LineUpImage> entities) {

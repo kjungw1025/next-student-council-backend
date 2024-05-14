@@ -11,6 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import java.util.HashSet;
+import java.util.List;
+
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -51,9 +54,9 @@ public class OauthClient {
     }
 
     public void checkRedirectUri(String redirectUri) {
-        if (!this.redirectUri.equals(redirectUri)) {
+        HashSet<String> redirectUriSet = new HashSet<>(List.of(this.redirectUri.split(" ")));
+        if (!redirectUriSet.contains(redirectUri)) {
             throw new InvalidOauthRedirectUriException(redirectUri);
         }
     }
-
 }
