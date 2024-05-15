@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class InvalidOauthResponseTypeException extends LocalizedMessageException {
     public InvalidOauthResponseTypeException(String responseType) {
-        super(HttpStatus.BAD_REQUEST, "invalid.oauth-response-type", responseType);
+        super(HttpStatus.NOT_ACCEPTABLE, "invalid.oauth-response-type", responseType);
     }
 }

@@ -49,6 +49,7 @@ public class OauthService {
         oauthClient.checkRedirectUri(redirectUri);
         return UriComponentsBuilder
                 .fromUriString(LOGIN_URL)
+                .queryParams(oauthRequest.toQueryParams())
                 .toUriString();
     }
 
@@ -91,13 +92,14 @@ public class OauthService {
     }
 
     private String getCodeChallengeMethod(String codeChallengeMethod) {
+        if (codeChallengeMethod == null) {
+            return HashAlgorithm.SHA256.getAlgorithm();
+        }
         if (Objects.equals(codeChallengeMethod, HashAlgorithm.SHA1.getShortenedAlgorithm())) {
             codeChallengeMethod = HashAlgorithm.SHA1.getAlgorithm();
-        }
-        if (Objects.equals(codeChallengeMethod, HashAlgorithm.SHA256.getShortenedAlgorithm())) {
+        } else if (Objects.equals(codeChallengeMethod, HashAlgorithm.SHA256.getShortenedAlgorithm())) {
             codeChallengeMethod = HashAlgorithm.SHA256.getAlgorithm();
-        }
-        if (Objects.equals(codeChallengeMethod, HashAlgorithm.SHA512.getShortenedAlgorithm())) {
+        } else if (Objects.equals(codeChallengeMethod, HashAlgorithm.SHA512.getShortenedAlgorithm())) {
             codeChallengeMethod = HashAlgorithm.SHA512.getAlgorithm();
         }
         return codeChallengeMethod;
