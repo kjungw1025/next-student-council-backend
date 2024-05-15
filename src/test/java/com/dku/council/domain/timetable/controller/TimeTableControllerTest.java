@@ -16,6 +16,7 @@ import com.dku.council.domain.timetable.service.TimeTableService;
 import com.dku.council.domain.user.service.UserService;
 import com.dku.council.mock.LectureMock;
 import com.dku.council.util.base.AbstractAuthControllerTest;
+import com.dku.council.util.test.FullIntegrationTest;
 import com.dku.council.util.test.ImportsForMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TimeTableController.class)
 @ImportsForMvc
+@FullIntegrationTest
 class TimeTableControllerTest extends AbstractAuthControllerTest {
 
     @MockBean
