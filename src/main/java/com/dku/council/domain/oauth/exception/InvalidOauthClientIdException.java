@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 
 public class InvalidOauthClientIdException extends LocalizedMessageException {
     public InvalidOauthClientIdException(String clientId) {
-        super(HttpStatus.BAD_REQUEST, "invalid.oauth-client-id: " + clientId);
+        super(HttpStatus.NOT_ACCEPTABLE, "invalid.oauth-client-id: " + clientId);
     }
 }

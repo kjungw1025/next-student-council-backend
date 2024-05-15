@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class InvalidGrantTypeException extends LocalizedMessageException {
     public InvalidGrantTypeException(String grantType) {
-        super(HttpStatus.BAD_REQUEST, "invalid.oauth-grant-type: " + grantType);
+        super(HttpStatus.NOT_ACCEPTABLE, "invalid.oauth-grant-type: " + grantType);
     }
 }

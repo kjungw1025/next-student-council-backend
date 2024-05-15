@@ -53,4 +53,15 @@ class OauthInfoTest {
         assertEquals(scope, payload.getScope());
     }
 
+    @Test
+    void createOauthInfoWithDefaultCodeChallengeMethod() {
+        // given
+        codeChallengeMethod = null;
+
+        // when
+        OauthInfo oauthInfo = OauthInfo.of(clientId, redirectUri, codeChallenge, codeChallengeMethod, scope, responseType);
+
+        // then
+        assertEquals("S256", oauthInfo.getCodeChallengeMethod());
+    }
 }

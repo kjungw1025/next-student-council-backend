@@ -45,7 +45,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(parseCorsList(corsList))
                 .allowedHeaders("*")
-                .allowedMethods("*");
+                .allowedMethods("*")
+                .allowCredentials(true);
     }
 
     private static String[] parseCorsList(String corsList) {
