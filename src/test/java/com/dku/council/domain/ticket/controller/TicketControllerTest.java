@@ -13,6 +13,7 @@ import com.dku.council.mock.TicketEventMock;
 import com.dku.council.mock.user.UserAuth;
 import com.dku.council.util.DateStringUtil;
 import com.dku.council.util.base.AbstractAuthControllerTest;
+import com.dku.council.util.test.FullIntegrationTest;
 import com.dku.council.util.test.ImportsForMvc;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TicketController.class)
 @ImportsForMvc
+@FullIntegrationTest
 class TicketControllerTest extends AbstractAuthControllerTest {
 
     @MockBean
