@@ -49,6 +49,7 @@ public class OauthService {
         oauthClient.checkRedirectUri(redirectUri);
         return UriComponentsBuilder
                 .fromUriString(LOGIN_URL)
+                .queryParams(oauthRequest.toQueryParams())
                 .toUriString();
     }
 
