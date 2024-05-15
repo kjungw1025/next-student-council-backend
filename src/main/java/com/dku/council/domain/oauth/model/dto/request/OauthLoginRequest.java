@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 
 @Getter
@@ -27,6 +28,7 @@ public class OauthLoginRequest {
     @NotBlank(message = "codeChallenge를 입력해주세요.")
     private final String codeChallenge;
 
+    @Nullable
     private final String codeChallengeMethod;
 
     @NotBlank(message = "scope를 입력해주세요.")
@@ -40,6 +42,6 @@ public class OauthLoginRequest {
     }
 
     public OauthInfo toOauthInfo() {
-        return OauthInfo.of(clientId, redirectUri, codeChallenge, codeChallengeMethod, scope,  responseType);
+        return OauthInfo.of(clientId, redirectUri, codeChallenge, codeChallengeMethod, scope, responseType);
     }
 }

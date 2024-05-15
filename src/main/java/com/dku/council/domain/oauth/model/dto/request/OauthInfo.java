@@ -2,6 +2,8 @@ package com.dku.council.domain.oauth.model.dto.request;
 
 import lombok.Getter;
 
+import static com.dku.council.domain.oauth.model.entity.HashAlgorithm.SHA256;
+
 @Getter
 public class OauthInfo {
     private final String clientId;
@@ -11,7 +13,8 @@ public class OauthInfo {
     private final String scope;
     private final String responseType;
 
-    private OauthInfo(String clientId, String redirectUri, String codeChallenge, String codeChallengeMethod, String scope, String responseType) {
+    private OauthInfo(String clientId, String redirectUri, String codeChallenge,
+                      String codeChallengeMethod, String scope, String responseType) {
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.codeChallenge = codeChallenge;
@@ -20,7 +23,11 @@ public class OauthInfo {
         this.responseType = responseType;
     }
 
-    public static OauthInfo of(String clientId, String redirectUri, String codeChallenge, String codeChallengeMethod, String scope, String responseType) {
+    public static OauthInfo of(String clientId, String redirectUri, String codeChallenge,
+                               String codeChallengeMethod, String scope, String responseType) {
+        if (codeChallengeMethod == null) {
+            codeChallengeMethod = SHA256.getShortenedAlgorithm();
+        }
         return new OauthInfo(clientId, redirectUri, codeChallenge, codeChallengeMethod, scope, responseType);
     }
 
