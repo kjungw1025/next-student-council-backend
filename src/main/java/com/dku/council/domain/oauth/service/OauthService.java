@@ -38,7 +38,7 @@ public class OauthService {
     private final PasswordEncoder passwordEncoder;
     private final CodeChallengeConverter codeChallengeConverter;
     private final JwtProvider jwtProvider;
-    private static final String LOGIN_URL = "https://danvery.com/login";
+    private static final String LOGIN_URL = "https://oauth.danvery.com/signin";
 
     public String authorize(OauthRequest oauthRequest) {
         String clientId = oauthRequest.getClientId();
